@@ -1,0 +1,50 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %} サインイン画面 {% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold text-center">ユーザー作成</h1>
+<div>
+    <form method="post" action="{% url 'accounts:user_create' %}">{% csrf_token %}
+        <div class="py-2">
+            <label>{{ signin_form.email.label }}</label>
+            <div>{{ signin_form.email }}</div>
+        </div>
+        <div class="py-2">
+            <label>{{ signin_form.password.label }}</label>
+            <div>{{ signin_form.password }}</div>
+        </div>
+        <div class="py-2">
+            <label>{{ signin_form.confirm_password.label }}</label>
+            <div>{{ signin_form.confirm_password }}</div>
+        </div>
+        <div class="py-2">
+            <label>{{ signin_form.username.label }}</label>
+            <div>{{ signin_form.username }}</div>
+        </div>
+        <div class="py-2">
+            <label>{{ signin_form.gender.label }}</label>
+            <div>{{ signin_form.gender }}</div>
+        </div>
+        <div class="py-2">
+            <label>{{ signin_form.barrier_free.label }}</label>
+            <div>{{ signin_form.barrier_free }}</div>
+        </div>
+
+        <!-- 全体のエラーメッセージを表示 -->
+        {% if signin_form.non_field_errors %}
+            <div class="text-red-500">
+                <ul>
+                    {% for error in signin_form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div>
+            <button type="submit" >サインイン</button>
+        </div>
+
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %} ログイン画面 {% endblock %}
+
+{% block content %}
+    <h1 class="text-2xl font-bold text-center">ログイン</h1>
+    <div>
+        <form method="post" action="{% url 'accounts:user_login' %}">{% csrf_token %}
+            <div class="py-2">
+                <label>{{ login_form.email.label }}</label>
+                <div>{{ login_form.email }}</div>
+            </div>
+            <div class="py-2">
+                <label>{{ login_form.password.label }}</label>
+                <div>{{ login_form.password }}</div>
+            </div>
+            <div class="py-2">
+                <label>{{ login_form.password.label }}</label>
+                <input>{{ login_form.password }}</input>
+            </div>
+            <div>
+                <button type="submit" >ログイン</button>
+            </div>
+
+        </form>
+    </div>
+{% endblock %}
