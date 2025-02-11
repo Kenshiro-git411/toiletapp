@@ -17,9 +17,8 @@ class SigninForm(forms.Form):
         empty_label="選択してください",
         label="性別"
     )
-    barrier_free = forms.ChoiceField(
+    barrier_free = forms.BooleanField(
         required=False,
-        widget=forms.CheckboxInput(),
         label="バリアフリー優先",
     )
 
@@ -37,15 +36,16 @@ class SigninForm(forms.Form):
             raise forms.ValidationError("パスワードが一致しません。")
 
         print("clean処理は完了しました")
-        # return cleaned_data
+        return cleaned_data
 
     def save(self):
         # user = super().save(commit=False)
+        print("saveメソッドが呼ばれました")
         user = User(
             email=self.cleaned_data.get("email"),
             username=self.cleaned_data.get("username"),
             gender_id=self.cleaned_data.get("gender").id,
-            barrier_free=self.cleaned_data.get("barrier_free"),
+            is_barrier_free=self.cleaned_data.get("barrier_free"),
         )
         validate_password(self.cleaned_data.get("password"), user)
         user.set_password(self.cleaned_data.get("password"))

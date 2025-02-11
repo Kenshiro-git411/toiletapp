@@ -43,6 +43,8 @@ def user_create(request):
             except ValidationError as e:
                 signin_form.add_error('password', e)
                 print(type(e).__name__, e)
+        else:
+            print("ValidationError:", signin_form.errors)
 
     return render(request, 'accounts/user_create.html', context={
         'signin_form': signin_form,
