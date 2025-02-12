@@ -1,0 +1,10 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %} ログイン画面 {% endblock %}
+
+{% block content %}
+    <div>
+        home画面
+    </div>
+    <div class="my-2"><a href="{% url 'accounts:user_logout' %}"><button>ログアウト</button></a></div>
+{% endblock %}
