@@ -51,3 +51,27 @@ class SigninForm(forms.Form):
         user.set_password(self.cleaned_data.get("password"))
         user.save()
         return user
+
+# class UserInfoUpdate(forms.ModelForm):
+#     email = forms.EmailField(label="メールアドレス")
+#     username = forms.CharField(label="ユーザー名")
+#     gender = forms.ModelChoiceField(
+#         queryset=Gender.objects.all(), # DBデータの取得
+#         widget=forms.Select,
+#         empty_label="選択してください",
+#         label="性別"
+#     )
+
+
+
+
+
+
+
+
+
+
+
+
+
+

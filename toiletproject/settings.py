@@ -126,3 +126,14 @@ MEDIA_URL = '/media/'
 
 # 認証用のモデルとして設定
 AUTH_USER_MODEL = 'accounts.User'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # メールの内容をコンソールに表示する。
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #djangoappプロジェクトフォルダ配下のmediaフォルダを指定。
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com' # GmailのSMTPサーバー
+EMAIL_PORT = 587 # Gmailサーバーのポート番号
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+EMAIL_USE_TLS = True # SMTPサーバーと通信する際に、TLS（セキュア）接続する
+
+
