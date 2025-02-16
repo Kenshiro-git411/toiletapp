@@ -1,0 +1,42 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %} ユーザー情報更新画面 {% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold text-center">ユーザー情報更新</h1>
+<div>
+    <form method="post" action="{% url 'accounts:user_info_update' %}">{% csrf_token %}
+        <div class="py-2">
+            <label>{{ update_form.email.label }}</label>
+            <div>{{ update_form.email }}</div>
+        </div>
+        <div class="py-2">
+            <label>{{ update_form.username.label }}</label>
+            <div>{{ update_form.username }}</div>
+        </div>
+        <div class="py-2">
+            <label>{{ update_form.gender.label }}</label>
+            <div>{{ update_form.gender }}</div>
+        </div>
+        <div class="py-2">
+            <label>{{ update_form.barrier_free.label }}</label>
+            <div>{{ update_form.barrier_free }}</div>
+        </div>
+
+        <!-- 全体のエラーメッセージを表示 -->
+        {% if signin_form.non_field_errors %}
+            <div class="text-red-500">
+                <ul>
+                    {% for error in signin_form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div>
+            <button type="submit" >更新する</button>
+        </div>
+
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %} ユーザー削除画面 {% endblock %}
+
+{% block content %}
+<h2>アカウント削除</h2>
+<p>この操作を行うと、アカウントは無効化されます。復旧することはできません。</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <div>
+        {{ delete_form.as_p }}
+    </div>
+    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">削除</button>
+</form>
+
+<a href="{% url 'accounts:home' %}" class="text-blue-500">キャンセル</a>
+{% endblock %}

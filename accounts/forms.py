@@ -1,6 +1,7 @@
 from django import forms
 from .models import Gender, User
 from django.contrib.auth.password_validation import validate_password
+from datetime import datetime
 
 class LoginForm(forms.Form):
     email = forms.EmailField(label="メールアドレス")
@@ -39,7 +40,7 @@ class SigninForm(forms.Form):
         return cleaned_data
 
     def save(self):
-        # user = super().save(commit=False)
+        user = super().save(commit=False)
         print("saveメソッドが呼ばれました")
         user = User(
             email=self.cleaned_data.get("email"),
@@ -52,15 +53,75 @@ class SigninForm(forms.Form):
         user.save()
         return user
 
-# class UserInfoUpdate(forms.ModelForm):
-#     email = forms.EmailField(label="メールアドレス")
-#     username = forms.CharField(label="ユーザー名")
-#     gender = forms.ModelChoiceField(
-#         queryset=Gender.objects.all(), # DBデータの取得
-#         widget=forms.Select,
-#         empty_label="選択してください",
-#         label="性別"
-#     )
+class UserInfoUpdateForm(forms.ModelForm):
+
+    gender = forms.ModelChoiceField(
+        queryset=Gender.objects.all(), # DBデータの取得
+        widget=forms.Select,
+        label="性別"
+    )
+    barrier_free = forms.BooleanField(
+        required=False,
+        label="バリアフリー優先",
+    )
+
+    class Meta:
+        model = User
+        fields = ["email", "username", "gender", "barrier_free"]
+        labels = {
+            "email": "メールアドレス",
+            "username": "ユーザー名",
+        }
+
+    def __init__(self, *args, **kwargs):
+        """現在のユーザー情報を初期値としてフォームにセット"""
+        user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+        if user:
+            self.fields["email"].initial = user.email
+            self.fields["username"].initial = user.username
+            self.fields["gender"].initial = user.gender
+            self.fields["barrier_free"].initial = user.is_barrier_free
+
+    def clean_email(self):
+        """メールアドレスのバリデーション（重複しないようにする）"""
+        email = self.cleaned_data["email"]
+        # print("更新処理のメール", email)
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("このメールアドレスは既に使用されています。")
+        
+        # print("メールアドレスの重複はありません。")
+        return email
+
+    def clean_username(self):
+        """ユーザー名のバリデーション（重複しないようする）"""
+        username = self.cleaned_data["username"]
+        if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("このユーザー名は既に使用されています。")
+        
+        # print("ユーザー名の重複はありません。")
+        return username
+
+class UserDeleteForm(forms.Form):
+    confirm = forms.BooleanField(
+        required=True,
+        label="アカウントを削除することを確認する"
+    )
+
+    def __init__(self, *args, user=None, **kwargs):
+        """ユーザーインスタンスを受け取る"""
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+
+    def save(self):
+        """ユーザーを論理削除する"""
+        if self.user:
+            self.user.is_active=False
+            self.user.is_deleted=True
+            self.user.deleted_at=datetime.now()
+            self.user.save()
 
 
 

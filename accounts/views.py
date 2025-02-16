@@ -17,6 +17,7 @@ from . import forms
 def home(request):
     return render(request, 'accounts/home.html')
 
+
 def user_login(request):
     login_form = forms.LoginForm()
 
@@ -39,6 +40,7 @@ def user_login(request):
     return render(request, 'accounts/user_login.html', context={
         'login_form': login_form,
     })
+
 
 def user_create(request):
     signin_form = forms.SigninForm()
@@ -63,11 +65,30 @@ def user_create(request):
         'signin_form': signin_form,
     })
 
+
 @login_required
 def user_logout(request):
     logout(request)
     # messages.success(request, 'ログアウトしました')
     return render(request, 'accounts/user_logout.html')
+
+
+@login_required
+def user_info_update(request):
+    """ユーザー情報（ユーザー名&メールアドレス）更新"""
+    if request.method == "POST":
+        update_form = forms.UserInfoUpdateForm(request.POST, user=request.user, instance=request.user)
+
+        if update_form.is_valid():
+            update_form.save()
+            print("ユーザー情報を更新しました。")
+            return redirect("accounts:home")
+
+    else:
+        update_form = forms.UserInfoUpdateForm(user=request.user, instance=request.user)
+
+    return render(request, "accounts/user_info_update.html", {"update_form": update_form})
+
 
 def password_reset_request(request):
     """パスワードリセットリクエスト（メール送信）"""
@@ -141,3 +162,17 @@ def password_reset_confirm(request, uidb64, token):
 def password_reset_complete(request):
     """パスワードリセット完了ページ"""
     return render(request, "accounts/password_reset/password_reset_complete.html")
+
+@login_required
+def user_delete(request):
+    if request.method == "POST":
+        delete_form = forms.UserDeleteForm(request.POST, user=request.user)
+        if delete_form.is_valid() and delete_form.cleaned_data.get("confirm"):
+            delete_form.save() # 論理削除する
+            logout(request)
+            print("アカウントが削除されました")
+            return redirect("accounts:home")
+    else:
+        delete_form = forms.UserDeleteForm()
+
+    return render(request, "accounts/user_delete.html", {"delete_form": delete_form})
