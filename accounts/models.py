@@ -50,8 +50,8 @@ class CustomUserManager(UserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     """カスタムユーザーモデル."""
 
-    email = models.EmailField(_('email address'), unique=True)
-    username = models.CharField(max_length=255, null=True, unique=True)
+    email = models.EmailField(_('email address'), unique=True, null=True, blank=True)
+    username = models.CharField(max_length=255, null=True, blank=True, unique=True)
 
     line_name = models.CharField(max_length=255, null=True, blank=True)
     line_id = models.CharField(max_length=255, null=True, blank=True)
@@ -124,7 +124,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def get_username(self):
-        return self.email
+        return self.username if self.username else self.email
 
 
 

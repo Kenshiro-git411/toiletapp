@@ -25,6 +25,11 @@ class MyUserAdmin(UserAdmin):
             ('Permissions'),
             {'fields':
                 (
+                    'username',
+                    'line_id',
+                    'line_name',
+                    'gender',
+                    'is_barrier_free',
                     'is_active',
                     'is_staff',
                     'is_superuser',
@@ -43,7 +48,7 @@ class MyUserAdmin(UserAdmin):
     )
     form = MyUserChangeForm
     add_form = MyUserCreationForm
-    list_display = ('email', 'gender', 'is_barrier_free', 'is_staff', 'is_deleted', 'deleted_at')
+    list_display = ('email', 'username', 'line_id', 'line_name', 'gender', 'is_barrier_free', 'is_staff', 'is_deleted', 'deleted_at')
     list_filter = ('is_staff', 'is_superuser', 'is_barrier_free', 'is_active', 'is_deleted', 'groups')
     search_fields = ('email',)
     ordering = ('email',)

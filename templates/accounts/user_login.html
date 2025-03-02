@@ -4,7 +4,7 @@
 
 {% block content %}
     <h1 class="text-2xl font-bold text-center">ログイン</h1>
-    <div>
+    <div id="login-content">
         <form method="post" action="{% url 'accounts:user_login' %}">{% csrf_token %}
             <div class="py-2">
                 <label>{{ login_form.email.label }}</label>
@@ -15,9 +15,128 @@
                 <div>{{ login_form.password }}</div>
             </div>
             <div>
-                <button type="submit" >ログイン</button>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">ログイン</button>
             </div>
-
         </form>
     </div>
+    
+    <!-- LINE Profile情報表示エリア -->
+    <div id="line-profile" class="hidden mt-4">
+        <div class="text-center">
+            <img id="profile-picture" class="mx-auto rounded-full w-24 h-24" src="" alt="プロフィール画像">
+            <p id="display-name" class="mt-2 font-bold"></p>
+            <p id="user-id" class="text-sm text-gray-600"></p>
+            <p id="status-message" class="text-sm"></p>
+            
+            <!-- LINE IDを使ったログインフォーム -->
+            <form id="line-login-form" method="post" action="{% url 'accounts:liff_login' %}" class="mt-4">
+                {% csrf_token %}
+                <input type="hidden" id="line-id-input" name="line_id" value="">
+                <input type="hidden" id="line-name-input" name="line_name" value="">
+                <input type="hidden" id="line-picture-input" name="line_picture" value="">
+                <div class="py-2">
+                    <label for="username-input">ユーザー名（任意）</label>
+                    <div><input type="text" id="username-input" name="username" class="border rounded px-2 py-1" placeholder="ユーザー名を入力"></div>
+                </div>
+                <div>
+                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                        LINEアカウントでログイン/登録
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- LIFF SDK -->
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // LIFFの初期化
+        const initializeLiff = async () => {
+            try {
+                // LIFF IDを設定
+                await liff.init({ liffId: "{{ liff_id }}" });
+                
+                // LIFFブラウザで開かれているか確認
+                if (liff.isInClient() || liff.isLoggedIn()) {
+                    // ログイン済みの場合はプロフィール取得
+                    getProfile();
+                } else {
+                    // 未ログインの場合はLIFFログイン
+                    liff.login();
+                }
+            } catch (error) {
+                console.error('LIFF initialization failed', error);
+            }
+        };
+
+        // プロフィール情報の取得と表示
+        const getProfile = async () => {
+            try {
+                const profile = await liff.getProfile();
+                
+                // プロフィール情報を表示
+                document.getElementById('profile-picture').src = profile.pictureUrl || '';
+                document.getElementById('display-name').textContent = profile.displayName || '';
+                document.getElementById('user-id').textContent = `ID: ${profile.userId}`;
+                document.getElementById('status-message').textContent = profile.statusMessage || '';
+                
+                // フォームの隠しフィールドに値をセット
+                document.getElementById('line-id-input').value = profile.userId;
+                document.getElementById('line-name-input').value = profile.displayName;
+                document.getElementById('line-picture-input').value = profile.pictureUrl || '';
+                
+                // LINE Profile表示、通常ログインフォーム非表示
+                document.getElementById('line-profile').classList.remove('hidden');
+                document.getElementById('login-content').classList.add('hidden');
+            } catch (error) {
+                console.error('Failed to get profile', error);
+            }
+        };
+
+        // LIFFが利用可能な環境かチェック
+        if (typeof liff !== 'undefined') {
+            // URLにLIFFのパラメータが含まれているかチェック
+            const isLiffUrl = window.location.href.includes('liff.line.me');
+            
+            // URLパラメータからliffIdを取得できるかチェック
+            const urlParams = new URLSearchParams(window.location.search);
+            const hasLiffParams = urlParams.has('liff.state') || urlParams.has('liffId');
+            
+            console.log('URL check:', { isLiffUrl, hasLiffParams });
+            
+            // LIFFブラウザかどうかを直接チェック
+            try {
+                // 直接初期化を試みる
+                liff.init({ liffId: "{{ liff_id }}" })
+                    .then(() => {
+                        console.log('LIFF initialized successfully');
+                        console.log('isInClient:', liff.isInClient());
+                        console.log('isLoggedIn:', liff.isLoggedIn());
+                        
+                        // LIFFブラウザまたはLINEログイン済みの場合
+                        if (liff.isInClient() || liff.isLoggedIn() || isLiffUrl || hasLiffParams) {
+                            console.log('LIFF browser detected. Showing LINE login form.');
+                            getProfile();
+                        } else {
+                            console.log('Regular web browser detected. Showing email login form.');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('LIFF initialization error:', err);
+                        // 初期化エラーの場合は通常のログインフォームを表示
+                        console.log('Showing regular login form due to LIFF error');
+                    });
+            } catch (error) {
+                console.error('LIFF initialization attempt failed:', error);
+                // エラーの場合は通常のログインフォームを表示
+                console.log('Showing regular login form due to LIFF error');
+            }
+        } else {
+            console.log('LIFF SDK not available. Showing regular login form.');
+        }
+    });
+</script>
 {% endblock %}
