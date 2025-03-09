@@ -1,0 +1,82 @@
+{% extends 'toilet/base.html' %}
+
+{% block title %} トイレを探す {% endblock %}
+
+{% block content %}
+    <div>
+        <h2>トイレを探す</h2>
+    </div>
+    <div>
+        <form method="post" action="#">{% csrf_token %}
+            <div>
+                <label>{{ search_form.station_name.label }}</label>
+                <div>{{ search_form.station_name }}</div>
+                <div id="suggestions" style="max-height: 150px; overflow-y: auto;"></div>
+            </div>
+            <div>
+                <button type="submit">探す</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+                // イベントリスナーを設定
+                document.getElementById("station_input").addEventListener("keyup", searchStation);
+        });
+
+        async function searchStation() {
+            const inputStationName = document.getElementById("station_input").value.trim();
+
+            // 入力がない場合、候補リストをクリアして処理終了
+            if (inputStationName === "") {
+                updateSuggestions([]);
+                return;
+            }
+
+            try {
+                // 駅候補を取得
+                const suggestions = await fetchStationSuggestions(inputStationName);
+                console.log(suggestions)
+                // 候補をリストを作成する
+                updateSuggestions(suggestions);
+            } catch (error) {
+                console.error("駅の候補を取得中にエラーが発生しました:", error);
+            }
+        }
+
+        // APIリクエスト処理（Djangoから駅候補を取得）
+        async function fetchStationSuggestions(query) {
+            const response = await fetch(`{% url 'suggest_station' %}?query=${encodeURIComponent(query)}`);
+
+            if (!response.ok) {
+                throw new Error(`HTTPエラー: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.suggestions || []; // suggestionsプロパティがなければ空配列を返す
+        }
+
+        // 駅候補のリストを更新する
+        function updateSuggestions(suggestions) {
+            const suggestionBox = document.getElementById("suggestions");
+            suggestionBox.innerHTML = ""; // 一度クリア
+
+            suggestions.forEach(station => {
+                const div = document.createElement("div");
+                div.textContent = `${station.station_name} (${station.train_line__train_line_name})`;
+                div.style.cursor = "pointer";
+                div.classList.add("suggestion-item");
+
+                // 候補をクリックしたら入力フィールドに反映
+                div.onclick = function () {
+                    document.getElementById("station_input").value = station.station_name;
+                    suggestionBox.innerHTML = ""; // 候補リストをクリア
+                };
+
+                suggestionBox.appendChild(div);
+            });
+        }
+    </script>
+
+{% endblock %}

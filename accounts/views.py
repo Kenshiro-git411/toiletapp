@@ -13,6 +13,11 @@ from django.utils.encoding import force_bytes
 from django.urls import reverse
 from .models import User
 from . import forms
+from django.conf import settings
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+import uuid
 
 def home(request):
     return render(request, 'accounts/home.html')
@@ -41,6 +46,49 @@ def user_login(request):
         'login_form': login_form,
     })
 
+@csrf_exempt
+def liff_login_view(request):
+    if request.method == 'POST':
+        line_id = request.POST.get('line_id')
+        line_name = request.POST.get('line_name')
+        username = request.POST.get('username')
+        
+        if not line_id:
+            messages.error(request, 'LINE IDが取得できませんでした。')
+            return redirect('accounts:user_login')
+        
+        # LINE IDでユーザーを検索
+        try:
+            user = User.objects.get(line_id=line_id)
+            # 既存ユーザーの場合、ログイン処理
+            login(request, user)
+            messages.success(request, f'{user.line_name or user.username}さん、おかえりなさい！')
+            return redirect('accounts:home')
+        except User.DoesNotExist:
+            # 新規ユーザーの場合、アカウント作成
+            if not username:
+                # ユーザー名が指定されていない場合は自動生成
+                username = f"user_{uuid.uuid4().hex[:8]}"
+            
+            # ユーザー名の重複チェック
+            while User.objects.filter(username=username).exists():
+                username = f"user_{uuid.uuid4().hex[:8]}"
+            
+            # 新規ユーザー作成
+            user = User.objects.create(
+                username=username,
+                line_id=line_id,
+                line_name=line_name,
+                is_active=True
+            )
+            
+            # ログイン処理
+            login(request, user)
+            messages.success(request, f'{line_name}さん、はじめまして！アカウントを作成しました。')
+            return redirect('accounts:home')
+    
+    # GETリクエストの場合はログインページにリダイレクト
+    return redirect('accounts:user_login')
 
 def user_create(request):
     signin_form = forms.SigninForm()
@@ -70,6 +118,7 @@ def user_create(request):
 def user_logout(request):
     logout(request)
     # messages.success(request, 'ログアウトしました')
+    print("ログアウトしました")
     return render(request, 'accounts/user_logout.html')
 
 
