@@ -1,4 +1,4 @@
-{% extends 'toilet/base.html' %}
+{% extends 'accounts/base.html' %}
 
 {% block title %} トイレGOホーム {% endblock %}
 
@@ -14,7 +14,7 @@
         </p>
     </div>
     <div>
-        <div><a href="#">トイレを探す</a></div>
+        <div><a href="{% url 'toilet:search_toilet' %}">トイレを探す</a></div>
         <div><a href="#">ランキングを見る</a></div>
         <div><a href="#">トイレをレビューする</a></div>
     </div>

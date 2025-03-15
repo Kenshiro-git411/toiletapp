@@ -3,21 +3,26 @@
 {% block title %} ログイン画面 {% endblock %}
 
 {% block content %}
-    <h1 class="text-2xl font-bold text-center">ログイン</h1>
-    <div>
-        <form method="post" action="{% url 'accounts:user_login' %}">{% csrf_token %}
-            <div class="py-2">
-                <label>{{ login_form.email.label }}</label>
-                <div>{{ login_form.email }}</div>
+    <div class="items-center justify-center">
+        <!-- タイトルを中央ぞろえ -->
+        <h1 class="text-2xl font-bold w-3/5 mx-auto text-center mb-2">ログイン</h1>
+        <div class="flex flex-col items-center justify-center rounded-lg py-2">
+            <form method="post" action="{% url 'accounts:user_login' %}" class="w-3/5 ">{% csrf_token %}
+                <div class="mt-7">
+                    <label class="font-bold">{{ login_form.email.label }}</label>
+                    <div>{{ login_form.email }}</div>
+                </div>
+                <div class="mt-5">
+                    <label class="font-bold">{{ login_form.password.label }}</label>
+                    <div>{{ login_form.password }}</div>
+                </div>
+                <button type="submit" class="w-3/5 flex items-center justify-center w-full bg-blue-500 border-transparent mt-10 py-2 shadow-lg text-white font-bold hover:shadow-none hover:duration-700">ログイン</button>
+            </form>
+            <div class="flex items-center justify-center my-10 pb-10 w-3/5 border-b border-gray-400">
+                <a href="#" class="mx-auto text-center border-b border-gray-400">パスワードお忘れの方はこちら</a>
             </div>
-            <div class="py-2">
-                <label>{{ login_form.password.label }}</label>
-                <div>{{ login_form.password }}</div>
-            </div>
-            <div>
-                <button type="submit" >ログイン</button>
-            </div>
-
-        </form>
+            <a href="#" class="mx-auto text-center text-blue-500 font-bold bg-white my-5 py-2 w-3/5 outline outline-3 outline-blue-500 shadow-lg hover:shadow-none hover:duration-700">ユーザー登録</a>
+        </div>
     </div>
+    
 {% endblock %}

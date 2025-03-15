@@ -7,16 +7,26 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>{% block title %}base{% endblock %}</title>
 </head>
-<body>
-    <div class="min-h-screen w-full max-w-screen-md mx-auto overflow-x-hidden bg-gray-100 p-4">
-        <!-- <h1 class="text-2xl font-bold text-center">レスポンシブデザイン</h1>
-        <p class="text-gray-600 text-center">iPhone 16対応 & PCでも対応幅</p>
-        <div class="mt-4 space-y-4">
-            <div class="bg-white p-4 rounded-lg shadow-md">コンテンツ1</div>
-            <div class="bg-white p-4 rounded-lg shadow-md">コンテンツ2</div>
-            <div class="bg-white p-4 rounded-lg shadow-md">コンテンツ3</div>
-        </div> -->
+<body class="bg-blue-100">
+    <header class="bg-blue-200 h-20 flex items-center relative shadow-md">
+        <div class="flex items-center justify-center w-full justify-between px-6">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+            <!-- トイレGOという文字は必ず画面上部中央に配置する -->
+            <a href="{% url "toilet:home" %}" class="absolute left-1/2 transform -translate-x-1/2 text-lg font-bold"><h1 >トイレGO</h1></a>
+            <div class="px-5 ">
+                <nav>
+                    <ul class="flex space-x-6 ">
+                        <li><a href="#">マイページ</a></li>
+                        <li><a href="#">設定</a></li>
 
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <div class="w-full max-w-screen-md mx-auto overflow-x-hidden bg-blue-100 p-4 ">
         {% block content %}
         <!-- 子テンプレートで置き換えられる部分 -->
         {% endblock %}

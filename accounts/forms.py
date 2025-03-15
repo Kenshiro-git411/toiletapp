@@ -4,14 +4,32 @@ from django.contrib.auth.password_validation import validate_password
 from datetime import datetime
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(label="メールアドレス")
-    password = forms.CharField(label="パスワード", widget=forms.PasswordInput)
+    email = forms.EmailField(
+        label="メールアドレス",
+        widget=forms.TextInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"})
+    )
+    password = forms.CharField(
+        label="パスワード",
+        widget=forms.PasswordInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"})
+    )
 
 class SigninForm(forms.Form):
-    email = forms.EmailField(label="メールアドレス")
-    password = forms.CharField(label="パスワード", widget=forms.PasswordInput)
-    confirm_password = forms.CharField(label="パスワード再入力", widget=forms.PasswordInput)
-    username = forms.CharField(label="ユーザー名")
+    email = forms.EmailField(
+        label="メールアドレス",
+        widget=forms.TextInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"})
+    )
+    password = forms.CharField(
+        label="パスワード",
+        widget=forms.PasswordInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"})
+    )
+    confirm_password = forms.CharField(
+        label="パスワード再入力",
+        widget=forms.PasswordInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"})
+    )
+    username = forms.CharField(
+        label="ユーザー名",
+        widget=forms.TextInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"})
+    )
     gender = forms.ModelChoiceField(
         queryset=Gender.objects.all(), # DBデータの取得
         widget=forms.Select,
@@ -66,11 +84,15 @@ class UserInfoUpdateForm(forms.ModelForm):
     )
 
     class Meta:
-        model = User
-        fields = ["email", "username", "gender", "barrier_free"]
-        labels = {
+        model=User
+        fields=["email", "username", "gender", "barrier_free"]
+        labels={
             "email": "メールアドレス",
             "username": "ユーザー名",
+        }
+        widgets = {
+            "email": forms.EmailInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"}),
+            "username": forms.TextInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -106,7 +128,7 @@ class UserInfoUpdateForm(forms.ModelForm):
 class UserDeleteForm(forms.Form):
     confirm = forms.BooleanField(
         required=True,
-        label="アカウントを削除することを確認する"
+        label="アカウント削除の注意事項を確認しました"
     )
 
     def __init__(self, *args, user=None, **kwargs):

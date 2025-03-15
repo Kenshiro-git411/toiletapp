@@ -2,49 +2,52 @@
 
 {% block title %} サインイン画面 {% endblock %}
 {% block content %}
-<h1 class="text-2xl font-bold text-center">ユーザー作成</h1>
-<div>
-    <form method="post" action="{% url 'accounts:user_create' %}">{% csrf_token %}
-        <div class="py-2">
-            <label>{{ signin_form.email.label }}</label>
-            <div>{{ signin_form.email }}</div>
-        </div>
-        <div class="py-2">
-            <label>{{ signin_form.password.label }}</label>
-            <div>{{ signin_form.password }}</div>
-        </div>
-        <div class="py-2">
-            <label>{{ signin_form.confirm_password.label }}</label>
-            <div>{{ signin_form.confirm_password }}</div>
-        </div>
-        <div class="py-2">
-            <label>{{ signin_form.username.label }}</label>
-            <div>{{ signin_form.username }}</div>
-        </div>
-        <div class="py-2">
-            <label>{{ signin_form.gender.label }}</label>
-            <div>{{ signin_form.gender }}</div>
-        </div>
-        <div class="py-2">
-            <label>{{ signin_form.barrier_free.label }}</label>
-            <div>{{ signin_form.barrier_free }}</div>
-        </div>
-
-        <!-- 全体のエラーメッセージを表示 -->
-        {% if signin_form.non_field_errors %}
-            <div class="text-red-500">
-                <ul>
-                    {% for error in signin_form.non_field_errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
+<div class="items-center justify-center">
+    <h1 class="text-2xl font-bold w-3/5 mx-auto text-center mb-2">ユーザー作成</h1>
+    <div class="flex flex-col items-center justify-center rounded-lg py-2">
+        <form method="post" action="{% url 'accounts:user_create' %}" class="w-3/5">{% csrf_token %}
+            <div class="mt-7">
+                <label class="font-bold">{{ signin_form.email.label }}</label>
+                <div>{{ signin_form.email }}</div>
             </div>
-        {% endif %}
+            <div class="mt-5">
+                <label class="font-bold">{{ signin_form.password.label }}</label>
+                <div>{{ signin_form.password }}</div>
+            </div>
+            <div class="mt-5">
+                <label class="font-bold">{{ signin_form.confirm_password.label }}</label>
+                <div>{{ signin_form.confirm_password }}</div>
+            </div>
+            <div class="mt-5">
+                <label class="font-bold">{{ signin_form.username.label }}</label>
+                <div>{{ signin_form.username }}</div>
+            </div>
+            <div class="mt-5">
+                <label class="font-bold">{{ signin_form.gender.label }}</label>
+                <div>{{ signin_form.gender }}</div>
+            </div>
+            <div class="mt-5">
+                <label class="font-bold">{{ signin_form.barrier_free.label }}</label>
+                <div>{{ signin_form.barrier_free }}</div>
+            </div>
 
-        <div>
-            <button type="submit" >サインイン</button>
-        </div>
-
-    </form>
+            <!-- 全体のエラーメッセージを表示 -->
+            {% if signin_form.non_field_errors %}
+                <div class="text-red-500">
+                    <ul>
+                        {% for error in signin_form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            <div>
+                <button type="submit" class="w-3/5 flex items-center justify-center w-full bg-blue-500 border-transparent mt-10 py-2 shadow-lg text-white font-bold hover:shadow-none hover:duration-700">サインイン</button>
+            </div>
+        </form>
+        <div class="my-10 pb-10 w-3/5 border-b border-gray-400"></div>
+        <a href="#" class="mx-auto text-center text-blue-500 font-bold bg-white my-5 py-2 w-3/5 outline outline-3 outline-blue-500 shadow-lg hover:shadow-none hover:duration-700">ログインへ</a>
+    </div>
 </div>
+
 {% endblock %}

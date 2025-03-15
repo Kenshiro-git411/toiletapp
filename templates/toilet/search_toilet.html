@@ -1,4 +1,4 @@
-{% extends 'toilet/base.html' %}
+{% extends 'accounts/base.html' %}
 
 {% block title %} トイレを探す {% endblock %}
 
@@ -47,7 +47,7 @@
 
         // APIリクエスト処理（Djangoから駅候補を取得）
         async function fetchStationSuggestions(query) {
-            const response = await fetch(`{% url 'suggest_station' %}?query=${encodeURIComponent(query)}`);
+            const response = await fetch(`{% url 'toilet:suggest_station' %}?query=${encodeURIComponent(query)}`);
 
             if (!response.ok) {
                 throw new Error(`HTTPエラー: ${response.status}`);

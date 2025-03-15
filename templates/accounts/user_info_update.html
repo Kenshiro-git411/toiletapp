@@ -2,41 +2,41 @@
 
 {% block title %} ユーザー情報更新画面 {% endblock %}
 {% block content %}
-<h1 class="text-2xl font-bold text-center">ユーザー情報更新</h1>
-<div>
-    <form method="post" action="{% url 'accounts:user_info_update' %}">{% csrf_token %}
-        <div class="py-2">
-            <label>{{ update_form.email.label }}</label>
-            <div>{{ update_form.email }}</div>
-        </div>
-        <div class="py-2">
-            <label>{{ update_form.username.label }}</label>
-            <div>{{ update_form.username }}</div>
-        </div>
-        <div class="py-2">
-            <label>{{ update_form.gender.label }}</label>
-            <div>{{ update_form.gender }}</div>
-        </div>
-        <div class="py-2">
-            <label>{{ update_form.barrier_free.label }}</label>
-            <div>{{ update_form.barrier_free }}</div>
-        </div>
-
-        <!-- 全体のエラーメッセージを表示 -->
-        {% if signin_form.non_field_errors %}
-            <div class="text-red-500">
-                <ul>
-                    {% for error in signin_form.non_field_errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
+<div class="items-center justify-center">
+    <h1 class="text-2xl font-bold w-3/5 mx-auto text-center mb-2">ユーザー情報更新</h1>
+    <div class="flex flex-col items-center justify-center rounded-lg py-2">
+        <form method="post" action="{% url 'accounts:user_info_update' %}" class="w-3/5">{% csrf_token %}
+            <div class="mt-7">
+                <label>{{ update_form.email.label }}</label>
+                <div>{{ update_form.email }}</div>
             </div>
-        {% endif %}
-
-        <div>
-            <button type="submit" >更新する</button>
-        </div>
-
-    </form>
+            <div class="mt-5">
+                <label>{{ update_form.username.label }}</label>
+                <div>{{ update_form.username }}</div>
+            </div>
+            <div class="mt-5">
+                <label>{{ update_form.gender.label }}</label>
+                <div>{{ update_form.gender }}</div>
+            </div>
+            <div class="mt-5">
+                <label>{{ update_form.barrier_free.label }}</label>
+                <div>{{ update_form.barrier_free }}</div>
+            </div>
+            <!-- 全体のエラーメッセージを表示 -->
+            {% if signin_form.non_field_errors %}
+                <div class="text-red-500">
+                    <ul>
+                        {% for error in signin_form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            <button type="submit" class="w-3/5 flex items-center justify-center w-full bg-blue-500 border-transparent mt-10 py-2 shadow-lg text-white font-bold hover:shadow-none hover:duration-700">更新する</button>
+        </form>
+    </div>
+    <div class="w-3/5 flex items-center mx-auto mt-8 ">
+        <a href="{% url "accounts:user_delete" %}" class="text-gray-700">アカウントを削除する</a>
+    </div>
 </div>
 {% endblock %}

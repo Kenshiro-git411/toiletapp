@@ -3,16 +3,22 @@
 {% block title %} ユーザー削除画面 {% endblock %}
 
 {% block content %}
-<h2>アカウント削除</h2>
-<p>この操作を行うと、アカウントは無効化されます。復旧することはできません。</p>
-
-<form method="POST">
-    {% csrf_token %}
-    <div>
-        {{ delete_form.as_p }}
+<div class="items-center justify-center">
+    <h2 class="text-2xl font-bold w-3/5 mx-auto text-center my-4">アカウント削除</h2>
+    <p class="w-3/5 mx-auto text-center mt-6">
+        この操作を行うと、アカウントは無効化されます。<br>復旧することはできません。
+    </p>
+    <div class="mx-auto flex flex-col items-center justify-center rounded-lg w-3/5 mt-2">
+        <form method="POST" class="w-full flex flex-col items-center">
+            {% csrf_token %}
+            <div class="mt-5 w-full text-center">
+                {{ delete_form.as_p }}
+            </div>
+            <div class="flex justify-center w-full">
+                <button type="submit" class="bg-red-500 text-white mt-5 px-4 py-2 rounded">削除</button>
+            </div>
+        </form>
+        <a href="{% url 'accounts:user_info_update' %}" class="text-blue-500 mt-12">キャンセル</a>
     </div>
-    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">削除</button>
-</form>
-
-<a href="{% url 'accounts:home' %}" class="text-blue-500">キャンセル</a>
+</div>
 {% endblock %}
