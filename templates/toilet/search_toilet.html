@@ -7,11 +7,15 @@
         <h2>トイレを探す</h2>
     </div>
     <div>
-        <form method="post" action="#">{% csrf_token %}
-            <div>
+        <form method="post" action="{% url 'toilet:search_toilet' %}">{% csrf_token %}
+            <div class="relative">
                 <label>{{ search_form.station_name.label }}</label>
                 <div>{{ search_form.station_name }}</div>
-                <div id="suggestions" style="max-height: 150px; overflow-y: auto;"></div>
+                <div id="suggestions" class="w-full max-w-md absolute bg-white border border-gray-300 max-h-40 shadow-lg overflow-y-auto z-50 hidden"></div>
+            </div>
+            <div>
+                <label>{{ search_form.toilet_name.label }}</label>
+                <div>{{ search_form.toilet_name }}</div>
             </div>
             <div>
                 <button type="submit">探す</button>
@@ -27,10 +31,13 @@
 
         async function searchStation() {
             const inputStationName = document.getElementById("station_input").value.trim();
+            document.getElementById("suggestions").classList.remove("hidden");
+
 
             // 入力がない場合、候補リストをクリアして処理終了
             if (inputStationName === "") {
                 updateSuggestions([]);
+                document.getElementById("suggestions").classList.add("hidden");
                 return;
             }
 
@@ -49,10 +56,12 @@
         async function fetchStationSuggestions(query) {
             const response = await fetch(`{% url 'toilet:suggest_station' %}?query=${encodeURIComponent(query)}`);
 
+            console.log(response);
             if (!response.ok) {
                 throw new Error(`HTTPエラー: ${response.status}`);
             }
 
+            // 非同期処理を返す（Promise）。データを取得するにはawaitを付ける必要がある。
             const data = await response.json();
             return data.suggestions || []; // suggestionsプロパティがなければ空配列を返す
         }
@@ -69,12 +78,61 @@
                 div.classList.add("suggestion-item");
 
                 // 候補をクリックしたら入力フィールドに反映
-                div.onclick = function () {
+                div.onclick = async function () {
                     document.getElementById("station_input").value = station.station_name;
                     suggestionBox.innerHTML = ""; // 候補リストをクリア
+
+                    // トイレ候補を取得する
+                    // ※fetchToiletSuggestions()は非同期関数として定義しているので、awaitを付ける。
+                    const suggestions_toilet = await fetchToiletSuggestions(station.station_name);
+                    console.log(suggestions_toilet);
+                    document.getElementById("toilet_select").value = suggestions_toilet;
+
                 };
 
                 suggestionBox.appendChild(div);
+            });
+
+        }
+
+        // 非同期関数としてfetchToiletSuggestions()を定義
+        async function fetchToiletSuggestions(query){
+            try {
+                // fetchはawaitでないと使えない
+                const response_toilet = await fetch(`{% url 'toilet:suggest_toilet' %}?query=${encodeURIComponent(query)}`);
+
+                console.log(response_toilet);
+                if (!response_toilet.ok) {
+                throw new Error(`HTTPエラー: ${response_toilet.status}`);
+                }
+
+                const toilet_data = await response_toilet.json();
+                console.log("取得したトイレ候補:", toilet_data.toilet_suggestions)
+                updateToiletSelect(toilet_data.toilet_suggestions);
+            } catch(error) {
+                console.error("トイレの候補を取得中にエラーが発生しました:", error);
+                return [];
+            }
+        }
+
+        // トイレの選択肢を更新する関数
+        function updateToiletSelect(toilets){
+            const selectToiletBox = document.getElementById("toilet_select");
+
+            // 既存の選択肢をクリア
+            selectToiletBox.innerHTML = "";
+
+            // 取得したデータを`<option>`に追加
+            toilets.forEach(toilet => {
+                const option = document.createElement("option");
+                option.value = toilet.place;
+                option.textContent = toilet.place; // 表示する名前
+                selectToiletBox.appendChild(option);
+
+                // option.click() = async function (){
+                //     document.getElementById("toilet_select").value = toilet.place;
+                //     suggestionBox.innerHTML = "";
+                // }
             });
         }
     </script>

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from . import forms
 from django.http import JsonResponse
-from .models import TrainStation
+from .models import TrainStation, ToiletMaster
 
 # Create your views here.
 
@@ -12,10 +12,15 @@ def search_toilet(request):
     if request.method == 'POST':
         search_form = forms.SearchStation(request.POST)
         if search_form.is_valid():
-            station_name = search_form.cleaned_data['station_name']
-            return render(request, 'toilet/search_result.html', {
-                'station_name': station_name
+            # station_name = search_form.cleaned_data['station_name']
+            toilet_name = search_form.cleaned_data['toilet_name']
+            print(toilet_name)
+            return render(request, 'toilet/search_result.html', context={
+                # 'station_name': station_name,
+                'toilet_name' : toilet_name,
             })
+        else:
+            print("フォームエラー:", search_form.errors) # エラーの確認
     else:
         search_form = forms.SearchStation()
 
@@ -37,5 +42,19 @@ def suggest_station(request):
         print(list(stations))
 
         return JsonResponse({"suggestions": list(stations)})
-    
+
     return JsonResponse({"suggestions": []})
+
+def suggest_toilet(request):
+    """駅名に紐づくトイレを取得"""
+
+    query = request.GET.get("query", "")
+    if query:
+        toilets = ToiletMaster.objects.filter(station_id__station_name__icontains=query).values(
+            "station_id__station_name", "place"
+        )
+        print(list(toilets))
+
+        return JsonResponse({"toilet_suggestions": list(toilets)})
+
+    return JsonResponse({"toilet_suggestions": []})
