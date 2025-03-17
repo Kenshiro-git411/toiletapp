@@ -11,11 +11,13 @@
             <div class="relative">
                 <label>{{ search_form.station_name.label }}</label>
                 <div>{{ search_form.station_name }}</div>
+                <input type="hidden" id="station_id" name="station_id">
                 <div id="suggestions" class="w-full max-w-md absolute bg-white border border-gray-300 max-h-40 shadow-lg overflow-y-auto z-50 hidden"></div>
             </div>
             <div>
                 <label>{{ search_form.toilet_name.label }}</label>
                 <div>{{ search_form.toilet_name }}</div>
+                <!-- <input type="hidden" id="toilet_id" name="toilet_id"> -->
             </div>
             <div>
                 <button type="submit">探す</button>
@@ -25,8 +27,34 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function(){
-                // イベントリスナーを設定
-                document.getElementById("station_input").addEventListener("keyup", searchStation);
+            // イベントリスナーを設定
+            document.getElementById("station_input").addEventListener("keyup", searchStation);
+
+            // MutationObserverの追加
+            const observer = new MutationObserver(() => {
+                const stationId = document.getElementById("station_id").value;
+                if (stationId){
+                    console.log("MutationObserver: station_idに値がセットされた:", stationId);
+                    SearchToilet();
+                }
+            });
+
+            // 監視する要素
+            const targetNode = document.getElementById("station_id");
+            const config = { attributes: true, attributeFilter: ["value"] };
+
+            // 監視開始
+            observer.observe(targetNode, config);
+
+            // トイレ選択時のイベントリスナー
+            const toiletSelectElement = document.getElementById("toilet_select");
+            if (toiletSelectElement) {
+                toiletSelectElement.addEventListener("change", function() {
+                    console.log("選択されたトイレのID:", this.value);
+                });
+            } else {
+                console.error("toilet_select の要素が見つかりません");
+            }
         });
 
         async function searchStation() {
@@ -44,7 +72,7 @@
             try {
                 // 駅候補を取得
                 const suggestions = await fetchStationSuggestions(inputStationName);
-                console.log(suggestions)
+                console.log("suggestions:", suggestions)
                 // 候補をリストを作成する
                 updateSuggestions(suggestions);
             } catch (error) {
@@ -63,6 +91,7 @@
 
             // 非同期処理を返す（Promise）。データを取得するにはawaitを付ける必要がある。
             const data = await response.json();
+            console.log("data.suggestions:", data.suggestions)
             return data.suggestions || []; // suggestionsプロパティがなければ空配列を返す
         }
 
@@ -70,9 +99,11 @@
         function updateSuggestions(suggestions) {
             const suggestionBox = document.getElementById("suggestions");
             suggestionBox.innerHTML = ""; // 一度クリア
+            // console.log("suggestions内容:", suggestions);
 
             suggestions.forEach(station => {
                 const div = document.createElement("div");
+                div.value = station.id;
                 div.textContent = `${station.station_name} (${station.train_line__train_line_name})`;
                 div.style.cursor = "pointer";
                 div.classList.add("suggestion-item");
@@ -80,22 +111,35 @@
                 // 候補をクリックしたら入力フィールドに反映
                 div.onclick = async function () {
                     document.getElementById("station_input").value = station.station_name;
+                    document.getElementById("station_id").value = station.id;
                     suggestionBox.innerHTML = ""; // 候補リストをクリア
-
-                    // トイレ候補を取得する
-                    // ※fetchToiletSuggestions()は非同期関数として定義しているので、awaitを付ける。
-                    const suggestions_toilet = await fetchToiletSuggestions(station.station_name);
-                    console.log(suggestions_toilet);
-                    document.getElementById("toilet_select").value = suggestions_toilet;
-
                 };
 
                 suggestionBox.appendChild(div);
             });
-
         }
 
-        // 非同期関数としてfetchToiletSuggestions()を定義
+        // 駅に紐づくトイレデータを抽出
+        async function SearchToilet(){
+            console.log("SearchToilet関数が実行された");
+            const inputStationId = document.getElementById("station_id").value;
+            console.log("inputStationId:", inputStationId);
+            if (inputStationId === "") {
+                updateToiletSelect([]);
+                return;
+            } else {
+                try {
+                    // トイレ候補を取得する
+                    // ※fetchToiletSuggestions()は非同期関数として定義しているので、awaitを付ける。
+                    const suggestions_toilet = await fetchToiletSuggestions(inputStationId);
+                    updateToiletSelect(suggestions_toilet.toilet_suggestions);
+                } catch (error){
+                    console.error("トイレの候補を取得中にエラーが発生しました:", error);
+                }
+            }
+        }
+
+        // Djangoとの処理。非同期関数としてfetchToiletSuggestions()を定義
         async function fetchToiletSuggestions(query){
             try {
                 // fetchはawaitでないと使えない
@@ -103,15 +147,17 @@
 
                 console.log(response_toilet);
                 if (!response_toilet.ok) {
-                throw new Error(`HTTPエラー: ${response_toilet.status}`);
+                    throw new Error(`HTTPエラー: ${response_toilet.status}`);
                 }
 
                 const toilet_data = await response_toilet.json();
                 console.log("取得したトイレ候補:", toilet_data.toilet_suggestions)
-                updateToiletSelect(toilet_data.toilet_suggestions);
+
+                return toilet_data;
+
             } catch(error) {
-                console.error("トイレの候補を取得中にエラーが発生しました:", error);
-                return [];
+                console.error("Djangoからトイレ候補を取得中にエラーが発生しました:", error);
+                return { toilet_suggestions: [] };
             }
         }
 
@@ -119,22 +165,35 @@
         function updateToiletSelect(toilets){
             const selectToiletBox = document.getElementById("toilet_select");
 
+            if (!selectToiletBox){
+                console.error("toilet_selectが見つかりません");
+                return;
+            }
+
             // 既存の選択肢をクリア
             selectToiletBox.innerHTML = "";
+
+            // データが空なら「該当なし」を追加
+            if ( !toilets || toilets.length === 0){
+                const option = document.createElement("option");
+                option.value = "";
+                option.textContent = "該当するトイレがありません";
+                selectToiletBox.appendChild(option);
+            }
 
             // 取得したデータを`<option>`に追加
             toilets.forEach(toilet => {
                 const option = document.createElement("option");
-                option.value = toilet.place;
+                console.log("toilet.pk:",toilet.pk);
+                option.value = toilet.pk;
                 option.textContent = toilet.place; // 表示する名前
                 selectToiletBox.appendChild(option);
-
-                // option.click() = async function (){
-                //     document.getElementById("toilet_select").value = toilet.place;
-                //     suggestionBox.innerHTML = "";
-                // }
             });
         }
+
+        // document.getElementById("toilet_select").addEventListener("change", function() {
+        //     console.log("選択されたトイレの ID:", this.value);
+        // });
     </script>
 
 {% endblock %}

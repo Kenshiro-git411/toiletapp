@@ -11,12 +11,15 @@ def home(request):
 def search_toilet(request):
     if request.method == 'POST':
         search_form = forms.SearchStation(request.POST)
+        station_id = request.POST.get("station_id")
+        print("受け取ったPOSTデータ:", request.POST)
+        print("選択された駅ID:", station_id)
         if search_form.is_valid():
-            # station_name = search_form.cleaned_data['station_name']
+            station_name = search_form.cleaned_data['station_name']
             toilet_name = search_form.cleaned_data['toilet_name']
             print(toilet_name)
             return render(request, 'toilet/search_result.html', context={
-                # 'station_name': station_name,
+                'station_name': station_name,
                 'toilet_name' : toilet_name,
             })
         else:
@@ -33,10 +36,11 @@ def suggest_station(request):
     """駅名検索時の駅候補機能（DBから参照する）"""
 
     query = request.GET.get("query", "")
+    print(query) # 入力された文字列を受け取る
     if query:
         # icontainsを使って部分一致検索
         stations = TrainStation.objects.filter(station_name__icontains=query).values(
-            "station_name", "train_line__train_line_name"
+            "id", "station_name", "train_line__train_line_name"
         )
 
         print(list(stations))
@@ -50,9 +54,9 @@ def suggest_toilet(request):
 
     query = request.GET.get("query", "")
     if query:
-        toilets = ToiletMaster.objects.filter(station_id__station_name__icontains=query).values(
-            "station_id__station_name", "place"
-        )
+        toilets = ToiletMaster.objects.filter(station_id=query).values(
+            "pk", "station_id__station_name", "place"
+            )
         print(list(toilets))
 
         return JsonResponse({"toilet_suggestions": list(toilets)})
