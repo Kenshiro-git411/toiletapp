@@ -12,7 +12,7 @@ class SearchStation(forms.Form):
             "autocomplete": "off" # ブラウザの自動補完機能をオフにして、過去の入力値が候補として表示されないようにする。
         })
     )
-    toilet_name = forms.ModelChoiceField(
+    toilet_id = forms.ModelChoiceField(
         label="トイレ場所を選択",
         queryset=ToiletMaster.objects.none(),
         empty_label="選択してください",
