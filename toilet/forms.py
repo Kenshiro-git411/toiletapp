@@ -12,13 +12,22 @@ class SearchStation(forms.Form):
             "autocomplete": "off" # ブラウザの自動補完機能をオフにして、過去の入力値が候補として表示されないようにする。
         })
     )
-    toilet_id = forms.ModelChoiceField(
-        label="トイレ場所を選択",
-        queryset=ToiletMaster.objects.none(),
-        empty_label="選択してください",
-        widget=forms.Select(attrs={
-            "id": "toilet_select",
-            "class": "w-full max-w-md p-1 text-md"
-        })
-    )
+    # toilet_name = forms.ModelChoiceField(
+    #     label="トイレ場所を選択",
+    #     queryset=ToiletMaster.objects.none(),
+    #     empty_label="選択してください",
+    #     widget=forms.Select(attrs={
+    #         "id": "toilet_select",
+    #         "class": "w-full max-w-md p-1 text-md"
+    #     })
+    # )
+
+    # def __init__(self, *args, **kwargs):
+    #     station_id = kwargs.pop("station_id", None)
+    #     super().__init__(*args, **kwargs)
+
+    #     if station_id:
+    #         self.fields["toilet_name"].queryset = ToiletMaster.objects.filter(station_id=station_id)
+    #     else:
+    #         self.fields["toilet_name"].queryset = ToiletMaster.objects.all()
 

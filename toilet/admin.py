@@ -23,8 +23,22 @@ class MaleToiletAdmin(admin.ModelAdmin):
     search_fields = ("toilet_id", "value",)
     list_filter = ("toilet_id", "value",)
 
+class FemaleToiletAdmin(admin.ModelAdmin):
+    list_display = ("toilet_id", "value", "toilet_stall", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair", "powder_room")
+    search_fields = ("toilet_id", "value",)
+    list_filter = ("toilet_id", "value",)
+
+class MultiFunctionalToiletAdmin(admin.ModelAdmin):
+    list_display = ("toilet_id", "value", "toilet_stall", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair",)
+    search_fields = ("toilet_id", "value",)
+    list_filter = ("toilet_id", "value",)
+
+
+
 admin.site.register(TrainLine, TrainLineAdmin)
 admin.site.register(TrainStation, TrainStationAdmin)
 admin.site.register(ToiletMaster, ToiletMasterAdmin)
 admin.site.register(StationTicketGate, StationTicketGateAdmin)
 admin.site.register(MaleToilet, MaleToiletAdmin)
+admin.site.register(FemaleToilet, FemaleToiletAdmin)
+admin.site.register(MultiFunctionalToilet, MultiFunctionalToiletAdmin)

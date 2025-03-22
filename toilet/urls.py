@@ -7,5 +7,7 @@ urlpatterns = [
     path('home/', views.home, name='home'),
     path('search_toilet/', views.search_toilet, name='search_toilet'),
     path('suggest_station/', views.suggest_station, name='suggest_station'),
-    path('suggest_toilet/', views.suggest_toilet, name='suggest_toilet'),
+    path('male_toilet_info/<int:male_pk>/', views.male_toilet_info, name='male_toilet_info'),
+    path('female_toilet_info/<int:female_pk>/', views.female_toilet_info, name='female_toilet_info'),
+    path('multifunctional_toilet_info/<int:multi_pk>/', views.multifunctional_toilet_info, name='multifunctional_toilet_info'),
 ]

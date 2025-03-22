@@ -1,0 +1,40 @@
+{% extends 'toilet/base.html' %}
+
+{% block title %} トイレ検索結果 {% endblock %}
+
+{% block content %}
+<h1 class="text-center">{{ station_name }}駅のトイレ</h1>
+<div>
+    <div><h2 class="text-center">{{ place }}</h2></div>
+    <div class="w-full flex items-center justify-center my-10">
+        <ul class="flex w-full max-w-md justify-center space-x-2">
+            <li class="flex-1 p-3 border border-gray-400 text-center shadow-md bg-gray-100">
+                男性
+            </li>
+            <li class="flex-1 p-3 border border-gray-400 text-center shadow-md bg-gray-100">
+                女性
+            </li>
+            <li class="flex-1 p-3 border border-gray-400 text-center shadow-md bg-gray-100">
+                だれでも
+            </li>
+        </ul>
+    </div>
+    <div class="flex justify-center">
+        <table class="table-auto border-collapse w-full max-w-3xl">
+            <tbody class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {% for label, value in toilet_info %}
+                {% if value is not None %}
+                <tr class="border-gray-400 h-full flex flex-col justify-between">
+                    <th class="border border-gray-300 p-4 bg-blue-500 text-white">{{ label }}</th>
+                    <td class="border border-gray-300 p-4 bg-blue-100 text-center">{{ value }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+
+</script>
+{% endblock %}
