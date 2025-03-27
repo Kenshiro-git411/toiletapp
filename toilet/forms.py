@@ -31,3 +31,23 @@ class SearchStation(forms.Form):
     #     else:
     #         self.fields["toilet_name"].queryset = ToiletMaster.objects.all()
 
+
+class Review(forms.Form):
+    value = forms.IntegerField(
+        label="評価点",
+        min_value=1,
+        max_value=5,
+        widget=forms.NumberInput(attrs={
+            "step":1,
+            "class": "w-full p-1",
+        }),
+    )
+    comment = forms.CharField(
+        label="コメント",
+        max_length=300,
+        widget=forms.Textarea(attrs={
+            "class": "w-full p-1"
+        }),
+
+    )
+

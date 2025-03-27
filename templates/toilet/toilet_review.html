@@ -1,0 +1,23 @@
+{% extends 'toilet/base.html' %}
+
+{% block title %} トイレ検索結果 {% endblock %}
+
+{% block content %}
+<!-- <h1 class="text-center">{{ toilets.0.station_id.station_name }}駅のトイレ</h1> -->
+<div>
+    <form method="post" action="{% url 'toilet:toilet_review' %}">{% csrf_token %}
+        <div class="my-5">
+            {{ review_form.value.label }}
+            {{ review_form.value }}
+        </div>
+        <div>
+            {{ review_form.comment.label }}
+            {{ review_form.comment }}
+        </div>
+        <button type="submit" class="w-3/5 flex items-center justify-center w-full bg-blue-500 border-transparent mt-10 py-2 shadow-lg text-white font-bold hover:shadow-none hover:duration-700">レビュー</button>
+    </form>
+</div>
+<script>
+
+</script>
+{% endblock %}
