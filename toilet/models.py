@@ -165,9 +165,7 @@ class Comment(models.Model):
     # accountsアプリのUserモデルを外部キーに設定
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField(max_length=300)
-    toilet_male_id = models.ForeignKey(MaleToilet, on_delete=models.CASCADE, null=True)
-    toilet_female_id = models.ForeignKey(FemaleToilet, on_delete=models.CASCADE, null=True)
-    toilet_multifunctional_id = models.ForeignKey(MultiFunctionalToilet, on_delete=models.CASCADE, null=True)
+    gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
     value = models.IntegerField(help_text="5段階で数値を入力してください")
 
 

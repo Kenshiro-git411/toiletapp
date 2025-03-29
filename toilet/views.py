@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404
 from . import forms
 from django.http import JsonResponse
-from .models import TrainStation, ToiletMaster, MaleToilet, FemaleToilet, MultiFunctionalToilet
+from .models import TrainStation, ToiletMaster, MaleToilet, FemaleToilet, MultiFunctionalToilet, Comment
 from decimal import Decimal, ROUND_DOWN
+from django.http import HttpResponseBadRequest
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
 
 def home(request):
     return render(request, 'toilet/home.html')
@@ -25,7 +26,7 @@ def search_toilet(request):
             male_toilets = MaleToilet.objects.filter(toilet_id__station_id=station_id)
             female_toilets = FemaleToilet.objects.filter(toilet_id__station_id=station_id)
             multifunctional_toilets = MultiFunctionalToilet.objects.filter(toilet_id__station_id=station_id)
-            
+
             # 一致したトイレ情報を格納するリスト
             toilet_data = []
 
@@ -77,119 +78,79 @@ def suggest_station(request):
 
     return JsonResponse({"suggestions": []})
 
-def male_toilet_info(request, male_pk):
-    """トイレpkに紐づく男性トイレ情報を返す"""
+def toilet_info(request, pk, gender):
+    print("pk", pk)
+    print("gender", gender)
 
-    # MaleToiletテーブルからデータを取得
-    toilet = get_object_or_404(MaleToilet, pk=male_pk)
-    print(toilet)
+    try:
+        if gender == 1:
+            toilet = get_object_or_404(MaleToilet, pk=pk)
+            toilet_info = [
+                ("改札内外", toilet.toilet_id.station_ticket_gate_id),
+                ("設置階", toilet.toilet_id.floor),
+                ("利用時間", toilet.toilet_id.get_opening_hours),
+                ("個室数", toilet.toilet_stall),
+                ("小便器数", toilet.urial),
+                ("近い改札口", toilet.toilet_id.near_gate),
+                ("近いホーム", toilet.toilet_id.near_home_num),
+                ("近い車両番号", toilet.toilet_id.near_train_door_num),
+                ("温水洗浄便座", toilet.warm_water_washing_toilet_seat_display),
+                ("おむつ交換設備", toilet.child_facility_display),
+                ("バリアフリートイレ", toilet.barrier_free_toilet_display),
+                ("車いす対応", toilet.wheelchair_display),
+            ]
+        elif gender == 2:
+            toilet = get_object_or_404(FemaleToilet, pk=pk)
+            toilet_info = [
+                ("改札内外", toilet.toilet_id.station_ticket_gate_id),
+                ("設置階", toilet.toilet_id.floor),
+                ("利用時間", toilet.toilet_id.get_opening_hours),
+                ("個室数", toilet.toilet_stall),
+                ("近い改札口", toilet.toilet_id.near_gate),
+                ("近いホーム", toilet.toilet_id.near_home_num),
+                ("近い車両番号", toilet.toilet_id.near_train_door_num),
+                ("パウダールーム", toilet.powder_room_display),
+                ("温水洗浄便座", toilet.warm_water_washing_toilet_seat_display),
+                ("おむつ交換設備", toilet.child_facility_display),
+                ("バリアフリートイレ", toilet.barrier_free_toilet_display),
+                ("車いす対応", toilet.wheelchair_display),
+            ]
+        elif gender == 3:
+            toilet = get_object_or_404(MultiFunctionalToilet, pk=pk)
+            toilet_info = [
+                ("改札内外", toilet.toilet_id.station_ticket_gate_id),
+                ("設置階", toilet.toilet_id.floor),
+                ("利用時間", toilet.toilet_id.get_opening_hours),
+                ("個室数", toilet.toilet_stall),
+                ("近い改札口", toilet.toilet_id.near_gate),
+                ("近いホーム", toilet.toilet_id.near_home_num),
+                ("近い車両番号", toilet.toilet_id.near_train_door_num),
+                ("温水洗浄便座", toilet.warm_water_washing_toilet_seat_display),
+                ("おむつ交換設備", toilet.child_facility_display),
+                ("バリアフリートイレ", toilet.barrier_free_toilet_display),
+                ("車いす対応", toilet.wheelchair_display),
+            ]
 
-    station_name = toilet.toilet_id.station_id.station_name
-    place = toilet.toilet_id.place
-    value = Decimal(toilet.value)
-    value = value.quantize(Decimal("0.0"), rounding=ROUND_DOWN)
-    root = toilet.toilet_id.toilet_root
-    gen = toilet.gender.pk
+        station_name = toilet.toilet_id.station_id.station_name
+        place = toilet.toilet_id.place
+        value = Decimal(toilet.value)
+        value = value.quantize(Decimal("0.0"), rounding=ROUND_DOWN)
+        root = toilet.toilet_id.toilet_root
 
-    toilet_info = [
-        ("改札内外", toilet.toilet_id.station_ticket_gate_id),
-        ("設置階", toilet.toilet_id.floor),
-        ("利用時間", toilet.toilet_id.get_opening_hours),
-        ("個室数", toilet.toilet_stall),
-        ("小便器数", toilet.urial),
-        ("近い改札口", toilet.toilet_id.near_gate),
-        ("近いホーム", toilet.toilet_id.near_home_num),
-        ("近い車両番号", toilet.toilet_id.near_train_door_num),
-        ("温水洗浄便座", toilet.warm_water_washing_toilet_seat_display),
-        ("おむつ交換設備", toilet.child_facility_display),
-        ("バリアフリートイレ", toilet.barrier_free_toilet_display),
-        ("車いす対応", toilet.wheelchair_display),
-    ]
+        return render(request, 'toilet/search_result_toilet_info.html', {
+            "toilet": toilet,
+            "station_name": station_name,
+            "place": place,
+            "value": value,
+            "toilet_info": toilet_info,
+            "root": root,
+            "gender": gender,
+        })
 
-    return render(request, 'toilet/search_result_toilet_info.html', {
-        "toilet": toilet,
-        "station_name": station_name,
-        "place": place,
-        "value": value,
-        "toilet_info": toilet_info,
-        "root": root,
-        "gender": gen,
-    })
+    except Exception as e:
+        print("データを取得出来ませんでした", e)
+        return render(request, 'toilet/search_result_toilet_info.html', {})
 
-def female_toilet_info(request, female_pk):
-    """トイレpkに紐づく女性トイレ情報を返す"""
-
-    # FemaleToiletテーブルからデータを取得
-    toilet = get_object_or_404(FemaleToilet, pk=female_pk)
-
-    station_name = toilet.toilet_id.station_id.station_name
-    place = toilet.toilet_id.place
-    value = Decimal(toilet.value)
-    value = value.quantize(Decimal("0.0"), rounding=ROUND_DOWN)
-    root = toilet.toilet_id.toilet_root
-    gen = toilet.gender.pk
-
-    toilet_info = [
-        ("改札内外", toilet.toilet_id.station_ticket_gate_id),
-        ("設置階", toilet.toilet_id.floor),
-        ("利用時間", toilet.toilet_id.get_opening_hours),
-        ("個室数", toilet.toilet_stall),
-        ("近い改札口", toilet.toilet_id.near_gate),
-        ("近いホーム", toilet.toilet_id.near_home_num),
-        ("近い車両番号", toilet.toilet_id.near_train_door_num),
-        ("パウダールーム", toilet.powder_room_display),
-        ("温水洗浄便座", toilet.warm_water_washing_toilet_seat_display),
-        ("おむつ交換設備", toilet.child_facility_display),
-        ("バリアフリートイレ", toilet.barrier_free_toilet_display),
-        ("車いす対応", toilet.wheelchair_display),
-    ]
-
-    return render(request, 'toilet/search_result_toilet_info.html', {
-        "toilet": toilet,
-        "station_name": station_name,
-        "place": place,
-        "value": value,
-        "toilet_info": toilet_info,
-        "root": root,
-        "gender": gen,
-    })
-
-def multifunctional_toilet_info(request, multi_pk):
-    """トイレpkに紐づく多機能トイレ情報を返す"""
-
-    # MultiFunctionalToiletテーブルからデータを取得
-    toilet = get_object_or_404(MultiFunctionalToilet, pk=multi_pk)
-
-    station_name = toilet.toilet_id.station_id.station_name
-    place = toilet.toilet_id.place
-    value = Decimal(toilet.value)
-    value = value.quantize(Decimal("0.0"), rounding=ROUND_DOWN)
-    root = toilet.toilet_id.toilet_root
-    gen = toilet.gender.pk
-
-    toilet_info = [
-        ("改札内外", toilet.toilet_id.station_ticket_gate_id),
-        ("設置階", toilet.toilet_id.floor),
-        ("利用時間", toilet.toilet_id.get_opening_hours),
-        ("個室数", toilet.toilet_stall),
-        ("近い改札口", toilet.toilet_id.near_gate),
-        ("近いホーム", toilet.toilet_id.near_home_num),
-        ("近い車両番号", toilet.toilet_id.near_train_door_num),
-        ("温水洗浄便座", toilet.warm_water_washing_toilet_seat_display),
-        ("おむつ交換設備", toilet.child_facility_display),
-        ("バリアフリートイレ", toilet.barrier_free_toilet_display),
-        ("車いす対応", toilet.wheelchair_display),
-    ]
-
-    return render(request, 'toilet/search_result_toilet_info.html', {
-        "toilet": toilet,
-        "station_name": station_name,
-        "place": place,
-        "value": value,
-        "toilet_info": toilet_info,
-        "root": root,
-        "gender": gen,
-    })
 
 def change_toilet_data(request, toilet_pk, gender_num):
 
@@ -296,25 +257,63 @@ def change_toilet_data(request, toilet_pk, gender_num):
 
     return JsonResponse({
         "toilet": {
-            "id": toilet.pk,
+            "id": toilet.pk, # 各性別のトイレpk
             "station_name": station_name,
             "place": place,
             "value": value,
             "toilet_info": toilet_info,
             "root": root,
             "gender": gen,
-        }
+        },
     })
 
-def toilet_review(request):
+# @login_required
+def toilet_review(request, toilet_id, gender):
     "レビューボタン押されたときの処理"
 
-    if request.method == 'POST':
-        pass
-    else:
-        review_form = forms.Review()
+    print("toilet_id:", toilet_id)
+    print("gender:", gender)
 
-    return render(request, 'toilet/toilet_review.html', context={
-            'review_form': review_form,
-        }
-    )
+    try:
+        if gender == 1:
+            toilet = get_object_or_404(MaleToilet, toilet_id=toilet_id)
+        elif gender == 2:
+            toilet = get_object_or_404(FemaleToilet, toilet_id=toilet_id)
+        elif gender == 3:
+            toilet = get_object_or_404(MultiFunctionalToilet, toilet_id=toilet_id)
+        else:
+            print("gender値が不正です")
+            raise ValueError(f"不正なgender値:{gender}")
+
+        if toilet is None:
+            raise ValueError(f"toilet_id={toilet_id} のデータが見つかりません")
+
+        print(toilet)
+        if request.method == 'POST':
+            review_form = forms.Review(request.POST)
+
+            if review_form.is_valid():
+                comment_data = Comment.objects.create(
+                    user=request.user,
+                    comment=review_form.cleaned_data["comment"],
+                    value=review_form.cleaned_data["value"],
+                    gender=gender,
+                )
+        else:
+            review_form = forms.Review()
+
+        print("ここまで来ている")
+        return render(request, 'toilet/toilet_review.html', context={
+                'toilet': toilet,
+                'review_form': review_form,
+            }
+        )
+
+    except ValueError as e:
+        print(f"ジェンダー値不正error:{e}")
+        return HttpResponseBadRequest(f"無効なリクエスト: {e}")
+    
+    except Exception as e:
+        print("データを取得出来ませんでした")
+        return HttpResponseBadRequest("エラーが発生しました")
+

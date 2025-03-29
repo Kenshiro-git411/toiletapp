@@ -11,13 +11,13 @@
         <div>{{ toilet.place }}</div>
         <ul>
             {% if toilet.male %}
-            <li><a href="{% url 'toilet:male_toilet_info' toilet.male.pk %}">男性トイレ</a></li>
+            <li><a href="{% url 'toilet:toilet_info' toilet.male.pk toilet.male.gender.pk %}">男性トイレ</a></li>
             {% endif %}
             {% if toilet.female %}
-            <li><a href="{% url 'toilet:female_toilet_info' toilet.female.pk %}">女性トイレ</a></li>
+            <li><a href="{% url 'toilet:toilet_info' toilet.female.pk toilet.female.gender.pk %}">女性トイレ</a></li>
             {% endif %}
             {% if toilet.multifunctional %}
-            <li><a href="{% url 'toilet:multifunctional_toilet_info' toilet.multi.pk %}">多機能トイレ</a></li>
+            <li><a href="{% url 'toilet:toilet_info' toilet.multifunctional.pk toilet.multifunctional.gender.pk %}">多機能トイレ</a></li>
             {% endif %}
         </ul>
     </section>

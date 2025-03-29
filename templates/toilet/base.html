@@ -14,13 +14,17 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
             <!-- トイレGOという文字は必ず画面上部中央に配置する -->
-            <a href="{% url "toilet:home" %}" class="absolute left-1/2 transform -translate-x-1/2 text-lg font-bold"><h1 >トイレGO</h1></a>
+            <a href="{% url 'toilet:home' %}" class="absolute left-1/2 transform -translate-x-1/2 text-lg font-bold"><h1 >トイレGO</h1></a>
             <div class="px-5 ">
                 <nav>
                     <ul class="flex space-x-6 ">
-                        <li><a href="#">マイページ</a></li>
-                        <li><a href="#">設定</a></li>
-
+                        {% if request.user.is_authenticated %}
+                            <li><a href="#">マイページ</a></li>
+                            <li><a href="{% url 'accounts:user_info_update' %}">設定</a></li>
+                        {% else %}
+                            <li><a href="{% url 'accounts:user_login' %}">ログイン</a></li>
+                            <li><a href="{% url 'accounts:user_create' %}">サインアップ</a></li>
+                        {% endif %}
                     </ul>
                 </nav>
             </div>

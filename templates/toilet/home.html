@@ -1,4 +1,4 @@
-{% extends 'accounts/base.html' %}
+{% extends 'toilet/base.html' %}
 
 {% block title %} トイレGOホーム {% endblock %}
 
@@ -18,5 +18,7 @@
         <div><a href="#">ランキングを見る</a></div>
         <div><a href="#">トイレをレビューする</a></div>
     </div>
-    
+    {% if request.user.is_authenticated %}
+    <div><a href="{% url 'accounts:user_logout' %}">ログアウト</a></div>
+    {% endif %}
 {% endblock %}

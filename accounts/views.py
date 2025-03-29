@@ -38,7 +38,7 @@ def user_login(request):
                 login(request, user)
                 messages.success(request, 'ログインしました。')
                 print('ログインしました')
-                return redirect('accounts:home')
+                return render(request, 'toilet/home.html')
             else:
                 messages.warning(request, 'メールアドレスかパスワードが間違っています。')
 

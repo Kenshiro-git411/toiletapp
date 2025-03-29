@@ -33,6 +33,10 @@ class MultiFunctionalToiletAdmin(admin.ModelAdmin):
     search_fields = ("toilet_id", "value",)
     list_filter = ("toilet_id", "value",)
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ("user", "gender", "value")
+    search_fields = ("user", "gender", "value")
+    list_filter = ("user", "gender", "value")
 
 
 admin.site.register(TrainLine, TrainLineAdmin)
@@ -42,3 +46,4 @@ admin.site.register(StationTicketGate, StationTicketGateAdmin)
 admin.site.register(MaleToilet, MaleToiletAdmin)
 admin.site.register(FemaleToilet, FemaleToiletAdmin)
 admin.site.register(MultiFunctionalToilet, MultiFunctionalToiletAdmin)
+admin.site.register(Comment, CommentAdmin)

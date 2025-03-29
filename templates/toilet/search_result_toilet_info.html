@@ -48,11 +48,12 @@
         </table>
     </div>
 </div>
-<div><a href="{% url 'toilet:toilet_review' %}">レビューする</a></div>
+<div><a id="review_link" href="{% url 'toilet:toilet_review' toilet.toilet_id.pk toilet.gender.pk %}">レビューする</a></div>
 <script>
     document.addEventListener("DOMContentLoaded", function(){
         updateBtn();
 
+        // MasterToiletテーブルのpkを取得（のちに各性別のトイレテーブルのtoilet_idで抽出）
         let toiletObj = document.getElementById('toilet_obj');
         let toilet_pk = toiletObj.dataset.pk;
         console.log(toilet_pk);
