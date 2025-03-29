@@ -48,7 +48,20 @@
         </table>
     </div>
 </div>
-<div><a id="review_link" href="{% url 'toilet:toilet_review' toilet.toilet_id.pk toilet.gender.pk %}">レビューする</a></div>
+<div class="my-5 p-3 bg-white/60 rounded rounded-lg">
+    <span class="font-bold text-lg">レビュー</span>
+    {% if not comments == "" %}
+        {% for comment in comments %}
+            <div class="my-3 p-2 bg-blue-300/30 rounded rounded-lg">
+                <div>@{{ comment.user.username }}</div>
+                <p>{{ comment.comment }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="my-4">まだコメントはありません</div>
+    {% endif %}
+</div>
+<a id="review_link" href="{% url 'toilet:toilet_review' toilet.toilet_id.pk toilet.gender.pk %}" class="block mx-auto text-center w-1/2 bg-blue-500 border-transparent mt-10 py-2 shadow-lg text-white font-bold hover:shadow-none hover:duration-700">レビューする</a>
 <script>
     document.addEventListener("DOMContentLoaded", function(){
         updateBtn();

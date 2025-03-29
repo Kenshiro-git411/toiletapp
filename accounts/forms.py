@@ -91,8 +91,8 @@ class UserInfoUpdateForm(forms.ModelForm):
             "username": "ユーザー名",
         }
         widgets = {
-            "email": forms.EmailInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"}),
-            "username": forms.TextInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"}),
+            "email": forms.EmailInput(attrs={"class": "w-full max-w-md p-1 text-md"}),
+            "username": forms.TextInput(attrs={"class": "w-full max-w-md p-1 text-md"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -102,6 +102,7 @@ class UserInfoUpdateForm(forms.ModelForm):
 
         if user:
             self.fields["email"].initial = user.email
+            # print(user.email)
             self.fields["username"].initial = user.username
             self.fields["gender"].initial = user.gender
             self.fields["barrier_free"].initial = user.is_barrier_free

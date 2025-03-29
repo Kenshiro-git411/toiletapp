@@ -167,6 +167,7 @@ class Comment(models.Model):
     comment = models.TextField(max_length=300)
     gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
     value = models.IntegerField(help_text="5段階で数値を入力してください")
+    toilet = models.ForeignKey(ToiletMaster, on_delete=models.CASCADE)
 
 
 

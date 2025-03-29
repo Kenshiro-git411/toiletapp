@@ -1,10 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from . import forms
 from django.http import JsonResponse
 from .models import TrainStation, ToiletMaster, MaleToilet, FemaleToilet, MultiFunctionalToilet, Comment
 from decimal import Decimal, ROUND_DOWN
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
+from accounts.models import Gender, User
 
 
 def home(request):
@@ -137,6 +138,12 @@ def toilet_info(request, pk, gender):
         value = value.quantize(Decimal("0.0"), rounding=ROUND_DOWN)
         root = toilet.toilet_id.toilet_root
 
+        comments = Comment.objects.filter(toilet=toilet.toilet_id, gender=gender)
+        print(comments)
+        if not comments.exists():
+            print("コメントはありません")
+            comments = ""
+
         return render(request, 'toilet/search_result_toilet_info.html', {
             "toilet": toilet,
             "station_name": station_name,
@@ -145,6 +152,7 @@ def toilet_info(request, pk, gender):
             "toilet_info": toilet_info,
             "root": root,
             "gender": gender,
+            "comments": comments,
         })
 
     except Exception as e:
@@ -267,12 +275,13 @@ def change_toilet_data(request, toilet_pk, gender_num):
         },
     })
 
-# @login_required
+@login_required(login_url='/accounts/user_login')
 def toilet_review(request, toilet_id, gender):
     "レビューボタン押されたときの処理"
 
     print("toilet_id:", toilet_id)
     print("gender:", gender)
+    print("user:", request.user.pk)
 
     try:
         if gender == 1:
@@ -293,12 +302,19 @@ def toilet_review(request, toilet_id, gender):
             review_form = forms.Review(request.POST)
 
             if review_form.is_valid():
+                gender_instance = get_object_or_404(Gender, pk=gender)
+                user_instance = get_object_or_404(User, pk=request.user.pk)
+                toilet_instance = get_object_or_404(ToiletMaster, pk=toilet_id)
+
                 comment_data = Comment.objects.create(
-                    user=request.user,
+                    user=user_instance,
                     comment=review_form.cleaned_data["comment"],
                     value=review_form.cleaned_data["value"],
-                    gender=gender,
+                    gender=gender_instance,
+                    toilet=toilet_instance,
                 )
+
+                return redirect('toilet:toilet_info', pk=toilet_id, gender=gender)
         else:
             review_form = forms.Review()
 
@@ -310,7 +326,7 @@ def toilet_review(request, toilet_id, gender):
         )
 
     except ValueError as e:
-        print(f"ジェンダー値不正error:{e}")
+        # print(f"ジェンダー値不正error:{e}")
         return HttpResponseBadRequest(f"無効なリクエスト: {e}")
     
     except Exception as e:

@@ -136,6 +136,8 @@ def user_info_update(request):
     else:
         update_form = forms.UserInfoUpdateForm(user=request.user, instance=request.user)
 
+    # print("フォームの email 初期値:", update_form.fields["email"].initial)
+
     return render(request, "accounts/user_info_update.html", {"update_form": update_form})
 
 

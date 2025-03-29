@@ -140,3 +140,6 @@ EMAIL_USE_TLS = True # SMTPサーバーと通信する際に、TLS（セキュ�
 LINE_CHANNEL_ACCESS_TOKEN = os.environ['LINE_CHANNEL_ACCESS_TOKEN']
 LINE_CHANNEL_SECRET = os.environ['LINE_CHANNEL_SECRET']
 LINE_LIFF_ID = os.environ['LINE_LIFF_ID']
+
+# ログインデフォルトURL
+LOGIN_URL = 'accounts/user_login'

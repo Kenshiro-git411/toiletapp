@@ -123,5 +123,5 @@ class User(AbstractBaseUser, PermissionsMixin):
         """Send an email to this user."""
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
-    def get_username(self):
-        return self.username if self.username else self.email
+    # def get_username(self):
+    #     return self.username if self.username else self.email

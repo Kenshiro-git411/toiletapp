@@ -34,9 +34,9 @@ class MultiFunctionalToiletAdmin(admin.ModelAdmin):
     list_filter = ("toilet_id", "value",)
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("user", "gender", "value")
-    search_fields = ("user", "gender", "value")
-    list_filter = ("user", "gender", "value")
+    list_display = ("toilet", "user", "gender", "value")
+    search_fields = ("toilet", "user", "gender", "value")
+    list_filter = ("toilet", "user", "gender", "value")
 
 
 admin.site.register(TrainLine, TrainLineAdmin)
