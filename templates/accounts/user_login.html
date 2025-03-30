@@ -19,9 +19,9 @@
                 <button type="submit" class="w-3/5 flex items-center justify-center w-full bg-blue-500 border-transparent mt-10 py-2 shadow-lg text-white font-bold hover:shadow-none hover:duration-700">ログイン</button>
             </form>
             <div class="flex items-center justify-center my-10 pb-10 w-3/5 border-b border-gray-400">
-                <a href="#" class="mx-auto text-center border-b border-gray-400">パスワードお忘れの方はこちら</a>
+                <a href="{% url 'accounts:password_reset_request' %}" class="mx-auto text-center border-b border-gray-400">パスワードお忘れの方はこちら</a>
             </div>
-            <a href="#" class="mx-auto text-center text-blue-500 font-bold bg-white my-5 py-2 w-3/5 outline outline-3 outline-blue-500 shadow-lg hover:shadow-none hover:duration-700">ユーザー登録</a>
+            <a href="{% url 'accounts:user_create' %}" class="mx-auto text-center text-blue-500 font-bold bg-white my-5 py-2 w-3/5 outline outline-3 outline-blue-500 shadow-lg hover:shadow-none hover:duration-700">ユーザー登録</a>
         </div>
     </div>
     

@@ -183,6 +183,10 @@ def change_toilet_data(request, toilet_pk, gender_num):
 
     print("toilet", toilet)
 
+    # トイレpk(ToiletMasterテーブルのpk)
+    toilet_pk = toilet.toilet_id.pk
+    # トイレid(各性別のトイレテーブルのid)
+    toilet_id = toilet.pk
     # 駅名
     station_name = toilet.toilet_id.station_id.station_name
     # トイレ場所
@@ -265,7 +269,8 @@ def change_toilet_data(request, toilet_pk, gender_num):
 
     return JsonResponse({
         "toilet": {
-            "id": toilet.pk, # 各性別のトイレpk
+            "toilet_pk": toilet_pk,
+            "id": toilet_id, # 各性別のトイレpk
             "station_name": station_name,
             "place": place,
             "value": value,
@@ -314,7 +319,7 @@ def toilet_review(request, toilet_id, gender):
                     toilet=toilet_instance,
                 )
 
-                return redirect('toilet:toilet_info', pk=toilet_id, gender=gender)
+                return redirect('toilet:toilet_info', pk=toilet.pk, gender=gender)
         else:
             review_form = forms.Review()
 

@@ -3,96 +3,112 @@
 {% block title %} トイレを探す {% endblock %}
 
 {% block content %}
-    <div>
-        <h2>トイレを探す</h2>
+    <div class="flex items-center justify-center w-full my-5 sm:my-10">
+        <h2 class="font-bold text-2xl">トイレを探す</h2>
     </div>
-    <div>
+    <div class="w-11/12 sm:w-3/4 md:w-1/2 p-4 block mx-auto text-center">
         <form method="post" action="{% url 'toilet:search_toilet' %}">{% csrf_token %}
             <div class="relative">
-                <label>{{ search_form.station_name.label }}</label>
+                <label class="text-lg font-bold block mb-2 text-left">{{ search_form.station_name.label }}</label>
                 <div>{{ search_form.station_name }}</div>
                 <input type="hidden" id="station_id" name="station_id">
-                <div id="suggestions" class="w-full max-w-md absolute bg-white border border-gray-300 max-h-40 shadow-lg overflow-y-auto z-50 hidden"></div>
+                <!-- <div id="suggestions" class="w-full max-w-md absolute bg-white border border-gray-300 max-h-40 shadow-lg overflow-y-auto z-50 invisible text-left px-2 py-1"></div> -->
             </div>
-            <!-- <div>
-                <label>{{ search_form.toilet_name.label }}</label>
-                <div>{{ search_form.toilet_name }}</div>
-            </div> -->
-            <div>
-                <button type="submit">探す</button>
-            </div>
+            <button type="submit" class="block w-full bg-blue-500 text-white py-2 mt-4 hover:bg-blue-600 transition">探す</button>
         </form>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function(){
-            // イベントリスナーを設定
-            document.getElementById("station_input").addEventListener("keyup", searchStation);
+            
+            const stationInput = document.getElementById("station_input");
+            const stationId = document.getElementById("station_id");
+            // searchStation関数をkeyupで呼び出す（keyupはinputフィールドに文字を入力して、キーを話したタイミングでsearchStation関数が実行されます。）
+            stationInput.addEventListener("keyup", searchStation);
 
+            async function searchStation() {
+                const inputValue = stationInput.value.trim();
+                console.log("inputValue:", inputValue);
+
+                // 既存の候補リストを削除
+                removeSuggestions();
+
+                // 入力がない場合、候補リストをクリアして処理終了
+                if (inputValue === "") return;
+                    removeSuggestions();
+
+                try {
+                    // APIから駅候補を取得
+                    const suggestions = await fetchStationSuggestions(inputValue);
+                    console.log("suggestions:", suggestions)
+                    if (suggestions == [])
+                        removeSuggestions();
+
+                    // 候補リストを表示
+                    if (suggestions.length > 0){
+                        displaySuggestions(suggestions);
+                    }
+                } catch (error) {
+                    console.error("駅の候補を取得中にエラーが発生しました:", error);
+                }
+            }
+
+            // APIリクエスト処理（Djangoから駅候補を取得）
+            async function fetchStationSuggestions(query) {
+                const response = await fetch(`{% url 'toilet:suggest_station' %}?query=${encodeURIComponent(query)}`);
+                console.log(response);
+
+                if (!response.ok) {
+                    throw new Error(`HTTPエラー: ${response.status}`);
+                }
+
+                // 非同期処理を返す（Promise）。データを取得するにはawaitを付ける必要がある。
+                const data = await response.json();
+                console.log("data.suggestions:", data.suggestions)
+                return data.suggestions || []; // suggestionsプロパティがなければ空配列を返す
+            }
+
+            // 駅候補のリストを更新する
+            function displaySuggestions(suggestions) {
+                const suggestionBox = document.createElement('ul');
+                suggestionBox.setAttribute("id", "suggestions");
+                suggestionBox.classList.add(
+                    "w-full", "max-w-md", "absolute", "bg-white", "border", 
+                    "border-gray-300", "max-h-40", "shadow-lg", "overflow-y-auto", 
+                    "z-50", "visible", "text-left", "p-1"
+                );
+
+                suggestions.forEach(station => {
+                    const li = document.createElement("li");
+                    li.textContent = `${station.station_name} (${station.train_line__train_line_name})`;
+                    li.setAttribute("data-id", station.id);
+                    li.classList.add("p-2", "cursor-pointer", "hover:bg-gray-200");
+
+                    // 候補をクリックしたとき処理
+                    li.addEventListener("click", function() {
+                        stationInput.value = station.station_name;
+                        stationId.value = station.id;
+                        removeSuggestions();
+
+                        // suggestionBox.classList.remove("visible");
+                        // suggestionBox.classList.add("invisible");
+                    });
+
+                    suggestionBox.appendChild(li);
+                });
+
+                // 入力フィールドの親要素に追加
+                stationInput.parentNode.appendChild(suggestionBox);
+            }
+
+            // 既存の候補リストを削除
+            function removeSuggestions(){
+                const existingSuggestions = document.getElementById("suggestions");
+                console.log("existingSuggestions:",existingSuggestions)
+                if (existingSuggestions) {
+                    existingSuggestions.remove();
+                }
+            }
         });
-
-        async function searchStation() {
-            const inputStationName = document.getElementById("station_input").value.trim();
-            document.getElementById("suggestions").classList.remove("hidden");
-
-
-            // 入力がない場合、候補リストをクリアして処理終了
-            if (inputStationName === "") {
-                updateSuggestions([]);
-                document.getElementById("suggestions").classList.add("hidden");
-                return;
-            }
-
-            try {
-                // 駅候補を取得
-                const suggestions = await fetchStationSuggestions(inputStationName);
-                console.log("suggestions:", suggestions)
-                // 候補をリストを作成する
-                updateSuggestions(suggestions);
-            } catch (error) {
-                console.error("駅の候補を取得中にエラーが発生しました:", error);
-            }
-        }
-
-        // APIリクエスト処理（Djangoから駅候補を取得）
-        async function fetchStationSuggestions(query) {
-            const response = await fetch(`{% url 'toilet:suggest_station' %}?query=${encodeURIComponent(query)}`);
-
-            console.log(response);
-            if (!response.ok) {
-                throw new Error(`HTTPエラー: ${response.status}`);
-            }
-
-            // 非同期処理を返す（Promise）。データを取得するにはawaitを付ける必要がある。
-            const data = await response.json();
-            console.log("data.suggestions:", data.suggestions)
-            return data.suggestions || []; // suggestionsプロパティがなければ空配列を返す
-        }
-
-        // 駅候補のリストを更新する
-        function updateSuggestions(suggestions) {
-            const suggestionBox = document.getElementById("suggestions");
-            suggestionBox.innerHTML = ""; // 一度クリア
-            // console.log("suggestions内容:", suggestions);
-
-            suggestions.forEach(station => {
-                const div = document.createElement("div");
-                div.value = station.id;
-                div.textContent = `${station.station_name} (${station.train_line__train_line_name})`;
-                div.style.cursor = "pointer";
-                div.classList.add("suggestion-item");
-
-                // 候補をクリックしたら入力フィールドに反映
-                div.onclick = async function () {
-                    document.getElementById("station_input").value = station.station_name;
-                    document.getElementById("station_id").value = station.id;
-                    suggestionBox.innerHTML = ""; // 候補リストをクリア
-                };
-
-                suggestionBox.appendChild(div);
-            });
-        }
-
     </script>
-
 {% endblock %}

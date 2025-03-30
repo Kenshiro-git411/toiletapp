@@ -3,22 +3,24 @@
 {% block title %} トイレGOホーム {% endblock %}
 
 {% block content %}
-    <div>
-        <h2>トイレGO</h2>
+    <div class="flex items-center justify-center mt-5">
+        <h2 class="font-bold text-2xl">トイレGO</h2>
     </div>
-    <div>
-        <p>
+    <div class="flex items-center justify-center my-5">
+        <p class="text-center font-bold">
             下のボタンから<br>
             駅のきれいなトイレ情報を<br>
-            確認しよう<br>
+            確認しよう！<br>
         </p>
     </div>
-    <div>
-        <div><a href="{% url 'toilet:search_toilet' %}">トイレを探す</a></div>
-        <div><a href="#">ランキングを見る</a></div>
-        <div><a href="#">トイレをレビューする</a></div>
+    <div class="flex flex-col items-center justify-center space-y-6">
+        <a href="{% url 'toilet:search_toilet' %}" class="w-full p-5 rounded rounded-full bg-blue-500/30 text-center text-2xl font-bold">トイレを探す</a>
+        <a href="#" class="w-full p-5 rounded rounded-full bg-blue-500/30 text-center text-2xl font-bold">ランキングを見る</a>
+        <a href="#" class="w-full p-5 rounded rounded-full bg-blue-500/30 text-center text-2xl font-bold">トイレをレビューする</a>
     </div>
     {% if request.user.is_authenticated %}
-    <div><a href="{% url 'accounts:user_logout' %}">ログアウト</a></div>
+    <div class="flex items-center justify-center mt-10">
+        <a href="{% url 'accounts:user_logout' %}" class=" border-b border-gray-500">ログアウト</a>
+    </div>
     {% endif %}
 {% endblock %}

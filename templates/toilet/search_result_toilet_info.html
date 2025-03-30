@@ -197,6 +197,11 @@
             }
         })
 
+        // 『レビューする』ボタンのhrefの自動更新
+        const review_link = document.getElementById("review_link");
+        review_link.href = `/toilet/toilet_review/${toilet.toilet_pk}/${toilet.gender}`;
+        console.log("更新後のreview_link:", review_link.href);
+
     }
 </script>
 {% endblock %}
