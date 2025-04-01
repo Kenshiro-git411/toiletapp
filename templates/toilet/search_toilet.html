@@ -1,4 +1,4 @@
-{% extends 'accounts/base.html' %}
+{% extends 'toilet/base.html' %}
 
 {% block title %} トイレを探す {% endblock %}
 
@@ -12,7 +12,6 @@
                 <label class="text-lg font-bold block mb-2 text-left">{{ search_form.station_name.label }}</label>
                 <div>{{ search_form.station_name }}</div>
                 <input type="hidden" id="station_id" name="station_id">
-                <!-- <div id="suggestions" class="w-full max-w-md absolute bg-white border border-gray-300 max-h-40 shadow-lg overflow-y-auto z-50 invisible text-left px-2 py-1"></div> -->
             </div>
             <button type="submit" class="block w-full bg-blue-500 text-white py-2 mt-4 hover:bg-blue-600 transition">探す</button>
         </form>

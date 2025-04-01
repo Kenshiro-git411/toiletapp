@@ -36,14 +36,14 @@ class SigninForm(forms.Form):
         empty_label="選択してください",
         label="性別"
     )
-    barrier_free = forms.BooleanField(
+    is_barrier_free = forms.BooleanField(
         required=False,
         label="バリアフリー優先",
     )
 
     class Meta:
         model = User
-        fields = ("email", "password", "username", "gender", "barrier_free")
+        fields = ("email", "password", "username", "gender", "is_barrier_free")
 
     def clean(self):
         cleaned_data = super().clean()
@@ -64,7 +64,7 @@ class SigninForm(forms.Form):
             email=self.cleaned_data.get("email"),
             username=self.cleaned_data.get("username"),
             gender_id=self.cleaned_data.get("gender").id,
-            is_barrier_free=self.cleaned_data.get("barrier_free"),
+            is_barrier_free=self.cleaned_data.get("is_barrier_free"),
         )
         validate_password(self.cleaned_data.get("password"), user)
         user.set_password(self.cleaned_data.get("password"))
@@ -78,14 +78,14 @@ class UserInfoUpdateForm(forms.ModelForm):
         widget=forms.Select,
         label="性別"
     )
-    barrier_free = forms.BooleanField(
+    is_barrier_free = forms.BooleanField(
         required=False,
         label="バリアフリー優先",
     )
 
     class Meta:
         model=User
-        fields=["email", "username", "gender", "barrier_free"]
+        fields=["email", "username", "gender", "is_barrier_free"]
         labels={
             "email": "メールアドレス",
             "username": "ユーザー名",
@@ -105,7 +105,7 @@ class UserInfoUpdateForm(forms.ModelForm):
             # print(user.email)
             self.fields["username"].initial = user.username
             self.fields["gender"].initial = user.gender
-            self.fields["barrier_free"].initial = user.is_barrier_free
+            self.fields["is_barrier_free"].initial = user.is_barrier_free
 
     def clean_email(self):
         """メールアドレスのバリデーション（重複しないようにする）"""

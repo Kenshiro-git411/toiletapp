@@ -53,7 +53,12 @@ class MaleToilet(models.Model):
 
     toilet_id = models.ForeignKey(ToiletMaster, on_delete=models.CASCADE)
     gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
+    # きれいさ
     value = models.FloatField(null=True)
+    # 広さ
+    size = models.FloatField(null=True)
+    # 混雑さ
+    congestion = models.FloatField(null=True)
     # 個室
     toilet_stall = models.IntegerField(help_text="個室数を入力してください")
     # 小便器
@@ -91,7 +96,12 @@ class FemaleToilet(models.Model):
     
     toilet_id = models.ForeignKey(ToiletMaster, on_delete=models.CASCADE)
     gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
+    # きれいさ
     value = models.FloatField(null=True)
+    # 広さ
+    size = models.FloatField(null=True)
+    # 混雑さ
+    congestion = models.FloatField(null=True)
     # 個室
     toilet_stall = models.IntegerField(help_text="個室数を入力してください")
     # 温水洗浄便座
@@ -131,7 +141,12 @@ class MultiFunctionalToilet(models.Model):
     
     toilet_id = models.ForeignKey(ToiletMaster, on_delete=models.CASCADE)
     gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
+    # きれいさ
     value = models.FloatField(null=True)
+    # 広さ
+    size = models.FloatField(null=True)
+    # 混雑さ
+    congestion = models.FloatField(null=True)
     # 個室
     toilet_stall = models.IntegerField(help_text="個室数を入力してください")
     # 温水洗浄便座

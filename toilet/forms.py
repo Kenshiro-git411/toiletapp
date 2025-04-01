@@ -16,7 +16,25 @@ class SearchStation(forms.Form):
 
 class Review(forms.Form):
     value = forms.IntegerField(
-        label="評価点",
+        label="きれいさ",
+        min_value=1,
+        max_value=5,
+        widget=forms.NumberInput(attrs={
+            "step":1,
+            "class": "w-full p-1",
+        }),
+    )
+    size = forms.IntegerField(
+        label="広さ",
+        min_value=1,
+        max_value=5,
+        widget=forms.NumberInput(attrs={
+            "step":1,
+            "class": "w-full p-1",
+        }),
+    )
+    congestion = forms.IntegerField(
+        label="混雑さ",
         min_value=1,
         max_value=5,
         widget=forms.NumberInput(attrs={

@@ -131,7 +131,7 @@ def user_info_update(request):
         if update_form.is_valid():
             update_form.save()
             print("ユーザー情報を更新しました。")
-            return redirect("accounts:home")
+            return redirect("accounts:user_info_update")
 
     else:
         update_form = forms.UserInfoUpdateForm(user=request.user, instance=request.user)

@@ -8,16 +8,37 @@
     {% for toilet in toilet_data %}
     {% if toilet %}
     <section class="my-2">
-        <div>{{ toilet.place }}</div>
-        <ul>
+        <div class="p-2 bg-blue-200 font-bold">{{ toilet.place }}</div>
+        <ul class="py-2 pl-3 space-y-1">
             {% if toilet.male %}
-            <li><a href="{% url 'toilet:toilet_info' toilet.male.pk toilet.male.gender.pk %}">男性トイレ</a></li>
+            <div class="flex">
+                <li><a href="{% url 'toilet:toilet_info' toilet.male.pk toilet.male.gender.pk %}">男性トイレ</a></li>
+                <div class="ml-8 space-x-4">
+                    <span>広さ★{{ toilet.male.size }}</span>
+                    <span>きれいさ★{{ toilet.male.value }}</span>
+                    <span>混雑さ★{{ toilet.male.congestion }}</span>
+                </div>
+            </div>
             {% endif %}
             {% if toilet.female %}
-            <li><a href="{% url 'toilet:toilet_info' toilet.female.pk toilet.female.gender.pk %}">女性トイレ</a></li>
+            <div class="flex">
+                <li><a href="{% url 'toilet:toilet_info' toilet.female.pk toilet.female.gender.pk %}">女性トイレ</a></li>
+                <div class="ml-8 space-x-4">
+                    <span>広さ★{{ toilet.female.size }}</span>
+                    <span>きれいさ★{{ toilet.female.value }}</span>
+                    <span>混雑さ★{{ toilet.female.congestion }}</span>
+                </div>
+            </div>
             {% endif %}
             {% if toilet.multifunctional %}
-            <li><a href="{% url 'toilet:toilet_info' toilet.multifunctional.pk toilet.multifunctional.gender.pk %}">多機能トイレ</a></li>
+            <div class="flex">
+                <li><a href="{% url 'toilet:toilet_info' toilet.multifunctional.pk toilet.multifunctional.gender.pk %}">多機能トイレ</a></li>
+                <div class="ml-8 space-x-4">
+                    <span>広さ★{{ toilet.multifunctional.size }}</span>
+                    <span>きれいさ★{{ toilet.multifunctional.value }}</span>
+                    <span>混雑さ★{{ toilet.multifunctional.congestion }}</span>
+                </div>
+            </div>
             {% endif %}
         </ul>
     </section>

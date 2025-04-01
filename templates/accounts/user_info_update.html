@@ -3,7 +3,7 @@
 {% block title %} ユーザー情報更新画面 {% endblock %}
 {% block content %}
 <div class="items-center justify-center">
-    <h1 class="text-2xl font-bold w-3/5 mx-auto text-center mb-2">ユーザー情報更新</h1>
+    <h1 class="text-2xl font-bold w-3/5 mx-auto text-center my-5 sm:my-10">ユーザー情報更新</h1>
     <div class="flex flex-col items-center justify-center rounded-lg py-2">
         <form method="post" action="{% url 'accounts:user_info_update' %}" class="w-3/5">{% csrf_token %}
             <div class="mt-7">
@@ -19,8 +19,8 @@
                 <div>{{ update_form.gender }}</div>
             </div>
             <div class="mt-5">
-                <label>{{ update_form.barrier_free.label }}</label>
-                <div>{{ update_form.barrier_free }}</div>
+                <label>{{ update_form.is_barrier_free.label }}</label>
+                <div>{{ update_form.is_barrier_free }}</div>
             </div>
             <!-- 全体のエラーメッセージを表示 -->
             {% if signin_form.non_field_errors %}
@@ -36,7 +36,11 @@
         </form>
     </div>
     <div class="w-3/5 flex items-center mx-auto mt-8 ">
-        <a href="{% url 'accounts:user_delete' %}" class="text-gray-700">アカウントを削除する</a>
+        <a href="{% url 'accounts:password_reset_request' %}" class="text-gray-700 border-b border-gray-400">パスワード変更はこちら
+        </a>
+    </div>
+    <div class="w-3/5 flex items-center mx-auto mt-5 ">
+        <a href="{% url 'accounts:user_delete' %}" class="text-gray-700  border-b border-gray-400">アカウント削除はこちら</a>
     </div>
 </div>
 {% endblock %}

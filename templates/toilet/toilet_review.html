@@ -4,11 +4,21 @@
 
 {% block content %}
 <!-- <h1 class="text-center">{{ toilets.0.station_id.station_name }}駅のトイレ</h1> -->
-<div class="">
+<div>
     <form method="post" action="{% url 'toilet:toilet_review' toilet.toilet_id.pk toilet.gender.pk %}">{% csrf_token %}
-        <div class="my-3">
-            {{ review_form.value.label }}
-            {{ review_form.value }}
+        <div class="flex items-center space-x-4">
+            <div class="my-3">
+                {{ review_form.value.label }}
+                {{ review_form.value }}
+            </div>
+            <div class="my-3">
+                {{ review_form.size.label }}
+                {{ review_form.size }}
+            </div>
+            <div class="my-3">
+                {{ review_form.congestion.label }}
+                {{ review_form.congestion }}
+            </div>
         </div>
         <div class="flex flex-col my-3">
             <label>トイレ場所</label>

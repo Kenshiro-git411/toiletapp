@@ -136,6 +136,10 @@ def toilet_info(request, pk, gender):
         place = toilet.toilet_id.place
         value = Decimal(toilet.value)
         value = value.quantize(Decimal("0.0"), rounding=ROUND_DOWN)
+        size = Decimal(toilet.size)
+        size = size.quantize(Decimal("0.0"), rounding=ROUND_DOWN)
+        congestion = Decimal(toilet.congestion)
+        congestion = congestion.quantize(Decimal("0.0"), rounding=ROUND_DOWN)
         root = toilet.toilet_id.toilet_root
 
         comments = Comment.objects.filter(toilet=toilet.toilet_id, gender=gender)
@@ -149,6 +153,8 @@ def toilet_info(request, pk, gender):
             "station_name": station_name,
             "place": place,
             "value": value,
+            "size": size,
+            "congestion": congestion,
             "toilet_info": toilet_info,
             "root": root,
             "gender": gender,
@@ -196,10 +202,17 @@ def change_toilet_data(request, toilet_pk, gender_num):
     # 評価
     value = Decimal(toilet.value)
     value = value.quantize(Decimal("0.0"), rounding=ROUND_DOWN)
+    # 広さ
+    size = Decimal(toilet.size)
+    size = size.quantize(Decimal("0.0"), rounding=ROUND_DOWN)
+    # 混雑さ
+    congestion = Decimal(toilet.congestion)
+    congestion = congestion.quantize(Decimal("0.0"), rounding=ROUND_DOWN)
     # 設置階
     floor = toilet.toilet_id.floor
     # 利用時間
-    time = f"{toilet.toilet_id.open_time}～{toilet.toilet_id.close_time}"
+    # time = f"{toilet.toilet_id.open_time}～{toilet.toilet_id.close_time}"
+    time = toilet.toilet_id.get_opening_hours()
     # 個室数
     toilet_stall = toilet.toilet_stall
     # 近い改札口
@@ -274,6 +287,8 @@ def change_toilet_data(request, toilet_pk, gender_num):
             "station_name": station_name,
             "place": place,
             "value": value,
+            "size": size,
+            "congestion": congestion,
             "toilet_info": toilet_info,
             "root": root,
             "gender": gen,
@@ -315,6 +330,8 @@ def toilet_review(request, toilet_id, gender):
                     user=user_instance,
                     comment=review_form.cleaned_data["comment"],
                     value=review_form.cleaned_data["value"],
+                    size=review_form.cleaned_data["size"],
+                    congestion=review_form.cleaned_data["congestion"],
                     gender=gender_instance,
                     toilet=toilet_instance,
                 )

@@ -3,7 +3,7 @@
 {% block title %} トイレ検索結果 {% endblock %}
 
 {% block content %}
-<h1 id="station_name" class="my-10 text-center font-bold text-2xl data-station='{{ station_name }}'">{{ station_name }}駅のトイレ</h1>
+<h1 id="station_name" class="my-5 sm:my-10 text-center font-bold text-2xl data-station='{{ station_name }}'">{{ station_name }}駅のトイレ</h1>
 <div id="toilet_obj" data-pk="{{ toilet.toilet_id.pk }}">
     <h2 class="font-bold text-lg text-center">{{ place }}</h2>
     <div class="w-full flex items-center justify-center my-10">
@@ -20,10 +20,24 @@
         </ul>
     </div>
     <div id="toilet_data" data-gender="{{ gender }}" class="items-center justify-center">
-        <div class="flex flex-col items-center justify-center my-5 font-bold">
-            <label class="text-lg">きれいさ</label>
-            <div class="flex items-center justify-center">
-                <div id="toilet_value" class="text-2xl" data-value="{{ value }}">{{ value }}</div><div class="self-end">/5.0</div>
+        <div class="flex items-center justify-center my-5 space-x-10">
+            <div>
+                <label class="">広さ</label>
+                <div class="flex items-center justify-center">
+                    <div id="toilet_size" class="text-2xl" data-value="{{ size }}">{{ size }}</div><div class="self-end">/5</div>
+                </div>
+            </div>
+            <div>
+                <label class="">きれいさ</label>
+                <div class="flex items-center justify-center">
+                    <div id="toilet_value" class="text-2xl" data-value="{{ value }}">{{ value }}</div><div class="self-end">/5</div>
+                </div>
+            </div>
+            <div>
+                <label class="">混雑さ</label>
+                <div class="flex items-center justify-center">
+                    <div id="toilet_congestion" class="text-2xl" data-value="{{ congestion }}">{{ congestion }}</div><div class="self-end">/5</div>
+                </div>
             </div>
         </div>
         <table class="table-auto border-collapse w-full max-w-3xl">
@@ -62,6 +76,7 @@
     {% endif %}
 </div>
 <a id="review_link" href="{% url 'toilet:toilet_review' toilet.toilet_id.pk toilet.gender.pk %}" class="block mx-auto text-center w-1/2 bg-blue-500 border-transparent mt-10 py-2 shadow-lg text-white font-bold hover:shadow-none hover:duration-700">レビューする</a>
+<a href="{% url 'toilet:search_toilet' %}">トイレ一覧へ戻る</a>
 <script>
     document.addEventListener("DOMContentLoaded", function(){
         updateBtn();
@@ -158,6 +173,21 @@
         toilet_value.setAttribute("data-value", toilet.value);
         console.log("更新後の toilet_value:", toilet_value.dataset.value);
         toilet_value.innerHTML = Number(toilet_value.dataset.value).toFixed(1);
+        
+        // 広さ
+        const toilet_size = document.getElementById("toilet_size");
+        toilet_size.innerHTML = "";
+        toilet_size.setAttribute("data-size", toilet.size);
+        console.log("更新後の toilet_size:", toilet_size.dataset.size);
+        toilet_size.innerHTML = Number(toilet_size.dataset.size).toFixed(1);
+        
+        // 混雑さ
+        const toilet_congestion = document.getElementById("toilet_congestion");
+        toilet_congestion.innerHTML = "";
+        toilet_congestion.setAttribute("data-congestion", toilet.congestion);
+        console.log("更新後の toilet_congestion:", toilet_congestion.dataset.congestion);
+        toilet_congestion.innerHTML = Number(toilet_congestion.dataset.congestion).toFixed(1);
+
 
         console.log("トイレ情報テーブル更新");
         // トイレ情報テーブルの更新
