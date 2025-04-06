@@ -38,7 +38,12 @@ def user_login(request):
                 login(request, user)
                 messages.success(request, 'ログインしました。')
                 print('ログインしました')
-                return render(request, 'toilet/home.html')
+                
+                # print(request.GET.get("next"))
+                if request.GET.get("next"):
+                    return redirect(request.GET.get("next"))
+                else:
+                    return render(request, 'toilet/home.html')
             else:
                 messages.warning(request, 'メールアドレスかパスワードが間違っています。')
 
@@ -131,7 +136,7 @@ def user_info_update(request):
         if update_form.is_valid():
             update_form.save()
             print("ユーザー情報を更新しました。")
-            return redirect("accounts:user_info_update")
+            return render(request, "accounts/user_info_update_done.html")
 
     else:
         update_form = forms.UserInfoUpdateForm(user=request.user, instance=request.user)
@@ -227,3 +232,4 @@ def user_delete(request):
         delete_form = forms.UserDeleteForm()
 
     return render(request, "accounts/user_delete.html", {"delete_form": delete_form})
+

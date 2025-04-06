@@ -42,7 +42,7 @@ class ToiletMaster(models.Model):
 
     def __str__(self):
         return f"{self.station_id.station_name}({self.place})"
-    
+
     def get_opening_hours(self):
         """営業時間を 'HH:MM～HH:MM' の形式で取得"""
         return f"{self.open_time.strftime('%H:%M')}～{self.close_time.strftime('%H:%M')}"
@@ -74,26 +74,26 @@ class MaleToilet(models.Model):
 
     def __str__(self):
         return f"{self.toilet_id.place}({self.toilet_id.station_id.station_name})"
-    
+
     def warm_water_washing_toilet_seat_display(self):
         """温水洗浄便座の〇☓表示"""
         return "〇" if self.warm_water_washing_toilet_seat else "☓"
-    
+
     def child_facility_display(self):
         """おむつ交換設備の〇☓表示"""
         return "〇" if self.child_facility else "☓"
-    
+
     def barrier_free_toilet_display(self):
         """バリアフリートイレの〇☓表示"""
         return "〇" if self.barrier_free_toilet else "☓"
-    
+
     def wheelchair_display(self):
         """車いす対応の〇☓表示"""
         return "〇" if self.wheelchair else "☓"
 
 class FemaleToilet(models.Model):
     """女性用トイレテーブル"""
-    
+
     toilet_id = models.ForeignKey(ToiletMaster, on_delete=models.CASCADE)
     gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
     # きれいさ
@@ -118,27 +118,27 @@ class FemaleToilet(models.Model):
     def warm_water_washing_toilet_seat_display(self):
         """温水洗浄便座の〇☓表示"""
         return "〇" if self.warm_water_washing_toilet_seat else "☓"
-    
+
     def child_facility_display(self):
         """おむつ交換設備の〇☓表示"""
         return "〇" if self.child_facility else "☓"
-    
+
     def barrier_free_toilet_display(self):
         """バリアフリートイレの〇☓表示"""
         return "〇" if self.barrier_free_toilet else "☓"
-    
+
     def wheelchair_display(self):
         """車いす対応の〇☓表示"""
         return "〇" if self.wheelchair else "☓"
-    
+
     def powder_room_display(self):
         """パウダールームの〇☓表示"""
         return "〇" if self.wheelchair else "☓"
-    
+
 
 class MultiFunctionalToilet(models.Model):
     """多機能トイレテーブル"""
-    
+
     toilet_id = models.ForeignKey(ToiletMaster, on_delete=models.CASCADE)
     gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
     # きれいさ
@@ -161,15 +161,15 @@ class MultiFunctionalToilet(models.Model):
     def warm_water_washing_toilet_seat_display(self):
         """温水洗浄便座の〇☓表示"""
         return "〇" if self.warm_water_washing_toilet_seat else "☓"
-    
+
     def child_facility_display(self):
         """おむつ交換設備の〇☓表示"""
         return "〇" if self.child_facility else "☓"
-    
+
     def barrier_free_toilet_display(self):
         """バリアフリートイレの〇☓表示"""
         return "〇" if self.barrier_free_toilet else "☓"
-    
+
     def wheelchair_display(self):
         """車いす対応の〇☓表示"""
         return "〇" if self.wheelchair else "☓"

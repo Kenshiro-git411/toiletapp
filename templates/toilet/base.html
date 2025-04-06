@@ -35,11 +35,14 @@
             <button id="close_button" class="absolute top-4 right-4 px-3 py-1 bg-gray-800 text-white rounded">☓</button>
             <div id="menu" class="relative w-full opacity-0 invisible">
                 <ul class="space-y-4 text-lg">
-                    <li>ホーム</li>
-                    <li>トイレを探す</li>
-                    <li>設定</li>
-                    <li>ログイン</li>
-                    <li>サインアップ</li>
+                    <li><a href="{% url 'toilet:home' %}">ホーム</a></li>
+                    <li><a href="{% url 'toilet:search_toilet' %}">トイレを探す</a></li>
+                    {% if request.user.is_authenticated %}
+                        <li><a href="{% url 'accounts:user_info_update' %}">設定</a></li>
+                    {% else %}
+                        <li><a href="{% url 'accounts:user_login' %}">ログイン</a></li>
+                        <li><a href="{% url 'accounts:user_create' %}"></a>サインアップ</li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

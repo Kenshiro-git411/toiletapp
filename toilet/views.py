@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from . import forms
 from django.http import JsonResponse
-from .models import TrainStation, ToiletMaster, MaleToilet, FemaleToilet, MultiFunctionalToilet, Comment
+from .models import TrainLine, TrainStation, ToiletMaster, MaleToilet, FemaleToilet, MultiFunctionalToilet, Comment
 from decimal import Decimal, ROUND_DOWN
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
@@ -18,42 +18,44 @@ def search_toilet(request):
         station_id = request.POST.get("station_id")
         print("受け取ったPOSTデータ:", request.POST)
         print("選択された駅ID:", station_id)
-        if search_form.is_valid():
+        # if search_form.is_valid():
 
-            station_id = request.POST.get("station_id")
+        station_id = request.POST.get("station_id")
+        # 検索のidをセッションに保存する
+        request.session["search_station_id"] = station_id
 
-            # DBから該当するトイレを取得する
-            toilets = ToiletMaster.objects.filter(station_id=station_id)
-            male_toilets = MaleToilet.objects.filter(toilet_id__station_id=station_id)
-            female_toilets = FemaleToilet.objects.filter(toilet_id__station_id=station_id)
-            multifunctional_toilets = MultiFunctionalToilet.objects.filter(toilet_id__station_id=station_id)
+        # DBから該当するトイレを取得する
+        toilets = ToiletMaster.objects.filter(station_id=station_id)
+        male_toilets = MaleToilet.objects.filter(toilet_id__station_id=station_id)
+        female_toilets = FemaleToilet.objects.filter(toilet_id__station_id=station_id)
+        multifunctional_toilets = MultiFunctionalToilet.objects.filter(toilet_id__station_id=station_id)
 
-            # 一致したトイレ情報を格納するリスト
-            toilet_data = []
+        # 一致したトイレ情報を格納するリスト
+        toilet_data = []
 
-            # 各トイレの場所と照合して、データを収集
-            for toilet in toilets:
-                toilet_place = toilet.place
-                matched_male = male_toilets.filter(toilet_id__place=toilet_place).first()
-                matched_female = female_toilets.filter(toilet_id__place=toilet_place).first()
-                matched_multifunctional = multifunctional_toilets.filter(toilet_id__place=toilet_place).first()
+        # 各トイレの場所と照合して、データを収集
+        for toilet in toilets:
+            toilet_place = toilet.place
+            matched_male = male_toilets.filter(toilet_id__place=toilet_place).first()
+            matched_female = female_toilets.filter(toilet_id__place=toilet_place).first()
+            matched_multifunctional = multifunctional_toilets.filter(toilet_id__place=toilet_place).first()
 
-                # 一致したデータをリストに格納
-                toilet_data.append({
-                    "place": toilet_place,
-                    "male": matched_male,
-                    "female": matched_female,
-                    "multifunctional": matched_multifunctional
-                })
-
-                # 一致したデータをリストに格納
-                print("toilet_data", toilet_data)
-
-            return render(request, 'toilet/search_result.html', context={
-                'toilet_data': toilet_data
+            # 一致したデータをリストに格納
+            toilet_data.append({
+                "place": toilet_place,
+                "male": matched_male,
+                "female": matched_female,
+                "multifunctional": matched_multifunctional
             })
-        else:
-            print("フォームエラー:", search_form.errors) # エラーの確認
+
+            # 一致したデータをリストに格納
+            print("toilet_data", toilet_data)
+
+        return render(request, 'toilet/search_result.html', context={
+            'toilet_data': toilet_data
+        })
+        # else:
+            # print("フォームエラー:", search_form.errors) # エラーの確認
     else:
         search_form = forms.SearchStation()
 
@@ -233,6 +235,15 @@ def change_toilet_data(request, toilet_pk, gender_num):
     root = toilet.toilet_id.toilet_root
     # 性別id
     gen = toilet.gender.pk
+    # コメント
+    comments = Comment.objects.filter(gender=gen, toilet=toilet_pk)
+    if comments.exists():
+        print("コメントはあります")
+        comments = list(comments.values())
+    else:
+        print("コメントはありません")
+        comments = ""
+
 
     # javascriptでデータを受け取るには、Json形式でレスポンスするのが一般的で、適しているため、JsonResponseを使用する。
     if gender_num == 1:
@@ -280,6 +291,7 @@ def change_toilet_data(request, toilet_pk, gender_num):
             {"label": "車いす対応", "value": wheelchair},
         ]
 
+    print("レスポンス前")
     return JsonResponse({
         "toilet": {
             "toilet_pk": toilet_pk,
@@ -292,6 +304,7 @@ def change_toilet_data(request, toilet_pk, gender_num):
             "toilet_info": toilet_info,
             "root": root,
             "gender": gen,
+            "comments": comments,
         },
     })
 
@@ -335,6 +348,14 @@ def toilet_review(request, toilet_id, gender):
                     gender=gender_instance,
                     toilet=toilet_instance,
                 )
+                data_dict = {
+                    "value": review_form.cleaned_data["value"],
+                    "size": review_form.cleaned_data["size"],
+                    "congestion": review_form.cleaned_data["congestion"],
+                    "gender": gender,
+                    "toilet_pk": toilet_id, # ToiletMasterテーブルのpk
+                }
+                calculate_value_size_congestion(data_dict)
 
                 return redirect('toilet:toilet_info', pk=toilet.pk, gender=gender)
         else:
@@ -354,4 +375,93 @@ def toilet_review(request, toilet_id, gender):
     except Exception as e:
         print("データを取得出来ませんでした")
         return HttpResponseBadRequest("エラーが発生しました")
+    
+def calculate_value_size_congestion(data_dict):
+    total_value
 
+def toilet_rank(request):
+    if request.method == "POST":
+        search_line_form = forms.SearchLine(request.POST)
+
+        line = request.POST.get("line")
+        gender = request.POST.get("gender")
+        print(request.POST)
+        print(line)
+        print(gender)
+        toilets = get_toilet_rank_queryset(line, gender)
+        print(toilets)
+
+        line_obj = TrainLine.objects.filter(pk=line).first
+        print(line_obj)
+
+        return render(request, 'toilet/toilet_rank.html', context={
+            "line":line_obj,
+            "toilets": toilets,
+            "gender": gender,
+            "search_line_form": search_line_form,
+        })
+
+    else:
+        search_line_form = forms.SearchLine()
+        return render(request, 'toilet/toilet_rank.html', context={
+            "search_line_form": search_line_form,
+        })
+
+def get_toilet_object_rank(request, line, gender):
+    print("line", line)
+    print("gender", gender)
+    gender = int(gender)
+
+    print("request.method", request.method)
+    try:
+        toilets = get_toilet_rank_queryset(line, gender)
+        return JsonResponse ({
+            "toilets": {
+                "toilet_value": {
+                    "station": [str(obj.toilet_id) for obj in toilets["toilet_value"]],
+                    "value": list(toilets["toilet_value"].values())
+                },
+                "toilet_size": {
+                    "station": [str(obj.toilet_id) for obj in toilets["toilet_size"]],
+                    "size": list(toilets["toilet_size"].values())
+                },
+                "toilet_congestion": {
+                    "station": [str(obj.toilet_id) for obj in toilets["toilet_congestion"]],
+                    "congestion": list(toilets["toilet_congestion"].values())
+                }
+            },
+            "gender": gender,
+        })
+    except ValueError:
+        return JsonResponse({"error": "無効なgender"}, status=400)
+        
+
+def get_toilet_rank_queryset(line, gender):
+    gender = int(gender)
+
+    if gender == 1:
+        # 男性トイレのオブジェクトを取得
+        return {
+            "toilet_value": MaleToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('value').reverse(),
+            "toilet_size": MaleToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('size').reverse(),
+            "toilet_congestion": MaleToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('congestion').reverse()
+        }
+
+    elif gender == 2:
+        # 女性トイレのオブジェクトを取得
+        return {
+            "toilet_value": FemaleToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('value').reverse(),
+            "toilet_size": FemaleToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('size').reverse(),
+            "toilet_congestion": FemaleToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('congestion').reverse()
+        }
+
+    elif gender == 3:
+        # 多機能トイレのオブジェクトを取得
+        return {
+            "toilet_value": MultiFunctionalToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('value').reverse(),
+            "toilet_size": MultiFunctionalToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('size').reverse(),
+            "toilet_congestion": MultiFunctionalToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('congestion').reverse()
+        }
+
+    else:
+        raise ValueError("不正gender値が設定されました")
