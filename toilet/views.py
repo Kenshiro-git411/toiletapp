@@ -6,6 +6,7 @@ from decimal import Decimal, ROUND_DOWN
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from accounts.models import Gender, User
+from django.db.models import Avg
 
 
 def home(request):
@@ -14,11 +15,9 @@ def home(request):
 def search_toilet(request):
     if request.method == 'POST':
         search_form = forms.SearchStation(request.POST)
-        print(search_form)
         station_id = request.POST.get("station_id")
-        print("受け取ったPOSTデータ:", request.POST)
-        print("選択された駅ID:", station_id)
-        # if search_form.is_valid():
+        # print("受け取ったPOSTデータ:", request.POST)
+        # print("選択された駅ID:", station_id)
 
         station_id = request.POST.get("station_id")
         # 検索のidをセッションに保存する
@@ -47,9 +46,6 @@ def search_toilet(request):
                 "female": matched_female,
                 "multifunctional": matched_multifunctional
             })
-
-            # 一致したデータをリストに格納
-            print("toilet_data", toilet_data)
 
         return render(request, 'toilet/search_result.html', context={
             'toilet_data': toilet_data
@@ -82,8 +78,8 @@ def suggest_station(request):
     return JsonResponse({"suggestions": []})
 
 def toilet_info(request, pk, gender):
-    print("pk", pk)
-    print("gender", gender)
+    # print("pk", pk)
+    # print("gender", gender)
 
     try:
         if gender == 1:
@@ -145,7 +141,7 @@ def toilet_info(request, pk, gender):
         root = toilet.toilet_id.toilet_root
 
         comments = Comment.objects.filter(toilet=toilet.toilet_id, gender=gender)
-        print(comments)
+        # print(comments)
         if not comments.exists():
             print("コメントはありません")
             comments = ""
@@ -170,8 +166,8 @@ def toilet_info(request, pk, gender):
 
 def change_toilet_data(request, toilet_pk, gender_num):
 
-    print("toilet_pk", toilet_pk)
-    print("gender_num", gender_num)
+    # print("toilet_pk", toilet_pk)
+    # print("gender_num", gender_num)
 
     try:
         if gender_num == 1:
@@ -189,7 +185,7 @@ def change_toilet_data(request, toilet_pk, gender_num):
         print("データを取得出来ませんでした")
         return JsonResponse({"error": f"データを取得できませんでした。存在しないデータの可能性があります。:{str(e)}"}, status=500)
 
-    print("toilet", toilet)
+    # print("toilet", toilet)
 
     # トイレpk(ToiletMasterテーブルのpk)
     toilet_pk = toilet.toilet_id.pk
@@ -312,9 +308,9 @@ def change_toilet_data(request, toilet_pk, gender_num):
 def toilet_review(request, toilet_id, gender):
     "レビューボタン押されたときの処理"
 
-    print("toilet_id:", toilet_id)
-    print("gender:", gender)
-    print("user:", request.user.pk)
+    # print("toilet_id:", toilet_id)
+    # print("gender:", gender)
+    # print("user:", request.user.pk)
 
     try:
         if gender == 1:
@@ -330,7 +326,6 @@ def toilet_review(request, toilet_id, gender):
         if toilet is None:
             raise ValueError(f"toilet_id={toilet_id} のデータが見つかりません")
 
-        print(toilet)
         if request.method == 'POST':
             review_form = forms.Review(request.POST)
 
@@ -353,7 +348,7 @@ def toilet_review(request, toilet_id, gender):
                     "size": review_form.cleaned_data["size"],
                     "congestion": review_form.cleaned_data["congestion"],
                     "gender": gender,
-                    "toilet_pk": toilet_id, # ToiletMasterテーブルのpk
+                    "toilet_id": toilet_id, # toilet_idはToiletMasterテーブルのpk
                 }
                 calculate_value_size_congestion(data_dict)
 
@@ -361,7 +356,6 @@ def toilet_review(request, toilet_id, gender):
         else:
             review_form = forms.Review()
 
-        print("ここまで来ている")
         return render(request, 'toilet/toilet_review.html', context={
                 'toilet': toilet,
                 'review_form': review_form,
@@ -377,7 +371,67 @@ def toilet_review(request, toilet_id, gender):
         return HttpResponseBadRequest("エラーが発生しました")
     
 def calculate_value_size_congestion(data_dict):
-    total_value
+    gender = data_dict["gender"]
+    value = data_dict["value"]
+    size = data_dict["size"]
+    congestion = data_dict["congestion"]
+    toilet_id = data_dict["toilet_id"]
+
+    if gender == 1:
+        # きれいさの平均を算出
+        total_value = MaleToilet.objects.filter(toilet_id=toilet_id).first().value
+
+        # 広さの平均を算出
+        total_size = MaleToilet.objects.filter(toilet_id=toilet_id).first().size
+
+        # 空き具合の平均を算出
+        total_congestion = MaleToilet.objects.filter(toilet_id=toilet_id).first().congestion
+
+        toilet = MaleToilet.objects.filter(toilet_id=toilet_id).first()
+
+    elif gender == 2:
+        # きれいさの平均を算出
+        total_value = FemaleToilet.objects.filter(toilet_id=toilet_id).first().value
+
+        # 広さの平均を算出
+        total_size = FemaleToilet.objects.filter(toilet_id=toilet_id).first().size
+
+        # 空き具合の平均を算出
+        total_congestion = FemaleToilet.objects.filter(toilet_id=toilet_id).first().congestion
+
+        toilet = FemaleToilet.objects.filter(toilet_id=toilet_id).first()
+
+    elif gender == 3:
+        # きれいさの平均を算出
+        total_value = MultiFunctionalToilet.objects.filter(toilet_id=toilet_id).first().value
+        
+        # 広さの平均を算出
+        total_size = MultiFunctionalToilet.objects.filter(toilet_id=toilet_id).first().size
+        
+        # 空き具合の平均を算出
+        total_congestion = MultiFunctionalToilet.objects.filter(toilet_id=toilet_id).first().congestion
+
+        toilet = MultiFunctionalToilet.objects.filter(toilet_id=toilet_id).first()
+    else:
+        raise ValueError("不正gender値が設定されました")
+
+    # コメントの数 + デフォルトで最初に登録されているデータ1件
+    length = (len(Comment.objects.filter(toilet_id=toilet_id, gender=gender)) + 1)
+
+    # きれいさの総合値
+    total_value = (total_value + value) / length
+    # 広さの総合値
+    total_size = (total_size + size) / length
+    # 混み具合の総合値
+    total_congestion = (total_congestion + congestion) / length
+
+    # データ更新
+    toilet.value = round(total_value, 1)
+    toilet.size = round(total_size, 1)
+    toilet.congestion = round(total_congestion, 1)
+    toilet.save()
+
+
 
 def toilet_rank(request):
     if request.method == "POST":
@@ -385,14 +439,9 @@ def toilet_rank(request):
 
         line = request.POST.get("line")
         gender = request.POST.get("gender")
-        print(request.POST)
-        print(line)
-        print(gender)
         toilets = get_toilet_rank_queryset(line, gender)
-        print(toilets)
 
         line_obj = TrainLine.objects.filter(pk=line).first
-        print(line_obj)
 
         return render(request, 'toilet/toilet_rank.html', context={
             "line":line_obj,
@@ -408,11 +457,8 @@ def toilet_rank(request):
         })
 
 def get_toilet_object_rank(request, line, gender):
-    print("line", line)
-    print("gender", gender)
     gender = int(gender)
 
-    print("request.method", request.method)
     try:
         toilets = get_toilet_rank_queryset(line, gender)
         return JsonResponse ({

@@ -183,6 +183,8 @@ class Comment(models.Model):
     gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
     value = models.IntegerField(help_text="5段階で数値を入力してください")
     toilet = models.ForeignKey(ToiletMaster, on_delete=models.CASCADE)
+    size = models.IntegerField(help_text="5段階で数値を入力してください", null=True)
+    congestion = models.IntegerField(help_text="5段階で数値を入力してください", null=True)
 
 
 

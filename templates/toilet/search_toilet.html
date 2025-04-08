@@ -6,7 +6,7 @@
     <div class="flex items-center justify-center w-full my-5 sm:my-10">
         <h2 class="font-bold text-2xl">トイレを探す</h2>
     </div>
-    <div class="w-11/12 sm:w-3/4 md:w-1/2 p-4 block mx-auto text-center">
+    <div class="w-full sm:w-3/4 md:w-1/2 p-4 block mx-auto text-center">
         <form method="post" action="{% url 'toilet:search_toilet' %}">{% csrf_token %}
             <div class="relative">
                 <label class="text-lg font-bold block mb-2 text-left">{{ search_form.station_name.label }}</label>
