@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import User, Gender
+from django.utils import timezone
 
 class TrainLine(models.Model):
     """路線マスターテーブル"""
@@ -185,6 +186,9 @@ class Comment(models.Model):
     toilet = models.ForeignKey(ToiletMaster, on_delete=models.CASCADE)
     size = models.IntegerField(help_text="5段階で数値を入力してください", null=True)
     congestion = models.IntegerField(help_text="5段階で数値を入力してください", null=True)
-
+    data_create = models.DateTimeField(
+        default=timezone.now,
+        help_text="コメントされた日時"
+    )
 
 

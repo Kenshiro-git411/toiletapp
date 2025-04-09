@@ -68,7 +68,8 @@
         {% if not comments == "" %}
             {% for comment in comments %}
                 <div class="my-3 p-2 bg-blue-300/30 rounded rounded-lg">
-                    <div>@{{ comment.user.username }}</div>
+                    <span>@{{ comment.user.username }}</span>
+                    <span class="text-sm text-gray-800">{{ comment.data_create | timesince}}前</span>
                     <p>{{ comment.comment }}</p>
                 </div>
             {% endfor %}
@@ -119,158 +120,185 @@
                 }
             });
         });
-        console.log("updateToiletInfo");
+        // console.log("updateToiletInfo");
 
-    });
-
-    async function fetchToilet(pk, gender_num) {
-        const url = `/toilet/change_toilet_data/${encodeURIComponent(pk)}/${encodeURIComponent(gender_num)}/`;
-
-        const response = await fetch(url);
-        console.log(response);
-
-        if (!response.ok) {
-            throw new Error(`HTTPエラー: ${response.status}`);
+        async function fetchToilet(pk, gender_num) {
+            const url = `/toilet/change_toilet_data/${encodeURIComponent(pk)}/${encodeURIComponent(gender_num)}/`;
+    
+            const response = await fetch(url);
+            console.log(response);
+    
+            if (!response.ok) {
+                throw new Error(`HTTPエラー: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            console.log("data", data);
+            console.log("data.toilet", data.toilet)
+    
+            return data.toilet || [];
+    
         }
 
-        const data = await response.json();
-        console.log("data", data);
-        console.log("data.toilet", data.toilet)
-
-        return data.toilet || [];
-
-    }
-
-    function updateBtn() {
-        let toiletInfo = document.getElementById("toilet_data");
-        let gender = toiletInfo.dataset.gender;
-        console.log(gender);
-
-        // すべてのボタンのスタイルをリセット
-        const btns = document.querySelectorAll(".gen-btn");
-        btns.forEach(btn => {
-            btn.classList.remove("bg-blue-500", "text-white");
-            btn.classList.add("shadow-md", "bg-gray-100");
-        });
-
-        // ジェンダーボタンがデフォルトで選択される処理
-        let btn;
-        if (gender === '1') {
-            btn = document.getElementById("male_btn");
-        } else if (gender === '2') {
-            btn = document.getElementById("female_btn");
-        } else if (gender === '3') {
-            btn = document.getElementById("multi_btn");
+        function updateBtn() {
+            let toiletInfo = document.getElementById("toilet_data");
+            let gender = toiletInfo.dataset.gender;
+            console.log(gender);
+    
+            // すべてのボタンのスタイルをリセット
+            const btns = document.querySelectorAll(".gen-btn");
+            btns.forEach(btn => {
+                btn.classList.remove("bg-blue-500", "text-white");
+                btn.classList.add("shadow-md", "bg-gray-100");
+            });
+    
+            // ジェンダーボタンがデフォルトで選択される処理
+            let btn;
+            if (gender === '1') {
+                btn = document.getElementById("male_btn");
+            } else if (gender === '2') {
+                btn = document.getElementById("female_btn");
+            } else if (gender === '3') {
+                btn = document.getElementById("multi_btn");
+            }
+    
+            // this.classList.add("shadow-md", "bg-gray-100");
+            // this.classList.remove("bg-blue-500", "text-white");
+    
+    
+            btn.classList.remove("shadow-md", "bg-gray-100");
+            btn.classList.add("bg-blue-500", "text-white");
         }
 
-        // this.classList.add("shadow-md", "bg-gray-100");
-        // this.classList.remove("bg-blue-500", "text-white");
-
-
-        btn.classList.remove("shadow-md", "bg-gray-100");
-        btn.classList.add("bg-blue-500", "text-white");
-    }
-
-    function updateToiletInfo(toilet) {
         console.log("updateToiletInfoが実行されました");
+    
+        
+        function timeSince(dateStr) {
+            const now = new Date();
+            const date = new Date(dateStr);
+            const seconds = Math.floor((now - date) / 1000);
 
-        // 駅名の値を変換 -> もし「女性」や「だれでも」ボタンを押したときにトイレがない、つまり抽出できるデータがなかった場合、responseがないため、responseのオブジェクトを適用するとデータを表示できない可能性がある。※placeも同様
+            if (seconds < 60) return `${seconds}秒`;
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}分`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}時間`;
+            const days = Math.floor(hours / 24);
+            if (days < 7) return `${days}日`;
+            const weeks = Math.floor(days / 7);
+            if (weeks < 5) return `${weeks}週間`;
+            const months = Math.floor(days / 30);
+            if (months < 12) return `${months}ヶ月`;
+            const years = Math.floor(days / 365);
+            return `${years}年`;
+        }
 
         // きれいさ数値の更新
-        const toilet_value = document.getElementById("toilet_value");
-        toilet_value.innerHTML = "";
-        toilet_value.setAttribute("data-value", toilet.value);
-        console.log("更新後の toilet_value:", toilet_value.dataset.value);
-        toilet_value.innerHTML = Number(toilet_value.dataset.value).toFixed(1);
-        
-        // 広さ
-        const toilet_size = document.getElementById("toilet_size");
-        toilet_size.innerHTML = "";
-        toilet_size.setAttribute("data-size", toilet.size);
-        console.log("更新後の toilet_size:", toilet_size.dataset.size);
-        toilet_size.innerHTML = Number(toilet_size.dataset.size).toFixed(1);
-        
-        // 混雑さ
-        const toilet_congestion = document.getElementById("toilet_congestion");
-        toilet_congestion.innerHTML = "";
-        toilet_congestion.setAttribute("data-congestion", toilet.congestion);
-        console.log("更新後の toilet_congestion:", toilet_congestion.dataset.congestion);
-        toilet_congestion.innerHTML = Number(toilet_congestion.dataset.congestion).toFixed(1);
+        function updateToiletInfo(toilet) {
+            const toilet_value = document.getElementById("toilet_value");
+            toilet_value.innerHTML = "";
+            toilet_value.setAttribute("data-value", toilet.value);
+            console.log("更新後の toilet_value:", toilet_value.dataset.value);
+            toilet_value.innerHTML = Number(toilet_value.dataset.value).toFixed(1);
 
-
-        console.log("トイレ情報テーブル更新");
-        // トイレ情報テーブルの更新
-        const tbody = document.querySelector("#toilet_data table tbody");
-        if (!tbody) {
-            console.error("エラー:tbodyが見つかりませんでした。");
-            return;
-        }
-        // console.log("aaa");
-        tbody.innerHTML = "";
-
-        const toilet_gender = document.getElementById("toilet_data");
-        toilet_gender.setAttribute("data-gender", toilet.gender);
-        console.log("更新後の data-gender:", toilet_gender.dataset.gender);
-        updateBtn();
-
-
-        console.log("ここまで来ている");
-        console.log("toilet",toilet.id);
-        toilet.toilet_info.forEach(info => {
-            console.log("info", info);
-            if (info.value !== null){
-                const tr = document.createElement("tr");
-                tr.classList.add("border", "border-gray-300", "h-full", "flex", "flex-col", "justify-between");
-
-                const th = document.createElement("th");
-                th.classList.add("border", "border-gray-300", "p-4", "bg-blue-500", "text-white");
-                th.innerText = info.label;
-
-                const td = document.createElement("td");
-                td.classList.add("border", "border-gray-300", "p-4", "bg-blue-100", "text-center");
-                td.innerHTML = info.value;
-
-                tr.appendChild(th);
-                tr.appendChild(td);
-                tbody.appendChild(tr);
+            // 広さ
+            const toilet_size = document.getElementById("toilet_size");
+            toilet_size.innerHTML = "";
+            toilet_size.setAttribute("data-size", toilet.size);
+            console.log("更新後の toilet_size:", toilet_size.dataset.size);
+            toilet_size.innerHTML = Number(toilet_size.dataset.size).toFixed(1);
+            
+            // 混雑さ
+            const toilet_congestion = document.getElementById("toilet_congestion");
+            toilet_congestion.innerHTML = "";
+            toilet_congestion.setAttribute("data-congestion", toilet.congestion);
+            console.log("更新後の toilet_congestion:", toilet_congestion.dataset.congestion);
+            toilet_congestion.innerHTML = Number(toilet_congestion.dataset.congestion).toFixed(1);
+    
+    
+            console.log("トイレ情報テーブル更新");
+            // トイレ情報テーブルの更新
+            const tbody = document.querySelector("#toilet_data table tbody");
+            if (!tbody) {
+                console.error("エラー:tbodyが見つかりませんでした。");
+                return;
             }
-        })
-
-        // コメント内容の更新
-        const comments = document.getElementById("comments");
-        comments.innerHTML = "";
-        const comments_data = toilet.comments;
-
-        if (comments_data.length > 0){
-            comments_data.forEach(comment => {
-                console.log(comment.comment);
-                const comments_inner = document.createElement("div");
-                comments_inner.classList.add("my-3", "p-2", "bg-blue-300/30", "rounded", "rounded-lg");
-
-                const username = document.createElement("div");
-                username.textContent = "@" + comment.user;
-
-                const com = document.createElement("p");
-                com.textContent = comment.comment;
-
-                comments_inner.appendChild(username);
-                comments_inner.appendChild(com);
-                comments.appendChild(comments_inner);
+            // console.log("aaa");
+            tbody.innerHTML = "";
+    
+            const toilet_gender = document.getElementById("toilet_data");
+            toilet_gender.setAttribute("data-gender", toilet.gender);
+            console.log("更新後の data-gender:", toilet_gender.dataset.gender);
+            updateBtn();
+    
+    
+            console.log("ここまで来ている");
+            console.log("toilet",toilet.id);
+            toilet.toilet_info.forEach(info => {
+                console.log("info", info);
+                if (info.value !== null){
+                    const tr = document.createElement("tr");
+                    tr.classList.add("border", "border-gray-300", "h-full", "flex", "flex-col", "justify-between");
+    
+                    const th = document.createElement("th");
+                    th.classList.add("border", "border-gray-300", "p-4", "bg-blue-500", "text-white");
+                    th.textContent = info.label;
+    
+                    const td = document.createElement("td");
+                    td.classList.add("border", "border-gray-300", "p-4", "bg-blue-100", "text-center");
+                    td.textContent = info.value;
+    
+                    tr.appendChild(th);
+                    tr.appendChild(td);
+                    tbody.appendChild(tr);
+                }
             })
-        } else {
-            const no_comment = document.createElement("div");
-            no_comment.classList.add("my-4");
-            no_comment.textContent = "まだコメントはありません";
-            comments.appendChild(no_comment);
+    
+            // コメント内容の更新
+            const comments = document.getElementById("comments");
+            comments.textContent = "";
+            const comments_data = toilet.comments;
+    
+            if (comments_data.length > 0){
+                comments_data.forEach(comment => {
+                    console.log(comment.comment);
+                    const comments_inner = document.createElement("div");
+                    comments_inner.classList.add("my-3", "p-2", "bg-blue-300/30", "rounded", "rounded-lg");
+    
+                    const username = document.createElement("span");
+                    console.log("comment.user", comment)
+                    username.textContent = "@" + comment.user__username;
+    
+                    const time = document.createElement("span");
+                    time.textContent = timeSince(comment.data_create) + "前";
+                    time.classList.add("text-sm", "text-gray-800");
+    
+                    const com = document.createElement("p");
+                    com.textContent = comment.comment;
+    
+                    comments_inner.appendChild(username);
+                    comments_inner.appendChild(time);
+                    comments_inner.appendChild(com);
+                    comments.appendChild(comments_inner);
+                })
+            } else {
+                const no_comment = document.createElement("div");
+                no_comment.classList.add("my-4");
+                no_comment.textContent = "まだコメントはありません";
+                comments.appendChild(no_comment);
+            }
+            console.log(comments.innerHTML);
+    
+    
+            // 『レビューする』ボタンのhrefの自動更新
+            const review_link = document.getElementById("review_link");
+            review_link.href = `/toilet/toilet_review/${toilet.toilet_pk}/${toilet.gender}`;
+            console.log("更新後のreview_link:", review_link.href);
+    
         }
-        console.log(comments.innerHTML);
+    });
 
 
-        // 『レビューする』ボタンのhrefの自動更新
-        const review_link = document.getElementById("review_link");
-        review_link.href = `/toilet/toilet_review/${toilet.toilet_pk}/${toilet.gender}`;
-        console.log("更新後のreview_link:", review_link.href);
 
-    }
 </script>
 {% endblock %}

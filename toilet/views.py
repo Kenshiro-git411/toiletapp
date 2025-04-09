@@ -6,7 +6,7 @@ from decimal import Decimal, ROUND_DOWN
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from accounts.models import Gender, User
-from django.db.models import Avg
+from django.db.models import F
 
 
 def home(request):
@@ -232,12 +232,16 @@ def change_toilet_data(request, toilet_pk, gender_num):
     # 性別id
     gen = toilet.gender.pk
     # コメント
-    comments = Comment.objects.filter(gender=gen, toilet=toilet_pk)
+    comments = Comment.objects.select_related("user").filter(gender=gen, toilet=toilet_pk)
+    print(comments)
     if comments.exists():
-        print("コメントはあります")
-        comments = list(comments.values())
+        comments = list(comments.values(
+            "user",
+            "user__username",
+            "comment",
+            "data_create"
+        ))
     else:
-        print("コメントはありません")
         comments = ""
 
 
@@ -419,18 +423,24 @@ def calculate_value_size_congestion(data_dict):
     length = (len(Comment.objects.filter(toilet_id=toilet_id, gender=gender)) + 1)
 
     # きれいさの総合値
-    total_value = (total_value + value) / length
+    """
+    総合値の計算方法（加重平均）
+    (total_value * (length - 1))の計算式は現在登録されているvalue(平均値)から
+    先ほどコメントテーブルに登録した1件分を引いた数を掛けることで前回分までの合計値を算出。
+    ((前回分までの合計値) + value) / lengthは、前回分までの合計値に今回分のvalueを
+    足すことで今回分までの合計値を算出し、コメント全体の数で割ることで平均値を算出する。
+    """
+    total_value = ((total_value * (length - 1)) + value) / length
     # 広さの総合値
-    total_size = (total_size + size) / length
+    total_size = ((total_size * (length - 1)) + size) / length
     # 混み具合の総合値
-    total_congestion = (total_congestion + congestion) / length
+    total_congestion = ((total_congestion * (length - 1)) + congestion) / length
 
     # データ更新
     toilet.value = round(total_value, 1)
     toilet.size = round(total_size, 1)
     toilet.congestion = round(total_congestion, 1)
     toilet.save()
-
 
 
 def toilet_rank(request):
