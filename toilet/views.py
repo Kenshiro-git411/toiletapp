@@ -521,3 +521,15 @@ def get_toilet_rank_queryset(line, gender):
 
     else:
         raise ValueError("不正gender値が設定されました")
+
+def get_latest_comment(request):
+    male_comments = Comment.objects.filter(gender=1).order_by("data_create")
+    female_comments = Comment.objects.filter(gender=2).order_by("data_create")
+    multi_comments = Comment.objects.filter(gender=3).order_by("data_create")
+    
+    print(multi_comments)
+    return render(request, "toilet/toilet_latest_comment.html", context={
+        "male_comments": male_comments,
+        "female_comments": female_comments,
+        "multi_comments": multi_comments
+    })

@@ -1,4 +1,5 @@
 {% extends 'toilet/base.html' %}
+{% load mytag %}
 
 {% block title %} トイレ検索結果 {% endblock %}
 
@@ -62,15 +63,14 @@
         </table>
     </div>
 </div>
-<div class="my-5 p-3 bg-white/60 rounded rounded-lg">
+<div class="my-5 p-3 border border-gray-400 rounded rounded-lg shadow-sm">
     <h2 class="font-bold text-lg">レビュー</h2>
     <div id="comments">
         {% if not comments == "" %}
             {% for comment in comments %}
-                <div class="my-3 p-2 bg-blue-300/30 rounded rounded-lg">
-                    <span>@{{ comment.user.username }}</span>
-                    <span class="text-sm text-gray-800">{{ comment.data_create | timesince}}前</span>
-                    <p>{{ comment.comment }}</p>
+                <div class="my-3 p-2 border-b border-gray-400">
+                    <span class="inline-block">@{{ comment.user.username }}</span><span class="text-sm text-gray-800 inline-block ml-1">{{ comment.data_create | time_since}}前</span>
+                    <p class="p-2">{{ comment.comment }}</p>
                 </div>
             {% endfor %}
         {% else %}
@@ -268,10 +268,11 @@
                     const username = document.createElement("span");
                     console.log("comment.user", comment)
                     username.textContent = "@" + comment.user__username;
+                    username.classList.add("inline-block")
     
                     const time = document.createElement("span");
                     time.textContent = timeSince(comment.data_create) + "前";
-                    time.classList.add("text-sm", "text-gray-800");
+                    time.classList.add("inline-block", "text-sm", "text-gray-800", "pl-1");
     
                     const com = document.createElement("p");
                     com.textContent = comment.comment;

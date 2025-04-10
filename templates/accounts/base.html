@@ -7,8 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>{% block title %}base{% endblock %}</title>
 </head>
-<body class="bg-blue-100">
-    <header class="bg-blue-200 h-20 flex items-center relative shadow-md">
+<body class="bg-[#F4F8FF]">
+    <header class="bg-[#D5E5FF] h-20 flex items-center relative shadow-md">
         <div class="flex items-center justify-center w-full justify-between px-6">
             <svg id="open_button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -47,7 +47,7 @@
             </div>
         </div>
     </div>
-    <div class="w-full max-w-screen-md mx-auto overflow-x-hidden bg-blue-100 p-4 ">
+    <div class="w-full max-w-screen-md mx-auto overflow-x-hidden p-4 ">
         {% block content %}
         <!-- 子テンプレートで置き換えられる部分 -->
         {% endblock %}

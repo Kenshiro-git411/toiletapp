@@ -3,40 +3,44 @@
 {% block title %} トイレ検索結果 {% endblock %}
 
 {% block content %}
-<div>
-    <table class="w-full">
-        <tbody>
-            {% for toilet in toilet_data %}
-                {% if toilet %}
-                    <tr>
-                        <th class="bg-blue-200 text-center text-lg font-bold p-3" colspan="4">{{ toilet.place }}</th>
+{% for toilet in toilet_data %}
+    {% if toilet %}
+        <div>
+            <table class="w-full table-fixed my-8">
+                <tbody class="">
+                    <tr class="border-b border-gray-400">
+                        <th class="text-center text-lg font-bold py-3" colspan="4">{{ toilet.place }}</th>
                     </tr>
-                    <tr>
-                        {% if toilet.male %}
-                        <td class="text-center py-2 px-4 font-semibold"><a href="{% url 'toilet:toilet_info' toilet.male.pk toilet.male.gender.pk %}">男性トイレ</a></td>
-                        <td class="text-center py-2 px-4">広さ★{{ toilet.male.size }}</td>
-                        <td class="text-center py-2 px-4">きれいさ★{{ toilet.male.value }}</td>
-                        <td class="text-center py-2 px-4">空き具合★{{ toilet.male.congestion }}</td>
-                        {% endif %}
-                    <tr>
-                        {% if toilet.female %}
-                        <td class="text-center py-2 px-4 font-semibold"><a href="{% url 'toilet:toilet_info' toilet.female.pk toilet.female.gender.pk %}">女性トイレ</a></td>
-                        <td class="text-center py-2 px-4">広さ★{{ toilet.female.size }}</td>
-                        <td class="text-center py-2 px-4">きれいさ★{{ toilet.female.value }}</td>
-                        <td class="text-center py-2 px-4">空き具合★{{ toilet.female.congestion }}</td>
-                        {% endif %}
+
+                    {% if toilet.male %}
+                    <tr class="border-b border-gray-300 h-16 bg-[#D0ECFF]">
+                        <td class="text-center font-semibold"><a href="{% url 'toilet:toilet_info' toilet.male.pk toilet.male.gender.pk %}">男性トイレ</a></td>
+                        <td class="text-center px-4">広さ★{{ toilet.male.size }}</td>
+                        <td class="text-center px-4">きれいさ★{{ toilet.male.value }}</td>
+                        <td class="text-center px-4">空き具合★{{ toilet.male.congestion }}</td>
                     </tr>
-                    <tr>
-                        {% if toilet.multifunctional %}
-                        <td class="text-center py-2 px-4 font-semibold"><a href="{% url 'toilet:toilet_info' toilet.multifunctional.pk toilet.multifunctional.gender.pk %}">多機能トイレ</a></td>
-                        <td class="text-center py-2 px-4">広さ★{{ toilet.multifunctional.size }}</td>
-                        <td class="text-center py-2 px-4">きれいさ★{{ toilet.multifunctional.value }}</td>
-                        <td class="text-center py-2 px-4">空き具合★{{ toilet.multifunctional.congestion }}</td>
-                        {% endif %}
+                    {% endif %}
+
+                    {% if toilet.female %}
+                    <tr class="border-b border-gray-300 h-16 bg-[#FFEAEA]">
+                        <td class="text-center font-semibold"><a href="{% url 'toilet:toilet_info' toilet.female.pk toilet.female.gender.pk %}">女性トイレ</a></td>
+                        <td class="text-center px-4">広さ★{{ toilet.female.size }}</td>
+                        <td class="text-center px-4">きれいさ★{{ toilet.female.value }}</td>
+                        <td class="text-center px-4">空き具合★{{ toilet.female.congestion }}</td>
                     </tr>
-                {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+                    {% endif %}
+
+                    {% if toilet.multifunctional %}
+                    <tr class="border-b border-gray-300 h-16 bg-white">
+                        <td class="text-center font-semibold"><a href="{% url 'toilet:toilet_info' toilet.multifunctional.pk toilet.multifunctional.gender.pk %}">多機能トイレ</a></td>
+                        <td class="text-center px-4">広さ★{{ toilet.multifunctional.size }}</td>
+                        <td class="text-center px-4">きれいさ★{{ toilet.multifunctional.value }}</td>
+                        <td class="text-center px-4">空き具合★{{ toilet.multifunctional.congestion }}</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endfor %}
 {% endblock %}
