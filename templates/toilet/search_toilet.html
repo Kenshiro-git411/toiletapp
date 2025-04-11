@@ -6,14 +6,14 @@
     <div class="flex items-center justify-center w-full my-5 sm:my-10">
         <h2 class="font-bold text-2xl">トイレを探す</h2>
     </div>
-    <div class="w-full sm:w-2/4 p-4 block mx-auto text-center">
-        <form method="post" action="{% url 'toilet:search_toilet' %}">{% csrf_token %}
+    <div class="w-full  flex items-center justify-center p-8 block mx-auto text-center bg-blue-100">
+        <form method="post" action="{% url 'toilet:search_toilet' %}" class="w-full sm:w-2/4">{% csrf_token %}
             <div class="relative">
-                <label class="text-lg font-bold block mb-2 text-left">{{ search_form.station_name.label }}</label>
+                <label class="text-lg block mb-2 text-left">{{ search_form.station_name.label }}</label>
                 <div>{{ search_form.station_name }}</div>
                 <input type="hidden" id="station_id" name="station_id">
             </div>
-            <button type="submit" class="block w-full bg-blue-500 text-white py-2 mt-4 hover:bg-blue-600 transition">探す</button>
+            <button type="submit" class="block w-full bg-blue-500 text-white py-2 mt-4 shadow-md hover:shadow-none hover:bg-blue-600 transition ">探す</button>
         </form>
     </div>
 

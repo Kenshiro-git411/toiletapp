@@ -4,11 +4,11 @@
 {% block title %} トイレ検索結果 {% endblock %}
 
 {% block content %}
-<h1 id="station_name" class="my-5 sm:my-10 text-center font-bold text-2xl data-station='{{ station_name }}'">{{ station_name }}駅のトイレ</h1>
+<h1 id="station_name" class="pb-5 my-5 sm:my-10 text-center font-bold text-3xl border-b border-blue-400 border-b-8 data-station='{{ station_name }}'">{{ station_name }}駅のトイレ</h1>
 <div id="toilet_obj" data-pk="{{ toilet.toilet_id.pk }}">
-    <h2 class="font-bold text-lg text-center">{{ place }}</h2>
-    <div class="w-full flex items-center justify-center my-10">
-        <ul class="flex w-full max-w-md justify-center space-x-2">
+    <h2 class="font-bold text-lg text-center p-2 border border-gray-500 rounded-full shadow-sm">{{ place }}</h2>
+    <div class="w-full flex items-center justify-center mt-10">
+        <ul class="flex w-full max-w-3xl justify-center space-x-2">
             <li id="male_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-gray-100 hover:shadow-none hover:duration-400">
                 男性
             </li>
@@ -16,31 +16,33 @@
                 女性
             </li>
             <li id="multi_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-gray-100 hover:shadow-none hover:duration-400">
-                だれでも
+                多機能
             </li>
         </ul>
     </div>
-    <div id="toilet_data" data-gender="{{ gender }}" class="items-center justify-center">
-        <div class="flex items-center justify-center my-5 space-x-10">
-            <div>
-                <label class="">広さ</label>
+    <div id="toilet_data" data-gender="{{ gender }}" class="w-full">
+        <ul class="flex w-full max-w-3xl justify-between my-5">
+            <li class="w-full pt-5">
+                <label class="flex items-center justify-center">広さ</label>
                 <div class="flex items-center justify-center">
                     <div id="toilet_size" class="text-2xl" data-size="{{ size }}">{{ size }}</div><div class="self-end">/5</div>
                 </div>
-            </div>
-            <div>
-                <label class="">きれいさ</label>
+            </li>
+            <li class="w-56 sm:w-40 border-l border-gray-400 rotate-45 origin-bottom-left"></li>
+            <li class="w-full pt-5">
+                <label class="flex items-center justify-center">きれいさ</label>
                 <div class="flex items-center justify-center">
                     <div id="toilet_value" class="text-2xl" data-value="{{ value }}">{{ value }}</div><div class="self-end">/5</div>
                 </div>
-            </div>
-            <div>
-                <label class="">混雑さ</label>
+            </li>
+            <li class="w-56 border-l border-gray-400 rotate-45 origin-bottom-left"></li>
+            <li class="w-full pt-5">
+                <label class="flex items-center justify-center">空き具合</label>
                 <div class="flex items-center justify-center">
                     <div id="toilet_congestion" class="text-2xl" data-congestion="{{ congestion }}">{{ congestion }}</div><div class="self-end">/5</div>
                 </div>
-            </div>
-        </div>
+            </li>
+        </ul>
         <table class="table-auto border-collapse w-full max-w-3xl">
             <tbody class="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {% for label, value in toilet_info %}
@@ -148,7 +150,7 @@
             // すべてのボタンのスタイルをリセット
             const btns = document.querySelectorAll(".gen-btn");
             btns.forEach(btn => {
-                btn.classList.remove("bg-blue-500", "text-white");
+                btn.classList.remove("bg-black", "text-white");
                 btn.classList.add("shadow-md", "bg-gray-100");
             });
     
@@ -167,7 +169,7 @@
     
     
             btn.classList.remove("shadow-md", "bg-gray-100");
-            btn.classList.add("bg-blue-500", "text-white");
+            btn.classList.add("bg-black", "text-white");
         }
 
         console.log("updateToiletInfoが実行されました");
@@ -263,7 +265,7 @@
                 comments_data.forEach(comment => {
                     console.log(comment.comment);
                     const comments_inner = document.createElement("div");
-                    comments_inner.classList.add("my-3", "p-2", "bg-blue-300/30", "rounded", "rounded-lg");
+                    comments_inner.classList.add("my-3", "p-2", "border-b", "border-gray-400");
     
                     const username = document.createElement("span");
                     console.log("comment.user", comment)
@@ -276,6 +278,7 @@
     
                     const com = document.createElement("p");
                     com.textContent = comment.comment;
+                    com.classList.add("p-2")
     
                     comments_inner.appendChild(username);
                     comments_inner.appendChild(time);

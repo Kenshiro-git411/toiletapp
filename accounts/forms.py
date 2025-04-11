@@ -6,33 +6,21 @@ from datetime import datetime
 class LoginForm(forms.Form):
     email = forms.EmailField(
         label="メールアドレス",
-        widget=forms.TextInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"})
+        widget=forms.TextInput(attrs={"class": "w-full max-w-md p-1 text-md ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"})
     )
     password = forms.CharField(
         label="パスワード",
-        widget=forms.PasswordInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"})
+        widget=forms.PasswordInput(attrs={"class": "w-full max-w-md p-1 text-md ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"})
     )
 
-class SigninForm(forms.Form):
-    email = forms.EmailField(
-        label="メールアドレス",
-        widget=forms.TextInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"})
-    )
-    password = forms.CharField(
-        label="パスワード",
-        widget=forms.PasswordInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"})
-    )
+class SigninForm(forms.ModelForm):
     confirm_password = forms.CharField(
         label="パスワード再入力",
-        widget=forms.PasswordInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"})
-    )
-    username = forms.CharField(
-        label="ユーザー名",
-        widget=forms.TextInput(attrs={"class": "w-full max-w-md p-1 text-md rounded"})
+        widget=forms.PasswordInput(attrs={"class": "w-full max-w-md p-1 text-md ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"})
     )
     gender = forms.ModelChoiceField(
         queryset=Gender.objects.all(), # DBデータの取得
-        widget=forms.Select,
+        widget=forms.Select(attrs={"class": "ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"}),
         empty_label="選択してください",
         label="性別"
     )
@@ -43,7 +31,17 @@ class SigninForm(forms.Form):
 
     class Meta:
         model = User
-        fields = ("email", "password", "username", "gender", "is_barrier_free")
+        fields=["email", "password", "username"]
+        labels={
+            "email": "メールアドレス",
+            "password": "パスワード",
+            "username": "ユーザー名",
+        }
+        widgets = {
+            "email": forms.EmailInput(attrs={"class": "w-full max-w-md p-1 text-md ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"}),
+            "password": forms.PasswordInput(attrs={"class": "w-full max-w-md p-1 text-md ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"}),
+            "username": forms.TextInput(attrs={"class": "w-full max-w-md p-1 text-md ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"}),
+        }
 
     def clean(self):
         cleaned_data = super().clean()
@@ -75,24 +73,27 @@ class UserInfoUpdateForm(forms.ModelForm):
 
     gender = forms.ModelChoiceField(
         queryset=Gender.objects.all(), # DBデータの取得
-        widget=forms.Select,
+        widget=forms.Select(attrs={"class": "ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"}),
         label="性別"
     )
     is_barrier_free = forms.BooleanField(
         required=False,
         label="バリアフリー優先",
+        widget=forms.CheckboxInput(attrs={
+            "class": "w-4 h-4" # チェックボックスのサイズ
+        })
     )
 
     class Meta:
         model=User
-        fields=["email", "username", "gender", "is_barrier_free"]
+        fields=["email", "username"]
         labels={
             "email": "メールアドレス",
             "username": "ユーザー名",
         }
         widgets = {
-            "email": forms.EmailInput(attrs={"class": "w-full max-w-md p-1 text-md"}),
-            "username": forms.TextInput(attrs={"class": "w-full max-w-md p-1 text-md"}),
+            "email": forms.EmailInput(attrs={"class": "w-full max-w-md p-1 text-md ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"}),
+            "username": forms.TextInput(attrs={"class": "w-full max-w-md p-1 text-md ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"})
         }
 
     def __init__(self, *args, **kwargs):
