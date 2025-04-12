@@ -67,7 +67,7 @@
 </div>
 <div class="my-5 p-3 border border-gray-400 rounded rounded-lg shadow-sm">
     <h2 class="font-bold text-lg">レビュー</h2>
-    <div id="comments">
+    <div id="comments" class="w-full h-60 overflow-auto bg-white border border-gray-300 p-3 rounded-md my-2">
         {% if not comments == "" %}
             {% for comment in comments %}
                 <div class="my-3 p-2 border-b border-gray-400">
