@@ -72,7 +72,7 @@
             {% for comment in comments %}
                 <div class="my-3 p-2 border-b border-gray-400">
                     <span class="inline-block">@{{ comment.user.username }}</span><span class="text-sm text-gray-800 inline-block ml-1">{{ comment.data_create | time_since}}前</span>
-                    <p class="p-2">{{ comment.comment }}</p>
+                    <p class="p-2 text-justify">{{ comment.comment }}</p>
                 </div>
             {% endfor %}
         {% else %}
@@ -278,7 +278,7 @@
     
                     const com = document.createElement("p");
                     com.textContent = comment.comment;
-                    com.classList.add("p-2")
+                    com.classList.add("p-2", "text-justify")
     
                     comments_inner.appendChild(username);
                     comments_inner.appendChild(time);

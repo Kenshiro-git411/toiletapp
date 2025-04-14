@@ -473,18 +473,11 @@ def get_toilet_object_rank(request, line, gender):
         toilets = get_toilet_rank_queryset(line, gender)
         return JsonResponse ({
             "toilets": {
-                "toilet_value": {
-                    "station": [str(obj.toilet_id) for obj in toilets["toilet_value"]],
-                    "value": list(toilets["toilet_value"].values())
-                },
-                "toilet_size": {
-                    "station": [str(obj.toilet_id) for obj in toilets["toilet_size"]],
-                    "size": list(toilets["toilet_size"].values())
-                },
-                "toilet_congestion": {
-                    "station": [str(obj.toilet_id) for obj in toilets["toilet_congestion"]],
-                    "congestion": list(toilets["toilet_congestion"].values())
-                }
+                "toilet_value": list(toilets["toilet_value"].values("toilet_id", "toilet_id__station_id__station_name", "toilet_id__place", "value")),
+
+                "toilet_size": list(toilets["toilet_size"].values("toilet_id", "toilet_id__station_id__station_name", "toilet_id__place", "size")),
+
+                "toilet_congestion": list(toilets["toilet_congestion"].values("toilet_id", "toilet_id__station_id__station_name", "toilet_id__place", "congestion")),
             },
             "gender": gender,
         })

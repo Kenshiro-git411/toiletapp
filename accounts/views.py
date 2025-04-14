@@ -202,8 +202,8 @@ def password_reset_confirm(request, uidb64, token):
             form = SetPasswordForm(user, request.POST)
             if form.is_valid():
                 form.save()
-                # messages.success(request, "パスワードが変更されました。")
-                # print("パスワードが変更されました。")
+                messages.success(request, "パスワードが変更されました。")
+                print("パスワードが変更されました。")
                 return redirect("accounts:password_reset_complete")
         else:
             form = SetPasswordForm(user)

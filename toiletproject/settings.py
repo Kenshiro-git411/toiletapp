@@ -129,6 +129,9 @@ MEDIA_URL = '/media/'
 # 認証用のモデルとして設定
 AUTH_USER_MODEL = 'accounts.User'
 
+# ログインデフォルトURL
+LOGIN_URL = 'accounts/user_login'
+
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # メールの内容をコンソールに表示する。
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #djangoappプロジェクトフォルダ配下のmediaフォルダを指定。
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -142,5 +145,3 @@ LINE_CHANNEL_ACCESS_TOKEN = os.environ['LINE_CHANNEL_ACCESS_TOKEN']
 LINE_CHANNEL_SECRET = os.environ['LINE_CHANNEL_SECRET']
 LINE_LIFF_ID = os.environ['LINE_LIFF_ID']
 
-# ログインデフォルトURL
-LOGIN_URL = 'accounts/user_login'

@@ -130,7 +130,10 @@ class UserInfoUpdateForm(forms.ModelForm):
 class UserDeleteForm(forms.Form):
     confirm = forms.BooleanField(
         required=True,
-        label="アカウント削除の注意事項を確認しました"
+        label="アカウント削除の注意事項を確認しました",
+        widget=forms.CheckboxInput(attrs={
+            "class": "w-4 h-4" # チェックボックスのサイズ
+        })
     )
 
     def __init__(self, *args, user=None, **kwargs):

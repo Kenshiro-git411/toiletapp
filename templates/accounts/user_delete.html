@@ -3,22 +3,23 @@
 {% block title %} ユーザー削除画面 {% endblock %}
 
 {% block content %}
-<div class="items-center justify-center">
-    <h1 class="text-2xl font-bold w-3/5 mx-auto text-center my-5 sm:my-10">アカウント削除</h1>
-    <p class="w-3/5 mx-auto text-center mt-6">
-        この操作を行うと、アカウントは無効化されます。<br>復旧することはできません。
+<div class="flex flex-col justify-center items-center mt-10">
+    <h1 class="w-full max-w-md text-center text-2xl font-bold p-2 border-b border-gray-300">アカウント削除</h1>
+    <p class="w-full max-w-md my-4 mx-auto text-justify">
+        この操作を行うと、アカウントは無効化されます。<br>
+        アカウントの復旧はできません。<br>
+        問題なければ以下にチェックを入れ、アカウントを削除してください。
     </p>
-    <div class="mx-auto flex flex-col items-center justify-center rounded-lg w-3/5 mt-2">
-        <form method="POST" class="w-full flex flex-col items-center">
+    <div class="w-full max-w-md flex flex-col items-center justify-center mt-2">
+        <form method="POST" class="w-full flex flex-col justify-center items-left ">
             {% csrf_token %}
-            <div class="mt-5 w-full text-center">
-                {{ delete_form.as_p }}
+            <div class="flex items-center justify-center bg-blue-100 p-3">
+                <label class="">{{ delete_form.confirm.label }}：</label>
+                {{ delete_form.confirm }}
             </div>
-            <div class="flex justify-center w-full">
-                <button type="submit" class="bg-red-500 text-white mt-5 px-4 py-2 rounded">削除</button>
-            </div>
+            <button type="submit" class="bg-red-500 text-white mt-5 px-4 py-2 shadow-md hover:bg-red-600 hover:shadow-none ">削除</button>
         </form>
-        <a href="{% url 'accounts:user_info_update' %}" class="text-blue-500 mt-12">キャンセル</a>
+        <a href="{% url 'accounts:user_info_update' %}" class="text-blue-500 mt-12 text-lg">キャンセル</a>
     </div>
 </div>
 {% endblock %}

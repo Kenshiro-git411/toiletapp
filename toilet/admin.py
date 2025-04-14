@@ -19,19 +19,19 @@ class StationTicketGateAdmin(admin.ModelAdmin):
     list_display = ("station_ticket_gate",)
 
 class MaleToiletAdmin(admin.ModelAdmin):
-    list_display = ("toilet_id", "value", "toilet_stall", "urial", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair",)
+    list_display = ("toilet_id", "value", "size", "congestion", "toilet_stall", "urial", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair",)
     search_fields = ("toilet_id", "value",)
     list_filter = ("toilet_id", "value",)
 
 class FemaleToiletAdmin(admin.ModelAdmin):
-    list_display = ("toilet_id", "value", "toilet_stall", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair", "powder_room")
+    list_display = ("toilet_id", "value", "size", "congestion", "toilet_stall", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair", "powder_room")
     search_fields = ("toilet_id", "value",)
     list_filter = ("toilet_id", "value",)
 
 class MultiFunctionalToiletAdmin(admin.ModelAdmin):
-    list_display = ("toilet_id", "value", "toilet_stall", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair",)
-    search_fields = ("toilet_id", "value",)
-    list_filter = ("toilet_id", "value",)
+    list_display = ("toilet_id", "value", "size", "congestion", "toilet_stall", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair",)
+    search_fields = ("toilet_id", "value", "size", "congestion",)
+    list_filter = ("toilet_id", "value", "size", "congestion",)
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ("toilet", "user", "gender", "value")
