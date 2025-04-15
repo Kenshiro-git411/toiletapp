@@ -1,21 +1,26 @@
 {% extends 'toilet/base.html' %}
 {% load mytag %}
+{% load static %}
 
 {% block title %} トイレ検索結果 {% endblock %}
 
 {% block content %}
-<h1 id="station_name" class="pb-5 my-5 sm:my-10 text-center font-bold text-3xl border-b border-blue-400 border-b-8 data-station='{{ station_name }}'">{{ station_name }}駅のトイレ</h1>
+<div class="flex items-center justify-center pb-5 my-5 sm:my-10 border-b border-[#5BB0EB]">
+    <h1 id="station_name" class="text-center font-bold text-3xl text-[#5BB0EB] data-station='{{ station_name }}'">{{ station_name }}駅のトイレ</h1>
+    <img src="{% static '/toilet/toilet_research_result.png' %}" alt="ロゴ_トイレ" class="w-6 h-auto rounded-lg ml-1">
+</div>
+
 <div id="toilet_obj" data-pk="{{ toilet.toilet_id.pk }}">
-    <h2 class="font-bold text-lg text-center p-2 border border-gray-500 rounded-full shadow-sm">{{ place }}</h2>
+    <h2 class="font-bold text-lg text-center p-2 rounded-full shadow-sm border border-gray-500 text-gray-700">{{ place }}</h2>
     <div class="w-full flex items-center justify-center mt-10">
         <ul class="flex w-full max-w-3xl justify-center space-x-2">
-            <li id="male_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-gray-100 hover:shadow-none hover:duration-400">
+            <li id="male_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#e6f0f0] hover:shadow-none hover:duration-400">
                 男性
             </li>
-            <li id="female_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-gray-100 hover:shadow-none hover:duration-400">
+            <li id="female_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#e6f0f0] hover:shadow-none hover:duration-400">
                 女性
             </li>
-            <li id="multi_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-gray-100 hover:shadow-none hover:duration-400">
+            <li id="multi_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#e6f0f0] hover:shadow-none hover:duration-400">
                 多機能
             </li>
         </ul>
@@ -48,8 +53,8 @@
                 {% for label, value in toilet_info %}
                 {% if value is not None %}
                 <tr class="border border-gray-300 h-full flex flex-col justify-between">
-                    <th class="border border-gray-300 p-4 bg-blue-500 text-white">{{ label }}</th>
-                    <td class="border border-gray-300 p-4 bg-blue-100 text-center">{{ value }}</td>
+                    <th class="border border-gray-300 p-4 bg-[#5BB0EB] text-white">{{ label }}</th>
+                    <td class="border border-gray-300 p-4 bg-[#e6f0f0] text-center">{{ value }}</td>
                 </tr>
                 {% endif %}
                 {% endfor %}
@@ -58,8 +63,8 @@
         <table class="table-auto border-collapse w-full max-w-3xl mt-3">
             <tbody>
                 <tr class="border border-gray-300 h-full flex flex-col justify-between">
-                    <th class="border border-gray-300 p-4 bg-blue-500 text-white">経路</th>
-                    <td class="border border-gray-300 p-4 bg-blue-100 text-center">{{ root }}</td>
+                    <th class="border border-gray-300 p-4 bg-[#5BB0EB] text-white">経路</th>
+                    <td class="border border-gray-300 p-4 bg-[#e6f0f0] text-center">{{ root }}</td>
                 </tr>
             </tbody>
         </table>
@@ -80,7 +85,7 @@
         {% endif %}
     </div>
 </div>
-<a id="review_link" href="{% url 'toilet:toilet_review' toilet.toilet_id.pk toilet.gender.pk %}" class="block mx-auto text-center w-1/2 bg-blue-500 border-transparent mt-10 py-2 shadow-lg text-white font-bold hover:shadow-none hover:duration-700">レビューする</a>
+<a id="review_link" href="{% url 'toilet:toilet_review' toilet.toilet_id.pk toilet.gender.pk %}" class="block mx-auto text-center w-1/2 bg-[#62AEE4] hover:bg-[#40A0E3] border-transparent mt-10 py-2 shadow-lg text-white hover:shadow-none hover:duration-400">レビューする</a>
 {% if common_station_id %}
     <form action="{% url 'toilet:search_toilet' %}" method="post" class="my-8 ">
         {% csrf_token %}
@@ -150,7 +155,7 @@
             // すべてのボタンのスタイルをリセット
             const btns = document.querySelectorAll(".gen-btn");
             btns.forEach(btn => {
-                btn.classList.remove("bg-black", "text-white");
+                btn.classList.remove("bg-[#4EAFA8]", "text-white");
                 btn.classList.add("shadow-md", "bg-gray-100");
             });
     
@@ -169,7 +174,7 @@
     
     
             btn.classList.remove("shadow-md", "bg-gray-100");
-            btn.classList.add("bg-black", "text-white");
+            btn.classList.add("bg-[#4EAFA8]", "text-white");
         }
 
         console.log("updateToiletInfoが実行されました");
@@ -243,11 +248,11 @@
                     tr.classList.add("border", "border-gray-300", "h-full", "flex", "flex-col", "justify-between");
     
                     const th = document.createElement("th");
-                    th.classList.add("border", "border-gray-300", "p-4", "bg-blue-500", "text-white");
+                    th.classList.add("border", "border-gray-300", "p-4", "bg-[#5BB0EB]", "text-white");
                     th.textContent = info.label;
     
                     const td = document.createElement("td");
-                    td.classList.add("border", "border-gray-300", "p-4", "bg-blue-100", "text-center");
+                    td.classList.add("border", "border-gray-300", "p-4", "bg-[#e6f0f0]", "text-center");
                     td.textContent = info.value;
     
                     tr.appendChild(th);

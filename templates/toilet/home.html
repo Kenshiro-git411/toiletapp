@@ -2,9 +2,12 @@
 
 {% block title %} トイレGOホーム {% endblock %}
 
+{% load static %}
 {% block content %}
     <div class="flex items-center justify-center my-5 sm:my-10">
-        <h2 class="font-bold text-2xl">トイレGO</h2>
+        <img src="{% static '/toilet/man_running.png' %}" alt="ロゴ_トイレ_人" class="w-6 h-auto rounded-lg flex items-center justify-center">
+        <h1 class="font-bold text-3xl text-[#86C3EE]">イレGO</h1>
+        <img src="{% static '/toilet/toilet_image.png' %}" alt="ロゴ_トイレ" class="w-9 h-auto rounded-lg">
     </div>
     <div class="flex items-center justify-center my-5">
         <p class="text-center font-bold">
@@ -14,13 +17,13 @@
         </p>
     </div>
     <div class="flex flex-col items-center justify-center space-y-6">
-        <a href="{% url 'toilet:search_toilet' %}" class="w-full p-5 rounded rounded-full bg-blue-500/30 text-center text-2xl font-bold">トイレを探す</a>
-        <a href="{% url 'toilet:toilet_rank' %}" class="w-full p-5 rounded rounded-full bg-blue-500/30 text-center text-2xl font-bold">ランキングを見る</a>
-        <a href="{% url 'toilet:get_latest_comment' %}" class="w-full p-5 rounded rounded-full bg-blue-500/30 text-center text-2xl font-bold">最新のレビュー見る</a>
+        <a href="{% url 'toilet:search_toilet' %}" class="w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white">トイレを探す</a>
+        <a href="{% url 'toilet:toilet_rank' %}" class="w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white">ランキングを見る</a>
+        <a href="{% url 'toilet:get_latest_comment' %}" class="w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white">最新のレビュー見る</a>
     </div>
     {% if request.user.is_authenticated %}
     <div class="flex items-center justify-center mt-10">
-        <a href="{% url 'accounts:user_logout' %}" class=" border-b border-gray-500">ログアウト</a>
+        <a href="{% url 'accounts:user_logout' %}" class=" border-b border-gray-500 text-gray-500 hover:text-gray-700">ログアウト</a>
     </div>
     {% endif %}
 {% endblock %}

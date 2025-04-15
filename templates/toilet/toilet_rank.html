@@ -3,8 +3,8 @@
 {% block title %} トイレランキング {% endblock %}
 
 {% block content %}
-<div class="bg-blue-100 rounded-md p-2 sm:py-5 sm:mt-5">
-    <h1 class="pb-2 sm:pb-5 text-center font-bold text-2xl ">トイレランキング</h1>
+<div class="bg-[#E3EFF7] rounded-md p-2 sm:py-5 my-5 sm:my-10">
+    <h1 class="pb-2 sm:pb-5 text-center font-bold text-2xl">トイレランキング</h1>
     <form method="post" action="{% url 'toilet:toilet_rank' %}" class="flex flex-col justify-center ">{% csrf_token %}
         <div class="flex flex-col items-center justify-center space-y-4">
             <div class="w-full flex items-center justify-center space-x-2">
@@ -21,17 +21,17 @@
     </form>
 </div>
 {% if toilets %}
-<h2 class="text-2xl text-center p-3 mt-10 border border-gray-500 rounded-full">{{ line.train_line_name }}</h2>
+<h2 class="text-2xl text-center p-1 mt-10 border border-gray-500 rounded-full">{{ line.train_line_name }}</h2>
 <div id="toilet_obj" data-pk="{{ line.pk }}">
     <section id="toilet_gender" class="w-full flex items-center justify-center my-10" data-gender="{{ gender }}">
         <ul class="flex w-full max-w-3xl justify-center space-x-2">
-            <li id="male_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-gray-100 hover:shadow-none hover:duration-400">
+            <li id="male_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#e6f0f0] hover:shadow-none hover:duration-400">
                 男性
             </li>
-            <li id="female_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-gray-100 hover:shadow-none hover:duration-400">
+            <li id="female_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#e6f0f0] hover:shadow-none hover:duration-400">
                 女性
             </li>
-            <li id="multi_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-gray-100 hover:shadow-none hover:duration-400">
+            <li id="multi_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#e6f0f0] hover:shadow-none hover:duration-400">
                 だれでも
             </li>
         </ul>
@@ -232,8 +232,8 @@
             // すべてのボタンのスタイルをリセット
             const btns = document.querySelectorAll(".gen-btn");
             btns.forEach(btn => {
-                btn.classList.remove("bg-blue-500", "text-white");
-                btn.classList.add("shadow-md", "bg-gray-100");
+                btn.classList.remove("bg-[#4EAFA8]", "text-white");
+                btn.classList.add("shadow-md", "bg-[#e6f0f0]");
             });
 
             const gender_toilet_name = document.getElementById("gender_toilet_name");
@@ -252,8 +252,8 @@
                 gender_toilet_name.textContent = "多機能トイレ"
             }
 
-            btn.classList.remove("shadow-md", "bg-gray-100");
-            btn.classList.add("bg-blue-500", "text-white");
+            btn.classList.remove("shadow-md", "bg-[#e6f0f0]");
+            btn.classList.add("bg-[#4EAFA8]", "text-white");
         }
 
         // トイレデータをdjangoから取得する処理
@@ -461,9 +461,9 @@
             }
 
             // フラグをリセット（すでに拡張表示していたとしてもボタン押下時に初期化）
-            // valueIsExpanded = false;
-            // sizeIsExpanded = false;
-            // congestionIsExpanded = false;
+            valueIsExpanded = false;
+            sizeIsExpanded = false;
+            congestionIsExpanded = false;
         }
     });
 </script>
