@@ -1,13 +1,13 @@
 {% extends 'toilet/base.html' %}
+{% load static %}
 
 {% block title %} トイレGOホーム {% endblock %}
 
-{% load static %}
 {% block content %}
     <div class="flex items-center justify-center my-5 sm:my-10">
-        <img src="{% static '/toilet/man_running.png' %}" alt="ロゴ_トイレ_人" class="w-6 h-auto rounded-lg flex items-center justify-center">
+        <img src="{% static '/toilet/man_running.png' %}" alt="ロゴ_トイレ_人" class="w-6 h-auto flex items-center justify-center">
         <h1 class="font-bold text-3xl text-[#86C3EE]">イレGO</h1>
-        <img src="{% static '/toilet/toilet_image.png' %}" alt="ロゴ_トイレ" class="w-9 h-auto rounded-lg">
+        <img src="{% static '/toilet/toilet_image.png' %}" alt="ロゴ_トイレ" class="w-9 h-auto">
     </div>
     <div class="flex items-center justify-center my-5">
         <p class="text-center font-bold">
@@ -17,9 +17,16 @@
         </p>
     </div>
     <div class="flex flex-col items-center justify-center space-y-6">
-        <a href="{% url 'toilet:search_toilet' %}" class="w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white shadow-lg hover:shadow-none">トイレを探す</a>
-        <a href="{% url 'toilet:toilet_rank' %}" class="w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white shadow-lg hover:shadow-none">ランキングを見る</a>
-        <a href="{% url 'toilet:get_latest_comment' %}" class="w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white shadow-lg hover:shadow-none">最新のレビュー見る</a>
+        <a href="{% url 'toilet:search_toilet' %}" class="flex items-center justify-center w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white shadow-lg hover:shadow-none">
+            <span>トイレを探す</span>
+            <img src="{% static '/toilet/search_logo_home.png' %}" alt="ロゴ_虫眼鏡" class="w-6 ml-1 h-auto"></a>
+        <a href="{% url 'toilet:toilet_rank' %}" class="flex items-center justify-center w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white shadow-lg hover:shadow-none">
+            <span>ランキングを見る</span>
+            <img src="{% static '/toilet/rank_home.png' %}" alt="ロゴ_王冠" class="w-8 ml-1 h-auto"></a>
+        <a href="{% url 'toilet:get_latest_comment' %}" class="flex items-center justify-center w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white shadow-lg hover:shadow-none">
+            <span>最新のレビュー見る</span>
+            <img src="{% static '/toilet/review_logo_home.png' %}" alt="ロゴ_レビュー" class="w-8 ml-1 h-auto">
+        </a>
     </div>
     {% if request.user.is_authenticated %}
     <div class="flex items-center justify-center mt-10">

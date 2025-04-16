@@ -28,10 +28,9 @@
             {{ review_form.comment.label }}
             {{ review_form.comment }}
         </div>
-        <button type="submit" class="w-3/5 block mx-auto text-center bg-[#62AEE4] hover:bg-[#40A0E3] border-transparent mt-10 py-2 shadow-lg text-white font-bold hover:shadow-none hover:duration-400">レビュー</button>
+        <button type="submit" class="w-full sm:w-3/5 block mx-auto text-center bg-[#62AEE4] hover:bg-[#40A0E3] border-transparent mt-10 py-2 shadow-lg text-white font-bold hover:shadow-none hover:duration-400">レビュー</button>
     </form>
-</div>
-<script>
 
-</script>
+    <a href="{% url 'toilet:toilet_info' toilet.pk toilet.gender.pk  %}" class="inline-block my-8 border-b border-gray-500">トイレ詳細ページに戻る</a>
+</div>
 {% endblock %}

@@ -14,17 +14,14 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['SECRET_KEY']
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = os.environ['DEBUG']
 
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -111,21 +108,26 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] # デプロイ時にコメントアウトする
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static') # デプロイ時にコメント外す
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
 STATIC_URL = '/static/'
+if DEBUG:
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+# 開発環境
+if DEBUG:
+    MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
+# 本番環境
+else:
+    MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
 
 # 認証用のモデルとして設定
 AUTH_USER_MODEL = 'accounts.User'
@@ -133,16 +135,40 @@ AUTH_USER_MODEL = 'accounts.User'
 # ログインデフォルトURL
 LOGIN_URL = 'accounts/user_login'
 
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # メールの内容をコンソールに表示する。
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #djangoappプロジェクトフォルダ配下のmediaフォルダを指定。
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com' # GmailのSMTPサーバー
-EMAIL_PORT = 587 # Gmailサーバーのポート番号
-EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
-EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
-EMAIL_USE_TLS = True # SMTPサーバーと通信する際に、TLS（セキュア）接続する
-
+# LINE 環境変数
 LINE_CHANNEL_ACCESS_TOKEN = os.environ['LINE_CHANNEL_ACCESS_TOKEN']
 LINE_CHANNEL_SECRET = os.environ['LINE_CHANNEL_SECRET']
 LINE_LIFF_ID = os.environ['LINE_LIFF_ID']
+
+
+# 開発環境
+if DEBUG:
+    # SECURITY WARNING: keep the secret key used in production secret!
+    SECRET_KEY = os.environ['SECRET_KEY']
+
+    # ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ['*']
+
+    # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # メールの内容をコンソールに表示する。
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #djangoappプロジェクトフォルダ配下のmediaフォルダを指定。
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com' # GmailのSMTPサーバー
+    EMAIL_PORT = 587 # Gmailサーバーのポート番号
+    EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+    EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+    EMAIL_USE_TLS = True # SMTPサーバーと通信する際に、TLS（セキュア）接続する
+
+
+# 本番環境
+if not DEBUG:
+    SECRET_KEY = os.environ['SECRET_KEY']
+    ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '')
+    ALLOWED_HOSTS = ALLOWED_HOSTS.split(',') if ALLOWED_HOSTS else []
+    # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com' # GmailのSMTPサーバー
+    EMAIL_PORT = 587 # Gmailサーバーのポート番号
+    EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+    EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+    EMAIL_USE_TLS = True # SMTPサーバーと通信する際に、TLS（セキュア）接続する
+
 

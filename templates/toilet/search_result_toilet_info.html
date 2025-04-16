@@ -87,7 +87,7 @@
 </div>
 <a id="review_link" href="{% url 'toilet:toilet_review' toilet.toilet_id.pk toilet.gender.pk %}" class="block mx-auto text-center w-1/2 bg-[#62AEE4] hover:bg-[#40A0E3] border-transparent mt-10 py-2 shadow-lg text-white hover:shadow-none hover:duration-400">レビューする</a>
 {% if common_station_id %}
-    <form action="{% url 'toilet:search_toilet' %}" method="post" class="my-8 ">
+    <form action="{% url 'toilet:search_toilet' %}" method="post" class="my-8">
         {% csrf_token %}
         <input type="hidden" name="station_id" value="{{ common_station_id }}" />
         <button type="submit" class="border-b border-gray-500">トイレ一覧へ戻る</button>

@@ -1,12 +1,13 @@
 {% extends 'toilet/base.html' %}
 {% load mytag %}
-
+{% load static %}
 {% block title %} 最新のコメント {% endblock %}
 
 {% block content %}
-    <div class="flex items-center justify-center my-5 sm:my-10">
-        <h2 class="font-bold text-2xl">最新のコメント</h2>
-    </div>
+    <h2 class="flex items-center justify-center my-5 sm:my-10">
+        <span class="font-bold text-2xl text-[#40A0E3]">最新レビュー</span>
+        <img src="{% static '/toilet/review.png' %}" alt="ロゴ_レビュー" class="w-8 ml-1 h-auto">
+    </h2>
     <section class="w-full max-w-xl flex flex-col justify-center items-center py-2 mx-auto">
         <div class="w-full flex items-center py-2 border-b border-gray-300 text-lg font-bold">男性トイレ</div>
         <div class="w-full h-96 overflow-auto bg-white border border-gray-300 p-3 rounded-md my-2">

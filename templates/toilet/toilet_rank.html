@@ -1,9 +1,10 @@
 {% extends 'toilet/base.html' %}
 
+{% load static %}
 {% block title %} トイレランキング {% endblock %}
 
 {% block content %}
-<h1 class="w-full text-center font-bold text-2xl my-5 sm:my-10">トイレランキング</h1>
+<h1 class="flex items-center justify-center w-full text-center my-5 sm:my-10"><span class="text-[#40A0E3] font-bold text-2xl">トイレランキング</span><img src="{% static '/toilet/rank.png' %}" alt="ロゴ_王冠" class="w-8 ml-1 h-auto"></h1>
 <div class="bg-[#EAF3F8] rounded-md p-8 sm:py-5 my-5 sm:my-10">
     <form method="post" action="{% url 'toilet:toilet_rank' %}" class="flex flex-col justify-center ">{% csrf_token %}
         <div class="flex flex-col items-center justify-center space-y-4">
