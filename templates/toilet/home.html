@@ -17,9 +17,9 @@
         </p>
     </div>
     <div class="flex flex-col items-center justify-center space-y-6">
-        <a href="{% url 'toilet:search_toilet' %}" class="w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white">トイレを探す</a>
-        <a href="{% url 'toilet:toilet_rank' %}" class="w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white">ランキングを見る</a>
-        <a href="{% url 'toilet:get_latest_comment' %}" class="w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white">最新のレビュー見る</a>
+        <a href="{% url 'toilet:search_toilet' %}" class="w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white shadow-lg hover:shadow-none">トイレを探す</a>
+        <a href="{% url 'toilet:toilet_rank' %}" class="w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white shadow-lg hover:shadow-none">ランキングを見る</a>
+        <a href="{% url 'toilet:get_latest_comment' %}" class="w-full p-5 rounded rounded-full bg-[#86C3EE] hover:bg-[#5BB0EB] text-center text-2xl font-bold text-white shadow-lg hover:shadow-none">最新のレビュー見る</a>
     </div>
     {% if request.user.is_authenticated %}
     <div class="flex items-center justify-center mt-10">

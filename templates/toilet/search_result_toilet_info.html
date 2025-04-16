@@ -14,13 +14,13 @@
     <h2 class="font-bold text-lg text-center p-2 rounded-full shadow-sm border border-gray-500 text-gray-700">{{ place }}</h2>
     <div class="w-full flex items-center justify-center mt-10">
         <ul class="flex w-full max-w-3xl justify-center space-x-2">
-            <li id="male_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#e6f0f0] hover:shadow-none hover:duration-400">
+            <li id="male_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#F6F8F8] hover:shadow-none hover:duration-400">
                 男性
             </li>
-            <li id="female_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#e6f0f0] hover:shadow-none hover:duration-400">
+            <li id="female_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#F6F8F8] hover:shadow-none hover:duration-400">
                 女性
             </li>
-            <li id="multi_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#e6f0f0] hover:shadow-none hover:duration-400">
+            <li id="multi_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#F6F8F8] hover:shadow-none hover:duration-400">
                 多機能
             </li>
         </ul>
@@ -54,7 +54,7 @@
                 {% if value is not None %}
                 <tr class="border border-gray-300 h-full flex flex-col justify-between">
                     <th class="border border-gray-300 p-4 bg-[#5BB0EB] text-white">{{ label }}</th>
-                    <td class="border border-gray-300 p-4 bg-[#e6f0f0] text-center">{{ value }}</td>
+                    <td class="border border-gray-300 p-4 bg-[#F6F8F8] text-center">{{ value }}</td>
                 </tr>
                 {% endif %}
                 {% endfor %}
@@ -64,7 +64,7 @@
             <tbody>
                 <tr class="border border-gray-300 h-full flex flex-col justify-between">
                     <th class="border border-gray-300 p-4 bg-[#5BB0EB] text-white">経路</th>
-                    <td class="border border-gray-300 p-4 bg-[#e6f0f0] text-center">{{ root }}</td>
+                    <td class="border border-gray-300 p-4 bg-[#F6F8F8] text-center">{{ root }}</td>
                 </tr>
             </tbody>
         </table>
@@ -156,7 +156,7 @@
             const btns = document.querySelectorAll(".gen-btn");
             btns.forEach(btn => {
                 btn.classList.remove("bg-[#4EAFA8]", "text-white");
-                btn.classList.add("shadow-md", "bg-gray-100");
+                btn.classList.add("shadow-md", "bg-[#F6F8F8]");
             });
     
             // ジェンダーボタンがデフォルトで選択される処理
@@ -173,7 +173,7 @@
             // this.classList.remove("bg-blue-500", "text-white");
     
     
-            btn.classList.remove("shadow-md", "bg-gray-100");
+            btn.classList.remove("shadow-md", "bg-[#F6F8F8]");
             btn.classList.add("bg-[#4EAFA8]", "text-white");
         }
 
@@ -252,7 +252,7 @@
                     th.textContent = info.label;
     
                     const td = document.createElement("td");
-                    td.classList.add("border", "border-gray-300", "p-4", "bg-[#e6f0f0]", "text-center");
+                    td.classList.add("border", "border-gray-300", "p-4", "bg-[#F6F8F8]", "text-center");
                     td.textContent = info.value;
     
                     tr.appendChild(th);

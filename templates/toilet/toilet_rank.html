@@ -3,8 +3,8 @@
 {% block title %} トイレランキング {% endblock %}
 
 {% block content %}
-<div class="bg-[#E3EFF7] rounded-md p-2 sm:py-5 my-5 sm:my-10">
-    <h1 class="pb-2 sm:pb-5 text-center font-bold text-2xl">トイレランキング</h1>
+<h1 class="w-full text-center font-bold text-2xl my-5 sm:my-10">トイレランキング</h1>
+<div class="bg-[#EAF3F8] rounded-md p-8 sm:py-5 my-5 sm:my-10">
     <form method="post" action="{% url 'toilet:toilet_rank' %}" class="flex flex-col justify-center ">{% csrf_token %}
         <div class="flex flex-col items-center justify-center space-y-4">
             <div class="w-full flex items-center justify-center space-x-2">
@@ -17,7 +17,7 @@
                 {% endfor %}
             </div>
         </div>
-        <button type="submit" class="w-full sm:w-2/5 block mx-auto text-center my-4 p-2 w-2/3 border border-gray-400 text-center shadow-md bg-gray-100 hover:shadow-none hover:duration-400">検索</button>
+        <button type="submit" class="w-full sm:w-2/5 block mx-auto text-center py-2 mt-4 text-center shadow-md text-white bg-[#62AEE4] hover:bg-[#40A0E3] hover:shadow-none hover:duration-400">検索</button>
     </form>
 </div>
 {% if toilets %}
@@ -25,35 +25,35 @@
 <div id="toilet_obj" data-pk="{{ line.pk }}">
     <section id="toilet_gender" class="w-full flex items-center justify-center my-10" data-gender="{{ gender }}">
         <ul class="flex w-full max-w-3xl justify-center space-x-2">
-            <li id="male_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#e6f0f0] hover:shadow-none hover:duration-400">
+            <li id="male_btn" class="gen-btn flex-1 p-3 border border-gray-400 bg-[#F6F8F8] text-center shadow-md hover:shadow-none hover:duration-400">
                 男性
             </li>
-            <li id="female_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#e6f0f0] hover:shadow-none hover:duration-400">
+            <li id="female_btn" class="gen-btn flex-1 p-3 border border-gray-400 bg-[#F6F8F8] text-center shadow-md hover:shadow-none hover:duration-400">
                 女性
             </li>
-            <li id="multi_btn" class="gen-btn flex-1 p-3 border border-gray-400 text-center shadow-md bg-[#e6f0f0] hover:shadow-none hover:duration-400">
+            <li id="multi_btn" class="gen-btn flex-1 p-3 border border-gray-400 bg-[#F6F8F8] text-center shadow-md hover:shadow-none hover:duration-400">
                 だれでも
             </li>
         </ul>
     </section>
     <section>
-        <h2 id="gender_toilet_name" class="flex items-center justify-center max-w-3xl text-2xl font-semibold">男性トイレ</h2>
-        <div id="toilet_value" class="flex flex-col items-center justify-center my-8 ">
-            <h2 class="text-xl">きれいさ</h2>
+        <h2 id="gender_toilet_name" class="flex items-center justify-center max-w-3xl text-2xl font-semibold text-gray-700">男性トイレ</h2>
+        <div id="toilet_value" class="flex flex-col items-center justify-center my-5 ">
+            <h2 class="w-full sm:w-2/3 mx-auto text-xl p-1 mb-2 border-b border-gray-200 text-center text-gray-700">きれいさ</h2>
             <table class="table-auto border-collapse w-full sm:w-2/3 mx-auto">
-                <thead>
-                    <tr class="bg-blue-100">
+                <thead >
+                    <tr class="py-1">
                         <td></td>
-                        <td class="w-2/3 text-left">駅名（トイレ場所）</td>
-                        <td class="w-1/3 text-center">評価</td>
+                        <td class="w-2/3 py-1 text-left">駅名（トイレ場所）</td>
+                        <td class="w-1/3 py-1 text-center">評価</td>
                     </tr>
                 </thead>
                 <tbody>
                 {% for toilet in toilets.toilet_value.all|slice:":5" %}
                     <tr class="h-full border-b border-gray-300">
-                        <td class="w-1/6 bg-blue-100 text-center py-4"><em>{{ forloop.counter }}位</em></td>
-                        <td class="w-2/3 bg-blue-100 text-left">{{ toilet.toilet_id }}</td>
-                        <td class="w-1/3 bg-blue-100 text-center">{{ toilet.value }}</td>
+                        <td class="w-1/6 bg-[#EAF3F8] text-center py-4"><em>{{ forloop.counter }}位</em></td>
+                        <td class="w-2/3 bg-[#EAF3F8] text-left">{{ toilet.toilet_id }}</td>
+                        <td class="w-1/3 bg-[#EAF3F8] text-center">{{ toilet.value }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -65,14 +65,21 @@
             {% endif %}
         </div>
         <div id="toilet_size" class="flex flex-col items-center justify-center my-8">
-            <h2 class="text-xl">広さ</h2>
+            <h2 class="w-full sm:w-2/3 mx-auto text-xl p-1 mb-2 border-b border-gray-200 text-center text-gray-700">広さ</h2>
             <table class="table-auto border-collapse w-full sm:w-2/3 max-w-3xl mx-auto">
+                <thead>
+                    <tr>
+                        <td></td>
+                        <td class="w-2/3 py-1 text-left">駅名（トイレ場所）</td>
+                        <td class="w-1/3 py-1 text-center">評価</td>
+                    </tr>
+                </thead>
                 <tbody>
                     {% for toilet in toilets.toilet_size.all|slice:":5" %}
                     <tr class="h-full border-b border-gray-300">
-                        <td class="w-1/6 bg-blue-100 text-center py-4"><em>{{ forloop.counter }}位</em></td>
-                        <td class="w-2/3 bg-blue-100 text-left">{{ toilet.toilet_id }}</td>
-                        <td class="w-1/3 bg-blue-100 text-center">{{ toilet.size }}</td>
+                        <td class="w-1/6 bg-[#EAF3F8] text-center py-4"><em>{{ forloop.counter }}位</em></td>
+                        <td class="w-2/3 bg-[#EAF3F8] text-left">{{ toilet.toilet_id }}</td>
+                        <td class="w-1/3 bg-[#EAF3F8] text-center">{{ toilet.size }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -84,14 +91,21 @@
             {% endif %}
         </div>
         <div id="toilet_congestion" class="flex flex-col items-center justify-center my-8">
-            <h2 class="text-xl">空き具合</h2>
+            <h2 class="w-full sm:w-2/3 mx-auto text-xl p-1 mb-2 border-b border-gray-200 text-center text-gray-700">空き具合</h2>
             <table class="table-auto border-collapse w-full sm:w-2/3 max-w-3xl mx-auto">
+                <thead>
+                    <tr>
+                        <td></td>
+                        <td class="w-2/3 py-1 text-left">駅名（トイレ場所）</td>
+                        <td class="w-1/3 py-1 text-center">評価</td>
+                    </tr>
+                </thead>
                 <tbody>
                     {% for toilet in toilets.toilet_congestion.all|slice:":5" %}
                     <tr class="h-full border-b border-gray-300">
-                        <td class="w-1/6 bg-blue-100 text-center py-4"><em>{{ forloop.counter }}位</em></td>
-                        <td class="w-2/3 bg-blue-100 text-left">{{ toilet.toilet_id }}</td>
-                        <td class="w-1/3 bg-blue-100 text-center">{{ toilet.congestion }}</td>
+                        <td class="w-1/6 bg-[#EAF3F8] text-center py-4"><em>{{ forloop.counter }}位</em></td>
+                        <td class="w-2/3 bg-[#EAF3F8] text-left">{{ toilet.toilet_id }}</td>
+                        <td class="w-1/3 bg-[#EAF3F8] text-center">{{ toilet.congestion }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -233,7 +247,7 @@
             const btns = document.querySelectorAll(".gen-btn");
             btns.forEach(btn => {
                 btn.classList.remove("bg-[#4EAFA8]", "text-white");
-                btn.classList.add("shadow-md", "bg-[#e6f0f0]");
+                btn.classList.add("shadow-md", "bg-[#F6F8F8]");
             });
 
             const gender_toilet_name = document.getElementById("gender_toilet_name");
@@ -252,7 +266,8 @@
                 gender_toilet_name.textContent = "多機能トイレ"
             }
 
-            btn.classList.remove("shadow-md", "bg-[#e6f0f0]");
+            gender_toilet_name.classList.add("text-gray-700")
+            btn.classList.remove("shadow-md", "bg-[#F6F8F8]");
             btn.classList.add("bg-[#4EAFA8]", "text-white");
         }
 
@@ -319,11 +334,11 @@
                     const em = document.createElement("em");
 
                     const td_1 = document.createElement("td");
-                    td_1.classList.add("w-1/6", "bg-blue-100", "text-center", "py-4");
+                    td_1.classList.add("w-1/6", "bg-[#EAF3F8]", "text-center", "py-4");
                     const td_2 = document.createElement("td");
-                    td_2.classList.add("w-2/3", "bg-blue-100", "text-left");
+                    td_2.classList.add("w-2/3", "bg-[#EAF3F8]", "text-left");
                     const td_3 = document.createElement("td");
-                    td_3.classList.add("w-1/3", "bg-blue-100", "text-center");
+                    td_3.classList.add("w-1/3", "bg-[#EAF3F8]", "text-center");
 
                     em.textContent = count+"位";
                     // let id = Number(info.id);
@@ -385,11 +400,11 @@
                     const em = document.createElement("em");
 
                     const td_1 = document.createElement("td");
-                    td_1.classList.add("w-1/6", "bg-blue-100", "text-center", "py-4");
+                    td_1.classList.add("w-1/6", "bg-[#EAF3F8]", "text-center", "py-4");
                     const td_2 = document.createElement("td");
-                    td_2.classList.add("w-2/3", "bg-blue-100", "text-left");
+                    td_2.classList.add("w-2/3", "bg-[#EAF3F8]", "text-left");
                     const td_3 = document.createElement("td");
-                    td_3.classList.add("w-1/3", "bg-blue-100", "text-center");
+                    td_3.classList.add("w-1/3", "bg-[#EAF3F8]", "text-center");
 
                     em.textContent = count+"位";
                     // let id = Number(info.id);
