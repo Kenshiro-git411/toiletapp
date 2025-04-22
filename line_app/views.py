@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-import json
+import json, os
 
 from linebot.v3 import (
     WebhookHandler
@@ -23,10 +23,12 @@ from linebot.v3.webhooks import (
 )
 
 # LINE Bot configuration
+line_channel_secret = "" # gitにpushしないようにする
 print("LINE_CHANNEL_ACCESS_TOKEN: ",settings.LINE_CHANNEL_ACCESS_TOKEN)
-print("LINE_CHANNEL_SECRET: ",settings.LINE_CHANNEL_SECRET)
+# print("LINE_CHANNEL_SECRET: ",settings.LINE_CHANNEL_SECRET)
+print()
 configuration = Configuration(access_token=settings.LINE_CHANNEL_ACCESS_TOKEN)
-handler = WebhookHandler(settings.LINE_CHANNEL_SECRET)
+handler = WebhookHandler(line_channel_secret)
 
 
 @csrf_exempt
@@ -45,6 +47,10 @@ def callback(request):
         print("Signature:", signature)
         print("Body:", body)
 
+        # print("LINE_CHANNEL_ACCESS_TOKEN: ", settings.LINE_CHANNEL_ACCESS_TOKEN)
+        # print("LINE_CHANNEL_SECRET: ", LINE_CHANNEL_SECRET)
+        # print()
+
         try:
             request_json = json.loads(body)
             print("request_json", request_json)
@@ -52,10 +58,10 @@ def callback(request):
             print("JSONデコードエラー")
             return HttpResponseBadRequest()
 
-        if not request_json["events"]:
-            # print("request_json", request_json)
-            print("空のイベントを無視")
-            return HttpResponse('OK')
+        # if not request_json["events"]:
+        #     # print("request_json", request_json)
+        #     print("空のイベントを無視")
+        #     return HttpResponse('OK')
 
         # handle webhook body
         try:
@@ -78,8 +84,6 @@ def handle_message(event):
         line_bot_api.reply_message_with_http_info(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
-                messages=[TextMessage(text="こんにちは")]
+                messages=[TextMessage(text="https://liff.line.me/2007002781-eQD6Wk94")]
             )
         )
-
-        # https://liff.line.me/2006987823-rbyRdp3p

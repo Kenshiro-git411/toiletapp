@@ -9,7 +9,7 @@
     <form method="post" action="{% url 'toilet:toilet_rank' %}" class="flex flex-col justify-center ">{% csrf_token %}
         <div class="flex flex-col items-center justify-center space-y-4">
             <div class="w-full flex items-center justify-center space-x-2">
-                <label class="">{{ search_line_form.line.label }}</label>
+                <label class="whitespace-nowrap">{{ search_line_form.line.label }}</label>
                 {{ search_line_form.line }}
             </div>
             <div class="w-full flex items-center justify-center space-x-8">

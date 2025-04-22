@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import Sum
+# from .forms import Review
 from . import forms
 from django.http import JsonResponse
 from .models import TrainLine, TrainStation, ToiletMaster, MaleToilet, FemaleToilet, MultiFunctionalToilet, Comment
@@ -6,7 +8,9 @@ from decimal import Decimal, ROUND_DOWN
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from accounts.models import Gender, User
-from django.db.models import F
+# from django.db.models import F
+from django.core.paginator import Paginator
+from django.http import Http404
 
 
 def home(request):
@@ -312,13 +316,14 @@ def change_toilet_data(request, toilet_pk, gender_num):
 def toilet_review(request, toilet_id, gender):
     "レビューボタン押されたときの処理"
 
-    # print("toilet_id:", toilet_id)
-    # print("gender:", gender)
-    # print("user:", request.user.pk)
+    print("toilet_id:", toilet_id)
+    print("gender:", gender)
+    print("user:", request.user.pk)
 
     try:
         if gender == 1:
             toilet = get_object_or_404(MaleToilet, toilet_id=toilet_id)
+            print("toilet: ", toilet)
         elif gender == 2:
             toilet = get_object_or_404(FemaleToilet, toilet_id=toilet_id)
         elif gender == 3:
@@ -341,10 +346,10 @@ def toilet_review(request, toilet_id, gender):
                 comment_data = Comment.objects.create(
                     user=user_instance,
                     comment=review_form.cleaned_data["comment"],
+                    gender=gender_instance,
                     value=review_form.cleaned_data["value"],
                     size=review_form.cleaned_data["size"],
                     congestion=review_form.cleaned_data["congestion"],
-                    gender=gender_instance,
                     toilet=toilet_instance,
                 )
                 data_dict = {
@@ -354,11 +359,17 @@ def toilet_review(request, toilet_id, gender):
                     "gender": gender,
                     "toilet_id": toilet_id, # toilet_idはToiletMasterテーブルのpk
                 }
-                calculate_value_size_congestion(data_dict)
+                calculate_value_size_congestion(data_dict['gender'], data_dict['toilet_id'])
 
                 return redirect('toilet:toilet_info', pk=toilet.pk, gender=gender)
         else:
-            review_form = forms.Review()
+            print("GETメソッド")
+            try:
+                review_form = forms.Review()
+                # review_form = None
+            except Exception as e:
+                print("フォーム生成エラー: ", e)
+                raise e
 
         return render(request, 'toilet/toilet_review.html', context={
                 'toilet': toilet,
@@ -367,52 +378,68 @@ def toilet_review(request, toilet_id, gender):
         )
 
     except ValueError as e:
-        # print(f"ジェンダー値不正error:{e}")
-        return HttpResponseBadRequest(f"無効なリクエスト: {e}")
+        return HttpResponseBadRequest(f"不正な値が指定されました: {e}")
+    
+    except Http404 as e:
+        return render(request, 'toilet/toilet_get_review_error.html', {
+            "message": "指定されたトイレ情報は見つかりませんでした。"
+        }, status=404)
     
     except Exception as e:
-        print("データを取得出来ませんでした")
-        return HttpResponseBadRequest("エラーが発生しました")
+        print("予期しないエラー: ", e)
+        return render(request, "toilet/toilet_get_review_error.html", {
+            "message": "予期しないエラーが発生しました。",
+            "error": str(e)
+        }, status=500)
     
-def calculate_value_size_congestion(data_dict):
-    gender = data_dict["gender"]
-    value = data_dict["value"]
-    size = data_dict["size"]
-    congestion = data_dict["congestion"]
-    toilet_id = data_dict["toilet_id"]
+def calculate_value_size_congestion(gender, toilet_id):
+    gender = gender
+    # value = data_dict["value"]
+    # size = data_dict["size"]
+    # congestion = data_dict["congestion"]
+    toilet_id = toilet_id
 
     if gender == 1:
-        # きれいさの平均を算出
+        # きれいさ
+        initial_value = MaleToilet.objects.filter(toilet_id=toilet_id).first().initial_value # 初期データ
         total_value = MaleToilet.objects.filter(toilet_id=toilet_id).first().value
 
         # 広さの平均を算出
+        initial_size = MaleToilet.objects.filter(toilet_id=toilet_id).first().initial_size # 初期データ
         total_size = MaleToilet.objects.filter(toilet_id=toilet_id).first().size
 
         # 空き具合の平均を算出
+        initial_congestion = MaleToilet.objects.filter(toilet_id=toilet_id).first().initial_congestion # 初期データ
         total_congestion = MaleToilet.objects.filter(toilet_id=toilet_id).first().congestion
 
         toilet = MaleToilet.objects.filter(toilet_id=toilet_id).first()
 
     elif gender == 2:
-        # きれいさの平均を算出
+        # きれいさ
+        initial_value = FemaleToilet.objects.filter(toilet_id=toilet_id).first().initial_value # 初期データ
         total_value = FemaleToilet.objects.filter(toilet_id=toilet_id).first().value
 
         # 広さの平均を算出
+        initial_size = FemaleToilet.objects.filter(toilet_id=toilet_id).first().initial_size # 初期データ
         total_size = FemaleToilet.objects.filter(toilet_id=toilet_id).first().size
 
         # 空き具合の平均を算出
+        initial_congestion = FemaleToilet.objects.filter(toilet_id=toilet_id).first().initial_congestion # 初期データ
         total_congestion = FemaleToilet.objects.filter(toilet_id=toilet_id).first().congestion
 
         toilet = FemaleToilet.objects.filter(toilet_id=toilet_id).first()
 
     elif gender == 3:
-        # きれいさの平均を算出
+        # きれいさ
+        initial_value = MultiFunctionalToilet.objects.filter(toilet_id=toilet_id).first().initial_value # 初期データ
         total_value = MultiFunctionalToilet.objects.filter(toilet_id=toilet_id).first().value
-        
+
         # 広さの平均を算出
+        initial_size = MultiFunctionalToilet.objects.filter(toilet_id=toilet_id).first().initial_size # 初期データ
         total_size = MultiFunctionalToilet.objects.filter(toilet_id=toilet_id).first().size
-        
+
         # 空き具合の平均を算出
+        initial_congestion = MultiFunctionalToilet.objects.filter(toilet_id=toilet_id).first().initial_congestion # 初期データ
         total_congestion = MultiFunctionalToilet.objects.filter(toilet_id=toilet_id).first().congestion
 
         toilet = MultiFunctionalToilet.objects.filter(toilet_id=toilet_id).first()
@@ -420,21 +447,37 @@ def calculate_value_size_congestion(data_dict):
         raise ValueError("不正gender値が設定されました")
 
     # コメントの数 + デフォルトで最初に登録されているデータ1件
-    length = (len(Comment.objects.filter(toilet_id=toilet_id, gender=gender)) + 1)
+    length = (Comment.objects.filter(toilet_id=toilet_id, gender=gender).count() + 1)
 
     # きれいさの総合値
-    """
-    総合値の計算方法（加重平均）
-    (total_value * (length - 1))の計算式は現在登録されているvalue(平均値)から
-    先ほどコメントテーブルに登録した1件分を引いた数を掛けることで前回分までの合計値を算出。
-    ((前回分までの合計値) + value) / lengthは、前回分までの合計値に今回分のvalueを
-    足すことで今回分までの合計値を算出し、コメント全体の数で割ることで平均値を算出する。
-    """
-    total_value = ((total_value * (length - 1)) + value) / length
+    comment_total_value_dict = Comment.objects.filter(toilet_id=toilet_id, gender=gender).aggregate(Sum('value'))
+    # print("total_value_dict", total_value_dict)
+
+    comment_total_value = comment_total_value_dict['value__sum'] or 0
+    # print("comment_total_value", comment_total_value)
+
+    total_value = (comment_total_value + initial_value) / length
+    # print("total_value", total_value)
+
     # 広さの総合値
-    total_size = ((total_size * (length - 1)) + size) / length
-    # 混み具合の総合値
-    total_congestion = ((total_congestion * (length - 1)) + congestion) / length
+    comment_total_size_dict = Comment.objects.filter(toilet_id=toilet_id, gender=gender).aggregate(Sum('size'))
+    # print("total_size_dict", total_size_dict)
+
+    comment_total_size = comment_total_size_dict['size__sum'] or 0
+    # print("comment_total_size", comment_total_size)
+
+    total_size = (comment_total_size + initial_size) / length
+    # print("total_size", total_size)
+
+    # 空き具合の総合値
+    comment_total_congestion_dict = Comment.objects.filter(toilet_id=toilet_id, gender=gender).aggregate(Sum('congestion'))
+    # print("total_congestion_dict", total_congestion_dict)
+
+    comment_total_congestion = comment_total_congestion_dict['congestion__sum'] or 0
+    # print("comment_total_congestion", comment_total_congestion)
+
+    total_congestion = (comment_total_congestion + initial_congestion) / length
+    # print("total_congestion", total_congestion)
 
     # データ更新
     toilet.value = round(total_value, 1)
@@ -444,6 +487,8 @@ def calculate_value_size_congestion(data_dict):
 
 
 def toilet_rank(request):
+    # ホーム画面でランキングを見るボタンが押された時の処理
+
     if request.method == "POST":
         search_line_form = forms.SearchLine(request.POST)
 
@@ -467,6 +512,8 @@ def toilet_rank(request):
         })
 
 def get_toilet_object_rank(request, line, gender):
+    # ランキング画面で性別ボタンが押された時の処理
+
     gender = int(gender)
 
     try:
@@ -490,6 +537,9 @@ def get_toilet_rank_queryset(line, gender):
 
     if gender == 1:
         # 男性トイレのオブジェクトを取得
+
+        # ★件数を限定して取得する
+
         return {
             "toilet_value": MaleToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('value').reverse(),
             "toilet_size": MaleToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('size').reverse(),
@@ -516,9 +566,9 @@ def get_toilet_rank_queryset(line, gender):
         raise ValueError("不正gender値が設定されました")
 
 def get_latest_comment(request):
-    male_comments = Comment.objects.filter(gender=1).order_by("data_create")
-    female_comments = Comment.objects.filter(gender=2).order_by("data_create")
-    multi_comments = Comment.objects.filter(gender=3).order_by("data_create")
+    male_comments = Comment.objects.filter(gender=1).order_by("data_create").reverse()
+    female_comments = Comment.objects.filter(gender=2).order_by("data_create").reverse()
+    multi_comments = Comment.objects.filter(gender=3).order_by("data_create").reverse()
     
     print(multi_comments)
     return render(request, "toilet/toilet_latest_comment.html", context={
@@ -526,3 +576,75 @@ def get_latest_comment(request):
         "female_comments": female_comments,
         "multi_comments": multi_comments
     })
+
+@login_required
+def user_comments(request):
+    print(request.user)
+    comments = Comment.objects.filter(user=request.user).order_by("data_create").reverse()
+
+    # ページネーション処理
+    paginator = Paginator(comments, 5)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "toilet/user_comments.html", {'page_obj': page_obj})
+
+def toilet_review_revise(request, pk):
+    comment = get_object_or_404(Comment, pk=pk, user=request.user)
+    print("comment", comment.toilet)
+    print("comment", comment.comment)
+    print("comment", comment.gender.pk)
+
+    if request.method == "POST":
+        form = forms.Review(request.POST, instance=comment)
+        gender_pk = comment.gender.pk
+        toilet_pk = comment.toilet.pk
+
+        if gender_pk == 1:
+            toilet_obj = MaleToilet.objects.filter(toilet_id=toilet_pk).first()
+            t_pk = toilet_obj.pk
+        elif gender_pk == 2:
+            toilet_obj = FemaleToilet.objects.filter(toilet_id=toilet_pk).first()
+            t_pk = toilet_obj.pk
+        elif gender_pk == 3:
+            toilet_obj = MultiFunctionalToilet.objects.filter(toilet_id=toilet_pk).first()
+            t_pk = toilet_obj.pk
+
+        try:
+            if form.is_valid():
+                form.save()
+                calculate_value_size_congestion(gender_pk, toilet_pk)
+                return redirect("toilet:toilet_info", pk=t_pk, gender=gender_pk)
+
+        except Exception as e:
+            print("e", e)
+    else:
+        review_form = forms.Review(instance=comment)
+
+    return render(request, "toilet/toilet_review_revise.html", context={
+        "review_form": review_form,
+        "comment": comment,
+    })
+
+def toilet_review_delete(request, pk):
+    comment = get_object_or_404(Comment, pk=pk, user=request.user)
+    gender_pk = comment.gender.pk
+    toilet_pk = comment.toilet.pk
+
+    if gender_pk == 1:
+        toilet_obj = MaleToilet.objects.filter(toilet_id=toilet_pk).first()
+        t_pk = toilet_obj.pk
+    elif gender_pk == 2:
+        toilet_obj = FemaleToilet.objects.filter(toilet_id=toilet_pk).first()
+        t_pk = toilet_obj.pk
+    elif gender_pk == 3:
+        toilet_obj = MultiFunctionalToilet.objects.filter(toilet_id=toilet_pk).first()
+        t_pk = toilet_obj.pk
+
+    try:
+        comment.delete()
+        calculate_value_size_congestion(gender_pk, toilet_pk)
+        return redirect("toilet:toilet_info", pk=t_pk, gender=gender_pk)
+    except Exception as e:
+        print("e", e)
+

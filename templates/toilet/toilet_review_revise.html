@@ -4,7 +4,7 @@
 
 {% block content %}
 <div>
-    <form method="post" action="{% url 'toilet:toilet_review' toilet.toilet_id.pk toilet.gender.pk %}">{% csrf_token %}
+    <form method="post" action="{% url 'toilet:toilet_review_revise' comment.pk %}">{% csrf_token %}
         <ul class="flex items-center space-x-4">
             <li class="my-3">
                 {{ review_form.value.label }}
@@ -21,7 +21,7 @@
         </ul>
         <div class="flex flex-col my-3">
             <label>トイレ場所</label>
-            <p class="flex pl-1 pr-3 py-1 bg-white w-fit border border-gray-500">{{ toilet.toilet_id.place }}</p>
+            <p class="flex pl-1 pr-3 py-1 bg-white w-fit border border-gray-500">{{ comment.toilet.place }}</p>
         </div>
         <div>
             {{ review_form.comment.label }}
@@ -29,7 +29,5 @@
         </div>
         <button type="submit" class="w-full sm:w-3/5 block mx-auto text-center bg-[#62AEE4] hover:bg-[#40A0E3] border-transparent mt-10 py-2 shadow-lg text-white font-bold hover:shadow-none hover:duration-400">レビュー</button>
     </form>
-
-    <a href="{% url 'toilet:toilet_info' toilet.pk toilet.gender.pk  %}" class="inline-block my-8 border-b border-gray-500">トイレ詳細ページに戻る</a>
 </div>
 {% endblock %}

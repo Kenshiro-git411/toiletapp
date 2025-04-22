@@ -18,8 +18,8 @@
                     <span class="">@{{ comment.user.username }}</span>
                     <span>{{ comment.data_create | time_since }}前</span>
                 </div>
-                <p class="px-1">トイレ：{{ comment.toilet }}</p>
-                <p class="px-1 text-justify">{{ comment.comment }}</p>
+                <p class="px-2">トイレ：{{ comment.toilet }}</p>
+                <p class="px-2 text-justify">{{ comment.comment }}</p>
             </div>
             {% endfor %}
             {% else %}

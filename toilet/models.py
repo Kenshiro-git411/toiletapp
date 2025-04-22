@@ -54,11 +54,17 @@ class MaleToilet(models.Model):
 
     toilet_id = models.ForeignKey(ToiletMaster, on_delete=models.CASCADE)
     gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
-    # きれいさ
+    # 初期データ(きれいさ)
+    initial_value = models.FloatField(null=True)
+    # 初期データ(広さ)
+    initial_size = models.FloatField(null=True)
+    # 初期データ(きれいさ)
+    initial_congestion = models.FloatField(null=True)
+    # きれいさ(平均値:随時更新)
     value = models.FloatField(null=True)
-    # 広さ
+    # 広さ(平均値:随時更新)
     size = models.FloatField(null=True)
-    # 混雑さ
+    # 混雑さ(平均値:随時更新)
     congestion = models.FloatField(null=True)
     # 個室
     toilet_stall = models.IntegerField(help_text="個室数を入力してください")
@@ -97,11 +103,17 @@ class FemaleToilet(models.Model):
 
     toilet_id = models.ForeignKey(ToiletMaster, on_delete=models.CASCADE)
     gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
-    # きれいさ
+    # 初期データ(きれいさ)
+    initial_value = models.FloatField(null=True)
+    # 初期データ(広さ)
+    initial_size = models.FloatField(null=True)
+    # 初期データ(きれいさ)
+    initial_congestion = models.FloatField(null=True)
+    # きれいさ(平均値:随時更新)
     value = models.FloatField(null=True)
-    # 広さ
+    # 広さ(平均値:随時更新)
     size = models.FloatField(null=True)
-    # 混雑さ
+    # 混雑さ(平均値:随時更新)
     congestion = models.FloatField(null=True)
     # 個室
     toilet_stall = models.IntegerField(help_text="個室数を入力してください")
@@ -142,11 +154,17 @@ class MultiFunctionalToilet(models.Model):
 
     toilet_id = models.ForeignKey(ToiletMaster, on_delete=models.CASCADE)
     gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
-    # きれいさ
+    # 初期データ(きれいさ)
+    initial_value = models.FloatField(null=True)
+    # 初期データ(広さ)
+    initial_size = models.FloatField(null=True)
+    # 初期データ(きれいさ)
+    initial_congestion = models.FloatField(null=True)
+    # きれいさ(平均値:随時更新)
     value = models.FloatField(null=True)
-    # 広さ
+    # 広さ(平均値:随時更新)
     size = models.FloatField(null=True)
-    # 混雑さ
+    # 混雑さ(平均値:随時更新)
     congestion = models.FloatField(null=True)
     # 個室
     toilet_stall = models.IntegerField(help_text="個室数を入力してください")
@@ -183,9 +201,9 @@ class Comment(models.Model):
     comment = models.TextField(max_length=300)
     gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
     value = models.IntegerField(help_text="5段階で数値を入力してください")
-    toilet = models.ForeignKey(ToiletMaster, on_delete=models.CASCADE)
     size = models.IntegerField(help_text="5段階で数値を入力してください", null=True)
     congestion = models.IntegerField(help_text="5段階で数値を入力してください", null=True)
+    toilet = models.ForeignKey(ToiletMaster, on_delete=models.CASCADE)
     data_create = models.DateTimeField(
         default=timezone.now,
         help_text="コメントされた日時"

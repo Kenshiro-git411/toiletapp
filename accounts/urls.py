@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from toilet import views as toilet_review
+
 
 app_name = 'accounts'
 

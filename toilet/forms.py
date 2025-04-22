@@ -1,6 +1,6 @@
 from django import forms
 from .models import TrainLine, ToiletMaster
-from toilet.models import Gender
+from toilet.models import Gender, Comment
 
 class SearchStation(forms.Form):
     station_name = forms.CharField(
@@ -14,7 +14,7 @@ class SearchStation(forms.Form):
         })
     )
 
-class Review(forms.Form):
+class Review(forms.ModelForm):
     value = forms.IntegerField(
         label="きれいさ",
         min_value=1,
@@ -53,6 +53,11 @@ class Review(forms.Form):
         }),
 
     )
+
+    # モデルと連携させることで、Commentモデルに連携されたフォームを作成 -> 登録データが入力された状態のフォームを表示できる
+    class Meta:
+        model = Comment
+        fields = ['value', 'size', 'congestion', 'comment']
 
 class SearchLine(forms.Form):
     line = forms.ModelChoiceField(
