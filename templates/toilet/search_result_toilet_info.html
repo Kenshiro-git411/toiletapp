@@ -77,6 +77,11 @@
             {% for comment in comments %}
                 <div class="my-3 p-2 border-b border-gray-400">
                     <span class="inline-block">@{{ comment.user.username }}</span><span class="text-sm text-gray-800 inline-block ml-1">{{ comment.data_create | time_since}}前</span>
+                    <div class="pl-2 space-x-2">
+                        <span>きれいさ★{{ comment.value }}</span>
+                        <span>広さ★{{ comment.size }}</span>
+                        <span>空き具合★{{ comment.congestion }}</span>
+                    </div>
                     <p class="p-2 text-justify">{{ comment.comment }}</p>
                 </div>
             {% endfor %}
@@ -268,7 +273,7 @@
     
             if (comments_data.length > 0){
                 comments_data.forEach(comment => {
-                    console.log(comment.comment);
+                    console.log("comment", comment);
                     const comments_inner = document.createElement("div");
                     comments_inner.classList.add("my-3", "p-2", "border-b", "border-gray-400");
     
@@ -280,6 +285,18 @@
                     const time = document.createElement("span");
                     time.textContent = timeSince(comment.data_create) + "前";
                     time.classList.add("inline-block", "text-sm", "text-gray-800", "pl-1");
+
+                    const div_three_points = document.createElement("div");
+                    div_three_points.classList.add("pl-2", "space-x-2");
+                    const value = document.createElement("span");
+                    value.textContent = "きれいさ★" + comment.value;
+                    const size = document.createElement("span");
+                    size.textContent = "広さ★" + comment.size;
+                    const congestion = document.createElement("span");
+                    congestion.textContent = "空き具合★" + comment.congestion;
+                    div_three_points.appendChild(value);
+                    div_three_points.appendChild(size);
+                    div_three_points.appendChild(congestion);
     
                     const com = document.createElement("p");
                     com.textContent = comment.comment;
@@ -287,6 +304,7 @@
     
                     comments_inner.appendChild(username);
                     comments_inner.appendChild(time);
+                    comments_inner.appendChild(div_three_points);
                     comments_inner.appendChild(com);
                     comments.appendChild(comments_inner);
                 })

@@ -81,7 +81,7 @@
 
                 suggestions.forEach(station => {
                     const li = document.createElement("li");
-                    li.textContent = `${station.station_name} (${station.train_line__train_line_name})`;
+                    li.textContent = `${station.station_name}(${station.train_line__railway_company})`;
                     li.setAttribute("data-id", station.id);
                     li.classList.add("p-2", "cursor-pointer", "hover:bg-gray-200");
 

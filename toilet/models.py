@@ -6,6 +6,7 @@ class TrainLine(models.Model):
     """路線マスターテーブル"""
 
     train_line_name = models.CharField(max_length=255)
+    railway_company = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         return self.train_line_name
@@ -42,7 +43,7 @@ class ToiletMaster(models.Model):
     toilet_root = models.TextField(null=True)
 
     def __str__(self):
-        return f"{self.station_id.station_name}({self.place})"
+        return f"{self.station_id.train_line.railway_company}{self.station_id.station_name}({self.place})"
 
     def get_opening_hours(self):
         """営業時間を 'HH:MM～HH:MM' の形式で取得"""

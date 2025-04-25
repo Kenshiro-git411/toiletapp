@@ -59,11 +59,7 @@
                 {% endfor %}
                 </tbody>
             </table>
-            {% if toilets.toilet_value.count > 5 %}
-                <button id="more_view_value" class="w-full sm:w-2/3 mt-4 px-4 py-2 bg-gray-100 text-black border border-gray-500 shadow-lg">もっと見る</button>
-            {% else %}
-                <button id="more_view_value" class="w-full sm:w-2/3 mt-4 px-4 py-2 bg-gray-100 text-black border border-gray-500 shadow-lg invisible">もっと見る</button>
-            {% endif %}
+            <button id="more_view_value" class="w-full sm:w-2/3 mt-4 px-4 py-2 bg-gray-100 text-black border border-gray-500 shadow-lg">もっと見る</button>
         </div>
         <div id="toilet_size" class="flex flex-col items-center justify-center my-8">
             <h2 class="w-full sm:w-2/3 mx-auto text-xl p-1 mb-2 border-b border-gray-200 text-center text-gray-700">広さ</h2>
@@ -85,11 +81,7 @@
                     {% endfor %}
                 </tbody>
             </table>
-            {% if toilets.toilet_size.count > 5 %}
-                <button id="more_view_size" class="w-full sm:w-2/3 mt-4 px-4 py-2 bg-gray-100 text-black border border-gray-500 shadow-lg">もっと見る</button>
-            {% else %}
-                <button id="more_view_size" class="w-full sm:w-2/3 mt-4 px-4 py-2 bg-gray-100 text-black border border-gray-500 shadow-lg invisible">もっと見る</button>
-            {% endif %}
+            <button id="more_view_size" class="w-full sm:w-2/3 mt-4 px-4 py-2 bg-gray-100 text-black border border-gray-500 shadow-lg">もっと見る</button>
         </div>
         <div id="toilet_congestion" class="flex flex-col items-center justify-center my-8">
             <h2 class="w-full sm:w-2/3 mx-auto text-xl p-1 mb-2 border-b border-gray-200 text-center text-gray-700">空き具合</h2>
@@ -111,11 +103,7 @@
                     {% endfor %}
                 </tbody>
             </table>
-            {% if toilets.toilet_congestion.count > 5 %}
-                <button id="more_view_congestion" class="w-full sm:w-2/3 mt-4 px-4 py-2 bg-gray-100 text-black border border-gray-500 shadow-lg">もっと見る</button>
-            {% else %}
-                <button id="more_view_congestion" class="w-full sm:w-2/3 mt-4 px-4 py-2 bg-gray-100 text-black border border-gray-500 shadow-lg invisible">もっと見る</button>
-            {% endif %}
+            <button id="more_view_congestion" class="w-full sm:w-2/3 mt-4 px-4 py-2 bg-gray-100 text-black border border-gray-500 shadow-lg">もっと見る</button>
         </div>
     </section>
     
@@ -129,10 +117,6 @@
         let toiletObj = document.getElementById('toilet_obj');
         let line_pk = toiletObj.dataset.pk;
         console.log(line_pk);
-
-        let valueIsExpanded = false; // 初期状態では「もっと見る」がされていないフラグ
-        let sizeIsExpanded = false;
-        let congestionIsExpanded = false;
 
         // ジェンダーボタンが押されたときに各種データを更新する処理
         const btnItem = document.querySelectorAll('.gen-btn');
@@ -152,9 +136,28 @@
                 console.log("gen_num", gen_num);
 
                 try {
-                    let toilet_data = await fetchToilet(line_pk, gen_num)
-                    console.log("updateToiletInfo前");
-                    updateToiletRank(toilet_data);
+                    let toilet_data = await fetchToilet(line_pk, gen_num, 5)
+                    
+                    updateRank(toilet_data, 1);
+                    v_isEnd = false;
+                    v_count = 5;
+                    more_view_value.textContent = "もっと見る";
+                    
+                    updateRank(toilet_data, 2);
+                    s_isEnd = false;
+                    s_count = 5;
+                    more_view_size.textContent = "もっと見る";
+                    
+                    updateRank(toilet_data, 3);
+                    c_isEnd = false;
+                    c_count = 5;
+                    more_view_congestion.textContent = "もっと見る";
+                    
+                    const toilet_gender = document.getElementById("toilet_gender");
+                    toilet_gender.setAttribute("data-gender", toilet_data.gender);
+                    console.log("更新後のdata-gender:", toilet_gender.dataset.gender);
+                    updateBtn();
+
                 } catch (error) {
                     console.error("データ取得エラー:", error);
                 }
@@ -163,76 +166,113 @@
 
         // もっと見るボタン(きれいさ)の処理
         const more_view_value = document.getElementById("more_view_value");
+        const step = 10;
+        let v_count = 5;
+        let v_isEnd = false;
         if (more_view_value){
             more_view_value.addEventListener("click", async() => {
                 let getGenderValue = document.getElementById("toilet_gender").dataset.gender;
                 console.log("取得したgetGenderValue: ", getGenderValue);
                 let value_flag = 1;
-                try {
-                    toilet_data = await fetchToilet(line_pk, getGenderValue);
-                    console.log("きれいさもっと見るボタン-toilet_data", toilet_data);
-                    console.log("取得したtoilet_data: ", toilet_data);
-                    if(!valueIsExpanded){
-                        updateRank(toilet_data, value_flag);
-                        more_view_value.textContent = "閉じる";
-                        valueIsExpanded = true;
-                    } else {
-                        closeView(toilet_data, value_flag);
+                if(v_isEnd){
+                    v_count = 5;
+                    v_isEnd = false;
+                    console.log("表示を少なくする");
+                    more_view_value.textContent = "閉じる";
+                    toilet_data = await fetchToilet(line_pk, getGenderValue, v_count);
+                    updateRank(toilet_data, value_flag);
+                    v_isEnd = toilet_data.is_end;
+
+                    if(v_isEnd == false){
                         more_view_value.textContent = "もっと見る";
-                        valueIsExpanded = false;
                     }
-                } catch (error) {
-                    console.log("データ取得エラー:", error);
+
+                } else {
+                    v_count += step;
+                    console.log("v_count: ", v_count);
+                    toilet_data = await fetchToilet(line_pk, getGenderValue, v_count);
+                    v_isEnd = toilet_data.is_end;
+                    console.log("v_isEnd: ", v_isEnd);
+                    updateRank(toilet_data, value_flag);
+
+                    if(v_isEnd == true){
+                        more_view_value.textContent = "閉じる";
+                    }
+
                 }
             })
         }
 
         // もっと見るボタン(広さ)の処理
         const more_view_size = document.getElementById("more_view_size");
+        let s_count = 5;
+        let s_isEnd = false;
         if(more_view_size){
             more_view_size.addEventListener("click", async() => {
                 let getGenderValue = document.getElementById("toilet_gender").dataset.gender;
                 console.log("取得したgetGenderValue: ", getGenderValue);
                 value_flag = 2;
-                try {
-                    toilet_data = await fetchToilet(line_pk, getGenderValue)
-                    console.log("取得したtoilet_data: ", toilet_data);
-                    if(!congestionIsExpanded){
-                        updateRank(toilet_data, value_flag);
-                        more_view_size.textContent = "閉じる";
-                        congestionIsExpanded = true;
-                    } else {
-                        closeView(toilet_data, value_flag);
+                if(s_isEnd){
+                    s_count = 5;
+                    s_isEnd = false;
+                    more_view_size.textContent = "閉じる";
+                    toilet_data = await fetchToilet(line_pk, getGenderValue, s_count);
+                    updateRank(toilet_data, value_flag);
+                    s_isEnd = toilet_data.is_end;
+
+                    if(s_isEnd == false){
                         more_view_size.textContent = "もっと見る";
-                        congestionIsExpanded = false;
                     }
-                } catch (error) {
-                    console.log("データ取得エラー:", error);
+
+                } else {
+                    s_count += step;
+                    console.log("s_count: ", s_count);
+                    toilet_data = await fetchToilet(line_pk, getGenderValue, s_count);
+                    s_isEnd = toilet_data.is_end;
+                    console.log("s_isEnd: ", s_isEnd);
+                    updateRank(toilet_data, value_flag);
+
+                    if(s_isEnd == true){
+                        more_view_size.textContent = "閉じる";
+                    }
+
                 }
             })
         }
 
         // もっと見るボタン(空き具合)の処理
         const more_view_congestion = document.getElementById("more_view_congestion");
+        let c_count = 5;
+        let c_isEnd = false;
         if(more_view_congestion){
             more_view_congestion.addEventListener("click", async() => {
                 let getGenderValue = document.getElementById("toilet_gender").dataset.gender;
                 console.log("取得したgetGenderValue: ", getGenderValue);
                 value_flag = 3;
-                try {
-                    toilet_data = await fetchToilet(line_pk, getGenderValue)
-                    console.log("取得したtoilet_data: ", toilet_data);
-                    if(!sizeIsExpanded){
-                        updateRank(toilet_data, value_flag);
-                        more_view_congestion.textContent = "閉じる";
-                        sizeIsExpanded = true;
-                    } else {
-                        closeView(toilet_data, value_flag);
+                if(c_isEnd){
+                    c_count = 5;
+                    c_isEnd = false;
+                    more_view_congestion.textContent = "閉じる";
+                    toilet_data = await fetchToilet(line_pk, getGenderValue, c_count);
+                    updateRank(toilet_data, value_flag);
+                    c_isEnd = toilet_data.is_end;
+
+                    if(c_isEnd == false){
                         more_view_congestion.textContent = "もっと見る";
-                        sizeIsExpanded = false;
                     }
-                } catch (error) {
-                    console.log("データ取得エラー:", error);
+
+                } else {
+                    c_count += step;
+                    console.log("c_count: ", c_count);
+                    toilet_data = await fetchToilet(line_pk, getGenderValue, c_count);
+                    c_isEnd = toilet_data.is_end;
+                    console.log("c_isEnd: ", c_isEnd);
+                    updateRank(toilet_data, value_flag);
+
+                    if(c_isEnd == true){
+                        more_view_congestion.textContent = "閉じる";
+                    }
+
                 }
             })
         }
@@ -273,8 +313,8 @@
         }
 
         // トイレデータをdjangoから取得する処理
-        async function fetchToilet(pk, gender_num) {
-            const url = `/toilet/get_toilet_object_rank/${encodeURIComponent(pk)}/${encodeURIComponent(gender_num)}/`;
+        async function fetchToilet(pk, gender_num, count) {
+            const url = `/toilet/get_toilet_object_rank/${encodeURIComponent(pk)}/${encodeURIComponent(gender_num)}/?count=${count}`;
             console.log("url", url);
 
             const response = await fetch(url);
@@ -288,10 +328,12 @@
             console.log("data", data);
             console.log("data.toilets", data.toilets);
             console.log("data.gender", data.gender);
+            console.log("data.is_end", data.is_end);
 
             return{
                 toilets: data.toilets,
-                gender: data.gender
+                gender: data.gender,
+                is_end: data.is_end,
             } || [];
         }
 
@@ -342,10 +384,7 @@
                     td_3.classList.add("w-1/3", "bg-[#EAF3F8]", "text-center");
 
                     em.textContent = count+"位";
-                    // let id = Number(info.id);
-                    td_2.textContent = `${info.toilet_id__station_id__station_name}(${info.toilet_id__place})`;
-                    // station = typeof"toilets.toilets.toilet_value.value.id";
-                    // console.log("駅名", station[id-1]);
+                    td_2.textContent = `${info.toilet_id__station_id__train_line__railway_company}${info.toilet_id__station_id__station_name}(${info.toilet_id__place})`;
                     if (flag === 1){
                         td_3.textContent = info.value.toFixed(1);
                     } else if(flag === 2){
@@ -362,124 +401,6 @@
                     count++;
                 }
             })
-        }
-
-        // ランキングの表を第5位までの表示とする処理
-        function closeView(toilets, flag){
-            let data;
-            let tbody
-            let station;
-            if (flag === 1) {
-                data = toilets.toilets.toilet_value;
-                tbody = document.querySelector("#toilet_value table tbody");
-                // station = toilets.toilets.toilet_value.station
-            } else if (flag === 2) {
-                data = toilets.toilets.toilet_size;
-                tbody = document.querySelector("#toilet_size table tbody");
-                // station = toilets.toilets.toilet_value.station
-            } else if (flag === 3) {
-                data = toilets.toilets.toilet_congestion;
-                tbody = document.querySelector("#toilet_congestion table tbody");
-                // station = toilets.toilets.toilet_value.station
-            } else {
-                throw new Error(`不正なflagの値です: $(flag)`);
-            }
-
-            if (!tbody) {
-                console.error("エラー:tbodyが見つかりませんでした");
-                return;
-            }
-            tbody.innerHTML = "";
-
-            let count = 1;
-
-            data.slice(0,5).forEach(info => {
-                console.log("info: ", info);
-                if (info.toilet_id != null){
-                    const tr = document.createElement("tr");
-                    tr.classList.add("h-full", "border-b", "border-gray-300");
-                    const em = document.createElement("em");
-
-                    const td_1 = document.createElement("td");
-                    td_1.classList.add("w-1/6", "bg-[#EAF3F8]", "text-center", "py-4");
-                    const td_2 = document.createElement("td");
-                    td_2.classList.add("w-2/3", "bg-[#EAF3F8]", "text-left");
-                    const td_3 = document.createElement("td");
-                    td_3.classList.add("w-1/3", "bg-[#EAF3F8]", "text-center");
-
-                    em.textContent = count+"位";
-                    // let id = Number(info.id);
-                    td_2.textContent = `${info.toilet_id__station_id__station_name}(${info.toilet_id__place})`;
-                    // station = typeof"toilets.toilets.toilet_value.value.id";
-                    // console.log("駅名", station[id-1]);
-                    if (flag === 1){
-                        td_3.textContent = info.value.toFixed(1);
-                    } else if(flag === 2){
-                        td_3.textContent = info.size.toFixed(1);
-                    } else if(flag === 3){
-                        td_3.textContent = info.congestion.toFixed(1);
-                    }
-
-                    td_1.appendChild(em);
-                    tr.appendChild(td_1);
-                    tr.appendChild(td_2);
-                    tr.appendChild(td_3);
-                    tbody.appendChild(tr);
-                    count++;
-                }
-            })
-        }
-
-        // ジェンダーボタンを押されたことによるランキング表の更新処理呼び出し
-        function updateToiletRank(toilets){
-            console.log("updateToiletRankが実行されました");
-            console.log("長さ確認toilets: ", toilets);
-
-            // ジェンダー値の更新
-            const toilet_gender = document.getElementById("toilet_gender");
-            toilet_gender.setAttribute("data-gender", toilets.gender);
-            console.log("更新後のdata-gender:", toilet_gender.dataset.gender);
-            updateBtn();
-
-            // きれいさランキングの更新
-            closeView(toilets, 1);
-
-            // 広さランキングの更新
-            closeView(toilets, 2);
-
-            // 空き具合ランキングの更新
-            closeView(toilets, 3);
-
-            // 「もっと見る」ボタンの表示更新
-            const more_view_value = document.getElementById("more_view_value");
-            const more_view_size = document.getElementById("more_view_size");
-            const more_view_congestion = document.getElementById("more_view_congestion");
-
-            if (toilets.toilets.toilet_value.length > 5) {
-                more_view_value.classList.remove("invisible");
-                more_view_value.textContent = "もっと見る";
-            } else {
-                more_view_value.classList.add("invisible");
-            }
-
-            if (toilets.toilets.toilet_size.length > 5) {
-                more_view_size.classList.remove("invisible");
-                more_view_size.textContent = "もっと見る";
-            } else {
-                more_view_size.classList.add("invisible");
-            }
-
-            if (toilets.toilets.toilet_congestion.length > 5) {
-                more_view_congestion.classList.remove("invisible");
-                more_view_congestion.textContent = "もっと見る";
-            } else {
-                more_view_congestion.classList.add("invisible");
-            }
-
-            // フラグをリセット（すでに拡張表示していたとしてもボタン押下時に初期化）
-            valueIsExpanded = false;
-            sizeIsExpanded = false;
-            congestionIsExpanded = false;
         }
     });
 </script>

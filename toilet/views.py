@@ -72,7 +72,7 @@ def suggest_station(request):
     if query:
         # icontainsを使って部分一致検索
         stations = TrainStation.objects.filter(station_name__icontains=query).values(
-            "id", "station_name", "train_line__train_line_name"
+            "id", "station_name", "train_line__train_line_name", "train_line__railway_company"
         )
 
         print(list(stations))
@@ -243,6 +243,9 @@ def change_toilet_data(request, toilet_pk, gender_num):
             "user",
             "user__username",
             "comment",
+            "value",
+            "size",
+            "congestion",
             "data_create"
         ))
     else:
@@ -494,7 +497,7 @@ def toilet_rank(request):
 
         line = request.POST.get("line")
         gender = request.POST.get("gender")
-        toilets = get_toilet_rank_queryset(line, gender)
+        toilets = get_toilet_rank_queryset(request, line, gender)
 
         line_obj = TrainLine.objects.filter(pk=line).first
 
@@ -517,53 +520,51 @@ def get_toilet_object_rank(request, line, gender):
     gender = int(gender)
 
     try:
-        toilets = get_toilet_rank_queryset(line, gender)
+        toilets = get_toilet_rank_queryset(request, line, gender)
+        print("toilets['is_end']:", toilets["is_end"])
         return JsonResponse ({
             "toilets": {
-                "toilet_value": list(toilets["toilet_value"].values("toilet_id", "toilet_id__station_id__station_name", "toilet_id__place", "value")),
+                "toilet_value": list(toilets["toilet_value"].values("toilet_id", "toilet_id__station_id__station_name", "toilet_id__place", "toilet_id__station_id__train_line__railway_company", "value")),
 
-                "toilet_size": list(toilets["toilet_size"].values("toilet_id", "toilet_id__station_id__station_name", "toilet_id__place", "size")),
+                "toilet_size": list(toilets["toilet_size"].values("toilet_id", "toilet_id__station_id__station_name", "toilet_id__place", "toilet_id__station_id__train_line__railway_company", "size")),
 
-                "toilet_congestion": list(toilets["toilet_congestion"].values("toilet_id", "toilet_id__station_id__station_name", "toilet_id__place", "congestion")),
+                "toilet_congestion": list(toilets["toilet_congestion"].values("toilet_id", "toilet_id__station_id__station_name", "toilet_id__place", "toilet_id__station_id__train_line__railway_company", "congestion")),
             },
             "gender": gender,
+            "is_end": toilets["is_end"]
         })
     except ValueError:
         return JsonResponse({"error": "無効なgender"}, status=400)
         
 
-def get_toilet_rank_queryset(line, gender):
+def get_toilet_rank_queryset(request, line, gender):
     gender = int(gender)
+    display_count = int(request.GET.get("count", 5))
+    
 
     if gender == 1:
         # 男性トイレのオブジェクトを取得
-
-        # ★件数を限定して取得する
-
-        return {
-            "toilet_value": MaleToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('value').reverse(),
-            "toilet_size": MaleToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('size').reverse(),
-            "toilet_congestion": MaleToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('congestion').reverse()
-        }
+        all_obj = MaleToilet.objects.filter(toilet_id__station_id__train_line=line)
 
     elif gender == 2:
         # 女性トイレのオブジェクトを取得
-        return {
-            "toilet_value": FemaleToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('value').reverse(),
-            "toilet_size": FemaleToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('size').reverse(),
-            "toilet_congestion": FemaleToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('congestion').reverse()
-        }
+        all_obj = FemaleToilet.objects.filter(toilet_id__station_id__train_line=line)
 
     elif gender == 3:
         # 多機能トイレのオブジェクトを取得
-        return {
-            "toilet_value": MultiFunctionalToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('value').reverse(),
-            "toilet_size": MultiFunctionalToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('size').reverse(),
-            "toilet_congestion": MultiFunctionalToilet.objects.filter(toilet_id__station_id__train_line=line).order_by('congestion').reverse()
-        }
+        all_obj = MultiFunctionalToilet.objects.filter(toilet_id__station_id__train_line=line)
 
     else:
         raise ValueError("不正gender値が設定されました")
+    
+    is_end = display_count >= all_obj.count()
+    print("is_end:", is_end) # 最後までデータを取得出来たらtrueになる
+    return {
+        "toilet_value": all_obj.order_by('value').reverse()[:display_count],
+        "toilet_size": all_obj.order_by('size').reverse()[:display_count],
+        "toilet_congestion": all_obj.order_by('congestion').reverse()[:display_count],
+        "is_end": is_end
+    }
 
 def get_latest_comment(request):
     male_comments = Comment.objects.filter(gender=1).order_by("data_create").reverse()

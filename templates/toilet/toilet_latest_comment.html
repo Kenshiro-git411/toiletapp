@@ -18,7 +18,12 @@
                     <span class="">@{{ comment.user.username }}</span>
                     <span>{{ comment.data_create | time_since }}前</span>
                 </div>
-                <p class="px-2">トイレ：{{ comment.toilet }}</p>
+                <span class="px-2">{{ comment.toilet }}</span>
+                <div class="pl-2 space-x-2">
+                    <span>きれいさ★{{ comment.value }}</span>
+                    <span>広さ★{{ comment.size }}</span>
+                    <span>空き具合★{{ comment.congestion }}</span>
+                </div>
                 <p class="px-2 text-justify">{{ comment.comment }}</p>
             </div>
             {% endfor %}
@@ -38,8 +43,13 @@
                         <span>@{{ comment.user.username }}</span>
                         <span class="text-sm">{{ comment.data_create | time_since }}前</span>
                     </div>
-                    <p class="px-1">トイレ：{{ comment.toilet }}</p>
-                    <p class="px-1 text-justify">{{ comment.comment }}</p>
+                    <span class="px-2">{{ comment.toilet }}</span>
+                    <div class="pl-2 space-x-2">
+                        <span>きれいさ★{{ comment.value }}</span>
+                        <span>広さ★{{ comment.size }}</span>
+                        <span>空き具合★{{ comment.congestion }}</span>
+                    </div>
+                    <p class="px-2 text-justify">{{ comment.comment }}</p>
                 </div>
                 {% endfor %}
             {% else %}
@@ -58,8 +68,13 @@
                         <span>@{{ comment.user.username }}</span>
                         <span class="text-sm">{{ comment.data_create | time_since }}前</span>
                     </div>
-                    <p class="px-1">トイレ：{{ comment.toilet }}</p>
-                    <p class="px-1 text-justify">{{ comment.comment }}</p>
+                    <span class="px-2">{{ comment.toilet }}</span>
+                    <div class="pl-2 space-x-2">
+                        <span>きれいさ★{{ comment.value }}</span>
+                        <span>広さ★{{ comment.size }}</span>
+                        <span>空き具合★{{ comment.congestion }}</span>
+                    </div>
+                    <p class="px-2 text-justify">{{ comment.comment }}</p>
                 </div>
                 {% endfor %}
             {% else %}
