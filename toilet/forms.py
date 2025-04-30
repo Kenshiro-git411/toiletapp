@@ -71,9 +71,15 @@ class SearchLine(forms.Form):
         required=True,
         error_messages={"required": "路線を選択してください"}
     )
-    # gender = forms.ChoiceField(
-    #     choices=[(g.pk, g.type) for g in Gender.objects.all()],
-    #     widget=forms.RadioSelect
-    # )
+    ################### 本番migraitonする前に一回コメントアウトする ###################
+    gender = forms.ChoiceField(
+        choices=[],
+        widget=forms.RadioSelect
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['gender'].choices = [(g.pk, g.type) for g in Gender.objects.all()]
+
 
 

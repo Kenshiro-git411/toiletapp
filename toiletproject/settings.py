@@ -3,21 +3,26 @@ from dotenv import load_dotenv
 import os
 
 # 環境変数.envの読み込み
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 
-
+# .envファイルの読み込みを確実に行う
+load_dotenv(override=True)  # override=True を追加
+# または以下のように詳細な設定も可能
+load_dotenv(
+    dotenv_path=BASE_DIR / '.env',
+    override=True,
+    verbose=True  # 読み込み状況をログ出力
+)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-DEBUG = os.environ['DEBUG']
-
+DEBUG = os.environ['DEBUG'].lower() == 'true'
 # ALLOWED_HOSTS = ['*']
 
 
@@ -139,7 +144,6 @@ LOGIN_URL = 'accounts/user_login'
 LINE_CHANNEL_ACCESS_TOKEN = os.environ['LINE_CHANNEL_ACCESS_TOKEN']
 LINE_CHANNEL_SECRET = os.environ['LINE_CHANNEL_SECRET']
 LINE_LIFF_ID = os.environ['LINE_LIFF_ID']
-
 
 # 開発環境
 if DEBUG:

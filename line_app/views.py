@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from toilet.views import home
 from accounts.views import liff_login_view
-
+import json
 from linebot.v3 import (
     WebhookHandler
 )
@@ -38,7 +38,12 @@ def callback(request):
 
         # get request body as text
         body = request.body.decode('utf-8')
-
+        request_json = json.loads(request.body.decode('utf-8'))
+        # print(request_json)
+        events = request_json['events']
+        if not request_json["events"]:
+            return HttpResponse('OK')
+    
         # handle webhook body
         try:
             handler.handle(body, signature)

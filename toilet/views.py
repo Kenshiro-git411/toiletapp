@@ -11,10 +11,15 @@ from accounts.models import Gender, User
 # from django.db.models import F
 from django.core.paginator import Paginator
 from django.http import Http404
+from django.conf import settings
 
 
 def home(request):
-    return render(request, 'toilet/home.html')
+    print("LINE_LIFF_ID", settings.LINE_LIFF_ID)
+    context = {
+        "liff_id": settings.LINE_LIFF_ID,
+    }
+    return render(request, 'toilet/home.html', context)
 
 def search_toilet(request):
     if request.method == 'POST':
