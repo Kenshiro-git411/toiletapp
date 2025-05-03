@@ -4,7 +4,14 @@
 {% block title %} トイレGOホーム {% endblock %}
 
 {% block content %}
-    <div class="flex items-center justify-center my-5 sm:my-10">
+    {% if not user.is_authenticated %}
+    <p class="text-gray-400">
+        ログインされていません
+    </p>
+    {% else %}
+        <p class="text-gray-400">{{ user.username }}でログイン中</p>
+    {% endif %}
+    <div class="flex items-center justify-center my-5">
         <img src="{% static '/toilet/man_running.png' %}" alt="ロゴ_トイレ_人" class="w-6 h-auto flex items-center justify-center">
         <h1 class="font-bold text-3xl text-[#86C3EE]">イレGO</h1>
         <img src="{% static '/toilet/toilet_image.png' %}" alt="ロゴ_トイレ" class="w-9 h-auto">
@@ -33,4 +40,69 @@
         <a href="{% url 'accounts:user_logout' %}" class=" border-b border-gray-500 text-gray-500 hover:text-gray-700">ログアウト</a>
     </div>
     {% endif %}
+{% endblock %}
+{% block extra_js %}
+<!-- CSRFトークンを隠しフィールドとして追加 -->
+<form id="csrf-form" style="display: none;">
+    {% csrf_token %}
+</form>
+
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/versions/2.22.3/sdk.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const isLineApp = navigator.userAgent.toLowerCase().includes('line');
+        console.log("LINEアプリからのアクセスか？", isLineApp);
+    
+        if (!isLineApp) {
+            console.log("LINEアプリではないため、LIFFログインは実行しません。");
+            return;
+        }
+    
+        // LINEアプリからのアクセス時のみログイン処理を実行
+        liff.init({
+            liffId: "{{ liff_id }}"
+        })
+        .then(() => {
+            if (!liff.isLoggedIn()) {
+                liff.login();
+            } else {
+                {% if not user.is_authenticated %}
+                liff.getProfile()
+                    .then(profile => {
+                        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                        fetch('{% url "accounts:liff_login" %}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken
+                            },
+                            credentials: 'same-origin',
+                            body: JSON.stringify({
+                                line_id: profile.userId,
+                                line_name: profile.displayName
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success && data.redirect_url) {
+                                window.location.href = data.redirect_url;
+                            } else {
+                                console.error('Login failed:', data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Login error:', error);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error getting profile:', error);
+                    });
+                {% endif %}
+            }
+        })
+        .catch(err => {
+            console.error('LIFF initialization failed', err);
+        });
+    });
+</script>
 {% endblock %}

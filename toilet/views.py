@@ -11,10 +11,16 @@ from accounts.models import Gender, User
 # from django.db.models import F
 from django.core.paginator import Paginator
 from django.http import Http404
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 
 
 def home(request):
-    return render(request, 'toilet/home.html')
+    print("LINE_LIFF_ID", settings.LINE_LIFF_ID)
+    context = {
+        "liff_id": settings.LINE_LIFF_ID,
+    }
+    return render(request, 'toilet/home.html', context)
 
 def search_toilet(request):
     if request.method == 'POST':
@@ -144,7 +150,7 @@ def toilet_info(request, pk, gender):
         congestion = congestion.quantize(Decimal("0.0"), rounding=ROUND_DOWN)
         root = toilet.toilet_id.toilet_root
 
-        comments = Comment.objects.filter(toilet=toilet.toilet_id, gender=gender)
+        comments = Comment.objects.filter(toilet=toilet.toilet_id, gender=gender).order_by("data_create").reverse()
         # print(comments)
         if not comments.exists():
             print("コメントはありません")
@@ -236,7 +242,7 @@ def change_toilet_data(request, toilet_pk, gender_num):
     # 性別id
     gen = toilet.gender.pk
     # コメント
-    comments = Comment.objects.select_related("user").filter(gender=gen, toilet=toilet_pk)
+    comments = Comment.objects.select_related("user").filter(gender=gen, toilet=toilet_pk).order_by("data_create").reverse()
     print(comments)
     if comments.exists():
         comments = list(comments.values(

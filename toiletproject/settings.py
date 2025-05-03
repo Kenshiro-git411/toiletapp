@@ -10,14 +10,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 
+# .envファイルの読み込みを確実に行う
+load_dotenv(override=True)  # override=True を追加
+# または以下のように詳細な設定も可能
+load_dotenv(
+    dotenv_path=BASE_DIR / '.env',
+    override=True,
+    verbose=True  # 読み込み状況をログ出力
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-DEBUG = os.environ['DEBUG']
-
+# DEBUG = os.environ['DEBUG']
+DEBUG = os.environ['DEBUG'].lower() == 'true'
+# print(DEBUG)
 # ALLOWED_HOSTS = ['*']
 
 
@@ -116,9 +125,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 STATIC_URL = '/static/'
-if DEBUG:
+if DEBUG: # (DEBUG=True)
     STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-else:
+else:# (DEBUG=False)
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
@@ -140,6 +149,10 @@ LINE_CHANNEL_ACCESS_TOKEN = os.environ['LINE_CHANNEL_ACCESS_TOKEN']
 LINE_CHANNEL_SECRET = os.environ['LINE_CHANNEL_SECRET']
 LINE_LIFF_ID = os.environ['LINE_LIFF_ID']
 
+# 以下のurlはCSRFを許可
+CSRF_TRUSTED_ORIGINS = [
+    "https://605c-106-72-36-161.ngrok-free.app"
+]
 
 # 開発環境
 if DEBUG:
@@ -158,7 +171,6 @@ if DEBUG:
     EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
     EMAIL_USE_TLS = True # SMTPサーバーと通信する際に、TLS（セキュア）接続する
 
-
 # 本番環境
 if not DEBUG:
     SECRET_KEY = os.environ['SECRET_KEY']
@@ -170,5 +182,4 @@ if not DEBUG:
     EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
     EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
     EMAIL_USE_TLS = True # SMTPサーバーと通信する際に、TLS（セキュア）接続する
-
 

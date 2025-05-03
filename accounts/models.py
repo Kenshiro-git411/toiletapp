@@ -125,3 +125,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # def get_username(self):
     #     return self.username if self.username else self.email
+
+    def __str__(self):
+        return self.username if self.username else self.email
