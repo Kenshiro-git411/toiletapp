@@ -20,11 +20,6 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import uuid
 
-
-def home(request):
-    return render(request, 'accounts/home.html')
-
-
 def user_login(request):
     login_form = forms.LoginForm()
 
@@ -51,11 +46,15 @@ def user_login(request):
 
     return render(request, 'accounts/user_login.html', context={
         'login_form': login_form,
-        "liff_id": settings.LINE_LIFF_ID,
+        'liff_id': settings.LINE_LIFF_ID,
     })
+
+def liff_redirect_login(request):
+    return redirect('accounts:user_login')
 
 def liff_login_view(request):
     if request.method == 'POST':
+        print("django内、ラインユーザーのログイン認証を開始")
         try:
             # JSON形式のデータを解析
             data = json.loads(request.body)

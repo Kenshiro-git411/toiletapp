@@ -26,58 +26,65 @@
             <a href="{% url 'accounts:user_create' %}" class="mx-auto text-center text-[#40A0E3] font-bold bg-white my-5 py-2 w-full sm:w-3/5 outline outline-3 outline-bg-[#40A0E3] shadow-lg hover:shadow-none hover:duration-700">ユーザー登録</a>
         </div>
     </div>
+    <p>LIFF ID: {{ liff_id }}</p>
     <!-- CSRFトークンを隠しフィールドとして追加 -->
     <form id="csrf-form" style="display: none;">
         {% csrf_token %}
     </form>
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/versions/2.22.3/sdk.js"></script>
     <script>
+        const LIFF_ID = "{{ liff_id|escapejs }}";
         document.addEventListener("DOMContentLoaded", function(){
-            document.getElementById('line_login').addEventListener('click', () => {
-                liff.init({
-                    liffId: "{{ liff_id }}"
-                })
-                .then(() => {
-                    if (!liff.isLoggedIn()){
-                        liff.login();
-                    } else {
-                        {% if not user.is_authenticated %}
-                            liff.getProfile()
-                                .then(profile => {
-                                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-                                    fetch('{% url "accounts:liff_login" %}', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'X-CSRFToken': csrfToken
-                                        },
-                                        credentials: 'same-origin',
-                                        body: JSON.stringify({
-                                            line_id: profile.userId,
-                                            line_name: profile.displayName
-                                        })
-                                    })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.success && data.redirect_url) {
-                                            window.location.href = data.redirect_url;
-                                        } else {
-                                            console.error('Login failed:', data.message);
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Login error:', error);
-                                    });
+            // ライン公式の認証がされているかどうか
+            {% if not user.is_authenticated %}
+            liff.init({
+                liffId: LIFF_ID
+            })
+            .then(() => {
+                if (liff.isLoggedIn()){
+                    liff.getProfile().then(profile => {
+                        console.log("django内ログイン認証");
+                        const csrfToken = "{{ csrf_token }}";
+                            // django内ユーザー認証処理
+                            fetch("{% url 'accounts:liff_login' %}", {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': csrfToken
+                                },
+                                credentials: 'same-origin',
+                                body: JSON.stringify({
+                                    line_id: profile.userId,
+                                    line_name: profile.displayName
                                 })
-                                .catch(error => {
-                                    console.error('Error getting profile:', error);
-                                });
-                        {% endif %}
-                    }
-                })
-                .catch(err => {
-                    console.error('LIFF initialization failed', err);
-                })
+                            }).then(response => response.json())
+                            .then(data => {
+                                if(data.success && data.redirect_url){
+                                    window.location.href = data.redirect_url;
+                                } else {
+                                    alert("ログイン失敗:" + data.message);
+                                }
+                            }).catch(err => {
+                                console.error('送信エラー:', err);
+                            });
+                    });
+                }
+            }).catch(err => {
+                console.error("LIFF初期化エラー", err);
+            })
+            {% endif %}
+
+
+            // ラインでログインボタンを押されたときの処理
+            document.getElementById('line_login').addEventListener('click', () => {
+                console.log("userはLINE公式未認証です。認証を行います。")
+                // ライン公式の認証がされているかどうか
+                if (!liff.isLoggedIn()){
+                    // ライン公式の認証処理 -> リダイレクトで再度本画面に遷移する
+                    liff.login({
+                        redirectUri: "https://605c-106-72-36-161.ngrok-free.app/accounts/liff_redirect_login/"
+                    });
+                }
             });
         });
 

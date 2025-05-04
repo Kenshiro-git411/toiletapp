@@ -24,10 +24,10 @@ from linebot.v3.webhooks import (
 )
 
 # LINE Bot configuration
-line_channel_secret = "" # gitにpushしないようにする
+# line_channel_secret = "" # gitにpushしないようにする
 configuration = Configuration(access_token=settings.LINE_CHANNEL_ACCESS_TOKEN)
-# handler = WebhookHandler(settings.LINE_CHANNEL_SECRET)
-handler = WebhookHandler(line_channel_secret) # デプロイ前に消す
+handler = WebhookHandler(settings.LINE_CHANNEL_SECRET)
+# handler = WebhookHandler(line_channel_secret) # デプロイ前に消す
 
 
 @csrf_exempt
