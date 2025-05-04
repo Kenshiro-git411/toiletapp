@@ -49,9 +49,6 @@ def user_login(request):
         'liff_id': settings.LINE_LIFF_ID,
     })
 
-def liff_redirect_login(request):
-    return redirect('accounts:user_login')
-
 def liff_login_view(request):
     if request.method == 'POST':
         print("django内、ラインユーザーのログイン認証を開始")
