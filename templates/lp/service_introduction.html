@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>トイレGOサービス紹介</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#ffffff]">
+    <header class="bg-[#D9ECF9] h-20 flex relative shadow-md">
+        <div class="flex items-center justify-center w-full justify-between px-6">
+            <svg id="open_button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 flex items-end">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+            </svg>
+            <!-- トイレGOという文字は必ず画面上部中央に配置する -->
+            <a href="{% url 'toilet:home' %}" class="absolute left-1/2 transform -translate-x-1/2 text-lg">トイレGO</a>
+            <div class="px-5 ">
+                <nav>
+                    <ul class="flex space-x-6 ">
+                        {% if request.user.is_authenticated %}
+                            <li class="hidden md:inline">
+                                <a href="{% url 'toilet:user_comments' %}">マイページ</a>
+                            </li>
+                            <li class="block md:hidden flex items-end">
+                                <a href="{% url 'toilet:user_comments' %}">
+                                    <img src="{% static '/accounts/account_mypage.png' %}" alt="マイページ" class="w-6 h-auto">
+                                </a>
+                            </li>
+                            <li class="hidden md:inline">
+                                <a href="{% url 'accounts:user_info_update' %}">設定</a>
+                            </li>
+                            <li class="block md:hidden flex items-end">
+                                <a href="{% url 'accounts:user_info_update' %}">
+                                    <img src="{% static '/accounts/account_setting.png' %}" alt="設定" class="w-5 h-auto">
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="hidden md:inline">
+                                <a href="{% url 'accounts:user_login' %}">ログイン</a>
+                            </li>
+                            <li class="block md:hidden flex items-end">
+                                <a href="{% url 'accounts:user_login' %}">
+                                    <img src="{% static '/accounts/account_login.png' %}" alt="ログイン" class="w-5 h-auto">
+                                </a>
+                            </li>
+                            <li class="hidden md:inline">
+                                <a href="{% url 'accounts:user_create' %}">サインアップ</a>
+                            </li>
+                            <li class="block md:hidden flex items-end">
+                                <a href="{% url 'accounts:user_create' %}"><img src="{% static '/accounts/account_create.png' %}" alt="サインアップ" class="w-6 h-auto">
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section></section>
+
+    </main>
+</body>
+</html>
