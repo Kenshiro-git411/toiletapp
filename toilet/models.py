@@ -66,7 +66,7 @@ class MaleToilet(models.Model):
     value = models.FloatField(null=True)
     # 広さ(平均値:随時更新)
     size = models.FloatField(null=True)
-    # 混雑さ(平均値:随時更新)
+    # 空き具合(平均値:随時更新)
     congestion = models.FloatField(null=True)
     # 個室
     toilet_stall = models.IntegerField(help_text="個室数を入力してください")
@@ -80,25 +80,57 @@ class MaleToilet(models.Model):
     barrier_free_toilet = models.BooleanField(null=True)
     # 車いす対応
     wheelchair = models.BooleanField(null=True)
+    # 姿見
+    full_length_mirror = models.BooleanField(null=True)
+    # フィッティングボード
+    fitting_board = models.BooleanField(null=True)
+    # ゴミ箱
+    trash_can = models.BooleanField(null=True)
 
     def __str__(self):
         return f"{self.toilet_id.place}({self.toilet_id.station_id.station_name})"
 
     def warm_water_washing_toilet_seat_display(self):
         """温水洗浄便座の〇☓表示"""
+        if self.warm_water_washing_toilet_seat is None:
+            return "-"
         return "〇" if self.warm_water_washing_toilet_seat else "☓"
 
     def child_facility_display(self):
         """おむつ交換設備の〇☓表示"""
+        if self.child_facility is None:
+            return "-"
         return "〇" if self.child_facility else "☓"
 
     def barrier_free_toilet_display(self):
         """バリアフリートイレの〇☓表示"""
+        if self.barrier_free_toilet is None:
+            return "-"
         return "〇" if self.barrier_free_toilet else "☓"
 
     def wheelchair_display(self):
         """車いす対応の〇☓表示"""
+        if self.wheelchair is None:
+            return "-"
         return "〇" if self.wheelchair else "☓"
+    
+    def full_length_mirror_display(self):
+        """姿見の〇☓表示"""
+        if self.full_length_mirror is None:
+            return "-"
+        return "〇" if self.full_length_mirror else "☓"
+    
+    def fitting_board_display(self):
+        """フィッティングボードの〇☓表示"""
+        if self.fitting_board is None:
+            return "-"
+        return "〇" if self.fitting_board else "☓"
+    
+    def trash_can_display(self):
+        """ゴミ箱の〇☓表示"""
+        if self.trash_can is None:
+            return "-"
+        return "〇" if self.trash_can else "☓"
 
 class FemaleToilet(models.Model):
     """女性用トイレテーブル"""
@@ -115,7 +147,7 @@ class FemaleToilet(models.Model):
     value = models.FloatField(null=True)
     # 広さ(平均値:随時更新)
     size = models.FloatField(null=True)
-    # 混雑さ(平均値:随時更新)
+    # 空き具合(平均値:随時更新)
     congestion = models.FloatField(null=True)
     # 個室
     toilet_stall = models.IntegerField(help_text="個室数を入力してください")
@@ -129,26 +161,60 @@ class FemaleToilet(models.Model):
     wheelchair = models.BooleanField(null=True)
     # パウダールーム
     powder_room = models.BooleanField(null=True)
+    # 姿見
+    full_length_mirror = models.BooleanField(null=True)
+    # フィッティングボード
+    fitting_board = models.BooleanField(null=True)
+    # ゴミ箱
+    trash_can = models.BooleanField(null=True)
 
     def warm_water_washing_toilet_seat_display(self):
         """温水洗浄便座の〇☓表示"""
+        if self.warm_water_washing_toilet_seat is None:
+            return "-"
         return "〇" if self.warm_water_washing_toilet_seat else "☓"
 
     def child_facility_display(self):
         """おむつ交換設備の〇☓表示"""
+        if self.child_facility is None:
+            return "-"
         return "〇" if self.child_facility else "☓"
 
     def barrier_free_toilet_display(self):
         """バリアフリートイレの〇☓表示"""
+        if self.barrier_free_toilet is None:
+            return "-"
         return "〇" if self.barrier_free_toilet else "☓"
 
     def wheelchair_display(self):
         """車いす対応の〇☓表示"""
+        if self.wheelchair is None:
+            return "-"
         return "〇" if self.wheelchair else "☓"
 
     def powder_room_display(self):
         """パウダールームの〇☓表示"""
+        if self.wheelchair is None:
+            return "-"
         return "〇" if self.wheelchair else "☓"
+    
+    def full_length_mirror_display(self):
+        """姿見の〇☓表示"""
+        if self.full_length_mirror is None:
+            return "-"
+        return "〇" if self.full_length_mirror else "☓"
+    
+    def fitting_board_display(self):
+        """フィッティングボードの〇☓表示"""
+        if self.fitting_board is None:
+            return "-"
+        return "〇" if self.fitting_board else "☓"
+    
+    def trash_can_display(self):
+        """ゴミ箱の〇☓表示"""
+        if self.trash_can is None:
+            return "-"
+        return "〇" if self.trash_can else "☓"
 
 
 class MultiFunctionalToilet(models.Model):
@@ -166,7 +232,7 @@ class MultiFunctionalToilet(models.Model):
     value = models.FloatField(null=True)
     # 広さ(平均値:随時更新)
     size = models.FloatField(null=True)
-    # 混雑さ(平均値:随時更新)
+    # 空き具合(平均値:随時更新)
     congestion = models.FloatField(null=True)
     # 個室
     toilet_stall = models.IntegerField(help_text="個室数を入力してください")
@@ -178,22 +244,54 @@ class MultiFunctionalToilet(models.Model):
     barrier_free_toilet = models.BooleanField(null=True)
     # 車いす対応
     wheelchair = models.BooleanField(null=True)
+    # 姿見
+    full_length_mirror = models.BooleanField(null=True)
+    # フィッティングボード
+    fitting_board = models.BooleanField(null=True)
+    # ゴミ箱
+    trash_can = models.BooleanField(null=True)
 
     def warm_water_washing_toilet_seat_display(self):
         """温水洗浄便座の〇☓表示"""
+        if self.warm_water_washing_toilet_seat is None:
+            return "-"
         return "〇" if self.warm_water_washing_toilet_seat else "☓"
 
     def child_facility_display(self):
         """おむつ交換設備の〇☓表示"""
+        if self.child_facility is None:
+            return "-"
         return "〇" if self.child_facility else "☓"
 
     def barrier_free_toilet_display(self):
         """バリアフリートイレの〇☓表示"""
+        if self.barrier_free_toilet is None:
+            return "-"
         return "〇" if self.barrier_free_toilet else "☓"
 
     def wheelchair_display(self):
         """車いす対応の〇☓表示"""
+        if self.wheelchair is None:
+            return "-"
         return "〇" if self.wheelchair else "☓"
+    
+    def full_length_mirror_display(self):
+        """姿見の〇☓表示"""
+        if self.full_length_mirror is None:
+            return "-"
+        return "〇" if self.full_length_mirror else "☓"
+    
+    def fitting_board_display(self):
+        """フィッティングボードの〇☓表示"""
+        if self.fitting_board is None:
+            return "-"
+        return "〇" if self.fitting_board else "☓"
+    
+    def trash_can_display(self):
+        """ゴミ箱の〇☓表示"""
+        if self.trash_can is None:
+            return "-"
+        return "〇" if self.trash_can else "☓"
 
 class Comment(models.Model):
     """コメントテーブル"""

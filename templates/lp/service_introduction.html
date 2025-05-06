@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>トイレGOサービス紹介</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    {% load static %}
 </head>
 <body class="bg-[#ffffff]">
     <header class="bg-[#D9ECF9] h-20 flex relative shadow-md">
@@ -56,9 +57,92 @@
             </div>
         </div>
     </header>
+    <div id="layer" class="bg-black/30 w-full h-full fixed top-0 left-0 z-[-1] opacity-0 invisible duration-300">
+        <div class="h-auto w-3/5 md:w-1/5 fixed left-0 top-0 shadow-lg duration-300 bg-[#D9ECF9] px-6 pt-6 pb-24">
+            <button id="close_button" class="z-[100] absolute top-4 right-4 px-3 py-1 bg-gray-800 text-white rounded">☓</button>
+            <div id="menu" class="relative w-full opacity-0 invisible">
+                <ul class="space-y-4 text-lg">
+                    <li><a href="{% url 'toilet:home' %}">ホーム</a></li>
+                    <li><a href="{% url 'toilet:search_toilet' %}">トイレを探す</a></li>
+                    <li><a href="{% url 'toilet:toilet_rank' %}">ランキング</a></li>
+                    <li><a href="{% url 'toilet:get_latest_comment' %}">最新レビュ－</a></li>
+                    {% if request.user.is_authenticated %}
+                    <li><a href="{% url 'toilet:user_comments' %}">マイページ</a></li>
+                    <li><a href="{% url 'accounts:user_info_update' %}">設定</a></li>
+                    {% else %}
+                    <li><a href="{% url 'accounts:user_login' %}">ログイン</a></li>
+                    <li><a href="{% url 'accounts:user_create' %}">サインアップ</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'toilet:display_lp' %}">サービス紹介ページ</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
     <main>
-        <section></section>
+        <section class="my-14">
+            <h2 class="mb-16">
+                <div class="flex items-center justify-center my-5">
+                    <img src="{% static '/toilet/man_running.png' %}" alt="ロゴ_トイレ_人" class="w-16 h-auto flex items-center justify-center">
+                    <h1 class="font-bold text-8xl text-[#3697dc]">イレGO</h1>
+                    <img src="{% static '/toilet/toilet_image.png' %}" alt="ロゴ_トイレ" class="w-16 h-auto">
+                </div>
+                <p class="text-center text-3xl text-[#5fb4e0]">駅のきれいなトイレを探す</p>
+            </h2>
+            <img src="{% static '/lp/hamon.png' %}" alt="波紋" class="w-3/5 h-auto mx-auto my-6">
+        </section>
+        <section class="mb-14">
+            <div>
+                <p class="text-center text-2xl font-bold text-[#00365c]">
+                    トイレGOは、駅のトイレを探すことができるアプリです<br>
+                    こんなお悩みを解決するお手伝いをします。
+                </p>
+            </div>
+            <div class="grid place-items-center space-y-1 mt-8">
+                <img src="{% static '/lp/bad.png' %}" alt="体調悪い人" class="object-contain">
+                <p class="text-xl font-semibold text-[#00365c] -mt-6">急に体調が悪くなった時</p>
+            </div>
+            <div class="flex justify-center items-center my-5 space-x-72">
+                <div class="grid place-items-center space-y-1">
+                    <img src="{% static '/lp/child.png' %}" alt="親子" class="object-contain">
+                    <p class="text-xl font-semibold text-[#00365c] -mt-6">子どもからトイレに行きたいと求められた時</p>
+                </div>
+                <div class="grid place-items-center space-y-1">
+                    <img src="{% static '/lp/mirror.png' %}" alt="姿見" class="object-contain">
+                    <p class="text-xl font-semibold text-[#00365c] -mt-6">身だしなみを確認したい時</p>
+                </div>
+            </div>
+        </section>
 
     </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const open_button = document.getElementById("open_button");
+            const layer = document.getElementById("layer");
+            const close_button = document.getElementById("close_button");
+            const menu = document.getElementById("menu");
+
+            open_button.addEventListener('click', () => {
+                open_menu();
+            })
+
+            close_button.addEventListener('click', () => {
+                close_menu();
+            })
+
+            function open_menu(){
+                layer.classList.remove('z-[-1]', 'opacity-0', 'invisible');
+                layer.classList.add('z-[999]', 'opacity-1', 'visible', 'duration-300');
+                menu.classList.remove('opacity-0', 'invisible');
+                menu.classList.add('opacity-1', 'visible', 'duration-500');
+            }
+
+            function close_menu(){
+                layer.classList.remove('z-[999]', 'opacity-1', 'visible');
+                layer.classList.add('z-[-1]', 'opacity-0', 'invisible');
+                menu.classList.remove('opacity-1', 'visible');
+                menu.classList.add('opacity-0', 'invisible');
+            }
+        })
+    </script>
 </body>
 </html>

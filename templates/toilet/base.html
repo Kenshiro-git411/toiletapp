@@ -67,12 +67,13 @@
                     <li><a href="{% url 'toilet:toilet_rank' %}">ランキング</a></li>
                     <li><a href="{% url 'toilet:get_latest_comment' %}">最新レビュ－</a></li>
                     {% if request.user.is_authenticated %}
-                        <li><a href="{% url 'toilet:user_comments' %}">マイページ</a></li>
-                        <li><a href="{% url 'accounts:user_info_update' %}">設定</a></li>
+                    <li><a href="{% url 'toilet:user_comments' %}">マイページ</a></li>
+                    <li><a href="{% url 'accounts:user_info_update' %}">設定</a></li>
                     {% else %}
-                        <li><a href="{% url 'accounts:user_login' %}">ログイン</a></li>
-                        <li><a href="{% url 'accounts:user_create' %}">サインアップ</a></li>
+                    <li><a href="{% url 'accounts:user_login' %}">ログイン</a></li>
+                    <li><a href="{% url 'accounts:user_create' %}">サインアップ</a></li>
                     {% endif %}
+                    <li><a href="{% url 'toilet:display_lp' %}">サービス紹介ページ</a></li>
                 </ul>
             </div>
         </div>
