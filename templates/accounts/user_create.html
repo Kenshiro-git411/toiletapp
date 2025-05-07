@@ -1,4 +1,5 @@
 {% extends 'accounts/base.html' %}
+{% load static %}
 
 {% block title %} サインイン画面 {% endblock %}
 {% block content %}
@@ -45,9 +46,66 @@
                 <button type="submit" class="w-3/5 flex items-center justify-center w-full bg-[#62AEE4] hover:bg-[#40A0E3] border-transparent mt-10 py-2 shadow-lg text-white font-bold hover:shadow-none hover:duration-400">サインイン</button>
             </div>
         </form>
-        <div class="my-10 pb-10 w-full sm:w-3/5 border-b border-gray-400"></div>
+        <button id="line_login" class="flex items-center justify-center mt-10 w-full sm:w-3/5 mx-auto text-center bg-[#06C755] p-2"><img src="{% static '/accounts/account_line_login.png' %}" alt="LINEログイン" class="h-6"><span class="px-4 text-white font-bold">LINEで登録</span></button>
+        <div class="mb-5 mt-10 w-full sm:w-3/5 border-b border-gray-400"></div>
         <a href="{% url 'accounts:user_login' %}" class="mx-auto text-center text-[#40A0E3] font-bold bg-white my-5 py-2 w-full sm:w-3/5 outline outline-3 outline-bg-[#40A0E3] shadow-lg hover:shadow-none hover:duration-400">ログインへ</a>
     </div>
 </div>
+<!-- CSRFトークンを隠しフィールドとして追加 -->
+<form id="csrf-form" style="display: none;">
+    {% csrf_token %}
+</form>
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/versions/2.22.3/sdk.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+        document.getElementById('line_login').addEventListener('click', () => {
+            liff.init({
+                liffId: "{{ liff_id }}"
+            })
+            .then(() => {
+                if (!liff.isLoggedIn()){
+                    liff.login();
+                } else {
+                    {% if not user.is_authenticated %}
+                        liff.getProfile()
+                            .then(profile => {
+                                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                                fetch('{% url "accounts:liff_login" %}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRFToken': csrfToken
+                                    },
+                                    credentials: 'same-origin',
+                                    body: JSON.stringify({
+                                        line_id: profile.userId,
+                                        line_name: profile.displayName
+                                    })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success && data.redirect_url) {
+                                        window.location.href = data.redirect_url;
+                                    } else {
+                                        console.error('Login failed:', data.message);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Login error:', error);
+                                });
+                            })
+                            .catch(error => {
+                                console.error('Error getting profile:', error);
+                            });
+                    {% endif %}
+                }
+            })
+            .catch(err => {
+                console.error('LIFF initialization failed', err);
+            })
+        });
+    });
+
+</script>
 
 {% endblock %}

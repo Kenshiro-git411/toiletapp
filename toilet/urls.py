@@ -4,6 +4,7 @@ from . import views
 app_name = 'toilet'
 
 urlpatterns = [
+    path('', views.liff_entrypoint, name='liff_entry'),
     path('home/', views.home, name='home'),
     path('search_toilet/', views.search_toilet, name='search_toilet'),
     path('suggest_station/', views.suggest_station, name='suggest_station'),
@@ -16,4 +17,5 @@ urlpatterns = [
     path('user_comments/', views.user_comments, name="user_comments"),
     path('toilet_review_revise/<int:pk>', views.toilet_review_revise, name='toilet_review_revise'),
     path('toilet_review_delete/<int:pk>', views.toilet_review_delete, name='toilet_review_delete'),
+    path('toilet/lp', views.display_lp, name='display_lp'),
 ]

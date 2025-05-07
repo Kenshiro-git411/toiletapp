@@ -53,8 +53,8 @@
                 {% for label, value in toilet_info %}
                 {% if value is not None %}
                 <tr class="border border-gray-300 h-full flex flex-col justify-between">
-                    <th class="border border-gray-300 p-4 bg-[#5BB0EB] text-white">{{ label }}</th>
-                    <td class="border border-gray-300 p-4 bg-[#F6F8F8] text-center">{{ value }}</td>
+                    <th class="border border-gray-300 p-2 bg-[#5BB0EB] text-white">{{ label }}</th>
+                    <td class="border border-gray-300 py-4 px-2 bg-[#F6F8F8] text-center">{{ value }}</td>
                 </tr>
                 {% endif %}
                 {% endfor %}
@@ -63,8 +63,8 @@
         <table class="table-auto border-collapse w-full max-w-3xl mt-3">
             <tbody>
                 <tr class="border border-gray-300 h-full flex flex-col justify-between">
-                    <th class="border border-gray-300 p-4 bg-[#5BB0EB] text-white">経路</th>
-                    <td class="border border-gray-300 p-4 bg-[#F6F8F8] text-center">{{ root }}</td>
+                    <th class="border border-gray-300 p-2 bg-[#5BB0EB] text-white">経路</th>
+                    <td class="border border-gray-300 p-4 bg-[#F6F8F8] "><p class="text-justify">{{ root }}</p></td>
                 </tr>
             </tbody>
         </table>
@@ -72,7 +72,7 @@
 </div>
 <div class="my-5 p-3 border border-gray-400 rounded rounded-lg shadow-sm">
     <h2 class="font-bold text-lg">レビュー</h2>
-    <div id="comments" class="w-full h-60 overflow-auto bg-white border border-gray-300 p-3 rounded-md my-2">
+    <div id="comments" class="w-full h-80 overflow-auto bg-white border border-gray-300 p-3 rounded-md my-2">
         {% if not comments == "" %}
             {% for comment in comments %}
                 <div class="my-3 p-2 border-b border-gray-400">
@@ -253,11 +253,11 @@
                     tr.classList.add("border", "border-gray-300", "h-full", "flex", "flex-col", "justify-between");
     
                     const th = document.createElement("th");
-                    th.classList.add("border", "border-gray-300", "p-4", "bg-[#5BB0EB]", "text-white");
+                    th.classList.add("border", "border-gray-300", "p-2", "bg-[#5BB0EB]", "text-white");
                     th.textContent = info.label;
     
                     const td = document.createElement("td");
-                    td.classList.add("border", "border-gray-300", "p-4", "bg-[#F6F8F8]", "text-center");
+                    td.classList.add("border", "border-gray-300", "py-4", "px-2", "bg-[#F6F8F8]", "text-center");
                     td.textContent = info.value;
     
                     tr.appendChild(th);

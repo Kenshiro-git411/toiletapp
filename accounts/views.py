@@ -14,16 +14,11 @@ from django.urls import reverse
 from .models import User
 from . import forms
 from django.conf import settings
-# from django.http import JsonResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 # from toilet.models import Comment
-# import json
+import json
 import uuid
-
-
-def home(request):
-    return render(request, 'accounts/home.html')
-
 
 def user_login(request):
     login_form = forms.LoginForm()
@@ -51,51 +46,68 @@ def user_login(request):
 
     return render(request, 'accounts/user_login.html', context={
         'login_form': login_form,
+        'liff_id': settings.LINE_LIFF_ID,
     })
 
-@csrf_exempt
 def liff_login_view(request):
     if request.method == 'POST':
-        line_id = request.POST.get('line_id')
-        line_name = request.POST.get('line_name')
-        username = request.POST.get('username')
-        
-        if not line_id:
-            messages.error(request, 'LINE IDが取得できませんでした。')
-            return redirect('accounts:user_login')
-        
-        # LINE IDでユーザーを検索
+        print("django内、ラインユーザーのログイン認証を開始")
         try:
-            user = User.objects.get(line_id=line_id)
-            # 既存ユーザーの場合、ログイン処理
-            login(request, user)
-            messages.success(request, f'{user.line_name or user.username}さん、おかえりなさい！')
-            return redirect('accounts:home')
-        except User.DoesNotExist:
-            # 新規ユーザーの場合、アカウント作成
-            if not username:
-                # ユーザー名が指定されていない場合は自動生成
+            # JSON形式のデータを解析
+            data = json.loads(request.body)
+            line_id = data.get('line_id')
+            line_name = data.get('line_name')
+            
+            if not line_id:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'LINE IDが取得できませんでした。',
+                    'redirect_url': reverse('accounts:user_login')
+                })
+            
+            try:
+                user = User.objects.get(line_id=line_id)
+                # 既存ユーザーの場合、ログイン処理
+                login(request, user)
+                return JsonResponse({
+                    'success': True,
+                    'message': f'{user.line_name or user.username}さん、おかえりなさい！',
+                    'redirect_url': reverse('toilet:home')
+                })
+            except User.DoesNotExist:
+                # 新規ユーザーの場合、アカウント作成
                 username = f"user_{uuid.uuid4().hex[:8]}"
-            
-            # ユーザー名の重複チェック
-            while User.objects.filter(username=username).exists():
-                username = f"user_{uuid.uuid4().hex[:8]}"
-            
-            # 新規ユーザー作成
-            user = User.objects.create(
-                username=username,
-                line_id=line_id,
-                line_name=line_name,
-                is_active=True
-            )
-            
-            # ログイン処理
-            login(request, user)
-            messages.success(request, f'{line_name}さん、はじめまして！アカウントを作成しました。')
-            return redirect('accounts:home')
+                
+                while User.objects.filter(username=username).exists():
+                    username = f"user_{uuid.uuid4().hex[:8]}"
+                
+                user = User.objects.create(
+                    username=username,
+                    line_id=line_id,
+                    line_name=line_name,
+                    is_active=True
+                )
+                
+                login(request, user)
+                return JsonResponse({
+                    'success': True,
+                    'message': f'{line_name}さん、はじめまして！アカウントを作成しました。',
+                    'redirect_url': reverse('toilet:home')
+                })
+                
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'message': '不正なリクエスト形式です。',
+                'redirect_url': reverse('accounts:user_login')
+            })
     
-    # GETリクエストの場合はログインページにリダイレクト
-    return redirect('accounts:user_login')
+    # GETリクエストの場合
+    return JsonResponse({
+        'success': False,
+        'message': '不正なアクセスです。',
+        'redirect_url': reverse('accounts:user_login')
+    })
 
 def user_create(request):
     signin_form = forms.SigninForm()
@@ -118,6 +130,7 @@ def user_create(request):
 
     return render(request, 'accounts/user_create.html', context={
         'signin_form': signin_form,
+        "liff_id": settings.LINE_LIFF_ID,
     })
 
 

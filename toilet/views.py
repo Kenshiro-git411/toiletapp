@@ -11,10 +11,38 @@ from accounts.models import Gender, User
 # from django.db.models import F
 from django.core.paginator import Paginator
 from django.http import Http404
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse, NoReverseMatch
+
+# liffでアクセスする際に必要
+def liff_entrypoint(request):
+    # state = request.GET.get('liff.state')
+    # print("state", state)
+    # if state:
+    #     cleaned_state = state.strip('/')
+    #     if cleaned_state in ['home', 'search_toilet']:
+    #         return redirect('toilet:search_toilet')
+    #         # return redirect('toilet:' + cleaned_state)
+    #     else:
+    #         print(f"Unknown state: {cleaned_state}")
+    #         return redirect('toilet:home')
+            
+    context = {
+        "liff_id": settings.LINE_LIFF_ID,
+    }
+    return render(request, 'toilet/liff_entry.html', context)   
+
+def display_lp(request):
+    return render(request, 'lp/service_introduction.html')
 
 
 def home(request):
-    return render(request, 'toilet/home.html')
+    print("LINE_LIFF_ID", settings.LINE_LIFF_ID)
+    context = {
+        "liff_id": settings.LINE_LIFF_ID,
+    }
+    return render(request, 'toilet/home.html', context)
 
 def search_toilet(request):
     if request.method == 'POST':
@@ -101,6 +129,9 @@ def toilet_info(request, pk, gender):
                 ("おむつ交換設備", toilet.child_facility_display),
                 ("バリアフリートイレ", toilet.barrier_free_toilet_display),
                 ("車いす対応", toilet.wheelchair_display),
+                ("姿見", toilet.full_length_mirror_display),
+                ("フィッティングボード", toilet.fitting_board_display),
+                ("ゴミ箱", toilet.trash_can_display),
             ]
         elif gender == 2:
             toilet = get_object_or_404(FemaleToilet, pk=pk)
@@ -117,6 +148,9 @@ def toilet_info(request, pk, gender):
                 ("おむつ交換設備", toilet.child_facility_display),
                 ("バリアフリートイレ", toilet.barrier_free_toilet_display),
                 ("車いす対応", toilet.wheelchair_display),
+                ("姿見", toilet.full_length_mirror_display),
+                ("フィッティングボード", toilet.fitting_board_display),
+                ("ゴミ箱", toilet.trash_can_display),
             ]
         elif gender == 3:
             toilet = get_object_or_404(MultiFunctionalToilet, pk=pk)
@@ -132,6 +166,9 @@ def toilet_info(request, pk, gender):
                 ("おむつ交換設備", toilet.child_facility_display),
                 ("バリアフリートイレ", toilet.barrier_free_toilet_display),
                 ("車いす対応", toilet.wheelchair_display),
+                ("姿見", toilet.full_length_mirror_display),
+                ("フィッティングボード", toilet.fitting_board_display),
+                ("ゴミ箱", toilet.trash_can_display),
             ]
 
         station_name = toilet.toilet_id.station_id.station_name
@@ -144,7 +181,7 @@ def toilet_info(request, pk, gender):
         congestion = congestion.quantize(Decimal("0.0"), rounding=ROUND_DOWN)
         root = toilet.toilet_id.toilet_root
 
-        comments = Comment.objects.filter(toilet=toilet.toilet_id, gender=gender)
+        comments = Comment.objects.filter(toilet=toilet.toilet_id, gender=gender).order_by("data_create").reverse()
         # print(comments)
         if not comments.exists():
             print("コメントはありません")
@@ -231,12 +268,18 @@ def change_toilet_data(request, toilet_pk, gender_num):
     barrier_free_toilet = toilet.barrier_free_toilet_display()
     # 車いす対応
     wheelchair = toilet.wheelchair_display()
+    # 姿見
+    full_length_mirror = toilet.full_length_mirror_display()
+    # フィッティングボード
+    fitting_board = toilet.fitting_board_display()
+    # ゴミ箱
+    trash_can = toilet.trash_can_display()
     # 経路
     root = toilet.toilet_id.toilet_root
     # 性別id
     gen = toilet.gender.pk
     # コメント
-    comments = Comment.objects.select_related("user").filter(gender=gen, toilet=toilet_pk)
+    comments = Comment.objects.select_related("user").filter(gender=gen, toilet=toilet_pk).order_by("data_create").reverse()
     print(comments)
     if comments.exists():
         comments = list(comments.values(
@@ -267,6 +310,9 @@ def change_toilet_data(request, toilet_pk, gender_num):
             {"label": "おむつ交換設備", "value": child_facility},
             {"label": "バリアフリートイレ", "value": barrier_free_toilet},
             {"label": "車いす対応", "value": wheelchair},
+            {"label": "姿見", "value": full_length_mirror},
+            {"label": "フィッティングボード", "value": fitting_board},
+            {"label": "ゴミ箱", "value": trash_can},
         ]
     elif gender_num == 2:
         toilet_info = [
@@ -282,8 +328,11 @@ def change_toilet_data(request, toilet_pk, gender_num):
             {"label": "おむつ交換設備", "value": child_facility},
             {"label": "バリアフリートイレ", "value": barrier_free_toilet},
             {"label": "車いす対応", "value": wheelchair},
+            {"label": "姿見", "value": full_length_mirror},
+            {"label": "フィッティングボード", "value": fitting_board},
+            {"label": "ゴミ箱", "value": trash_can},
         ]
-    else:
+    elif gender_num == 3:
         toilet_info = [
             {"label": "改札内外", "value": in_out_station_ticket_gate},
             {"label": "設置階", "value": floor},
@@ -296,6 +345,9 @@ def change_toilet_data(request, toilet_pk, gender_num):
             {"label": "おむつ交換設備", "value": child_facility},
             {"label": "バリアフリートイレ", "value": barrier_free_toilet},
             {"label": "車いす対応", "value": wheelchair},
+            {"label": "姿見", "value": full_length_mirror},
+            {"label": "フィッティングボード", "value": fitting_board},
+            {"label": "ゴミ箱", "value": trash_can},
         ]
 
     print("レスポンス前")

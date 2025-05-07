@@ -73,7 +73,7 @@ class UserInfoUpdateForm(forms.ModelForm):
 
     gender = forms.ModelChoiceField(
         queryset=Gender.objects.all(), # DBデータの取得
-        widget=forms.Select(attrs={"class": "ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"}),
+        widget=forms.Select(attrs={"class": "border border-gray-400 focus:border-blue-500 focus:outline-none rounded-none bg-white"}),
         label="性別"
     )
     is_barrier_free = forms.BooleanField(
