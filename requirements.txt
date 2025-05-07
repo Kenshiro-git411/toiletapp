@@ -12,7 +12,6 @@ Django==5.1.6
 frozenlist==1.5.0
 future==1.0.0
 idna==3.10
-line-bot-sdk==3.16.1
 multidict==6.1.0
 propcache==0.3.0
 pydantic==2.10.6
@@ -22,6 +21,7 @@ python-dotenv==1.0.1
 requests==2.32.3
 six==1.17.0
 sqlparse==0.5.3
+line-bot-sdk==3.17.1
 typing_extensions==4.12.2
 urllib3==2.3.0
 wrapt==1.17.2

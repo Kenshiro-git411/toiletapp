@@ -66,6 +66,7 @@
             if (!liff.isLoggedIn()) {
                 liff.login();
             } else {
+                
                 {% if not user.is_authenticated %}
                 liff.getProfile()
                     .then(profile => {

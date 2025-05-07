@@ -16,18 +16,22 @@ from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse, NoReverseMatch
 
 # liffでアクセスする際に必要
-# def liff_entrypoint(request):
-#     state = request.GET.get('liff.state')
-#     print("state", state)
-#     if state:
-#         cleaned_state = state.strip('/')
-#         if cleaned_state in ['home', 'search_toilet']:
-#             return redirect('toilet:search_toilet')
-#             # return redirect('toilet:' + cleaned_state)
-#         else:
-#             print(f"Unknown state: {cleaned_state}")
-#             return redirect('toilet:home')
-#     return redirect('toilet:home')
+def liff_entrypoint(request):
+    # state = request.GET.get('liff.state')
+    # print("state", state)
+    # if state:
+    #     cleaned_state = state.strip('/')
+    #     if cleaned_state in ['home', 'search_toilet']:
+    #         return redirect('toilet:search_toilet')
+    #         # return redirect('toilet:' + cleaned_state)
+    #     else:
+    #         print(f"Unknown state: {cleaned_state}")
+    #         return redirect('toilet:home')
+            
+    context = {
+        "liff_id": settings.LINE_LIFF_ID,
+    }
+    return render(request, 'toilet/liff_entry.html', context)   
 
 def display_lp(request):
     return render(request, 'lp/service_introduction.html')

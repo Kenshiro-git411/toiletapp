@@ -151,7 +151,8 @@ LINE_LIFF_ID = os.environ['LINE_LIFF_ID']
 
 # 以下のurlはCSRFを許可
 CSRF_TRUSTED_ORIGINS = [
-    "https://605c-106-72-36-161.ngrok-free.app"
+    "https://605c-106-72-36-161.ngrok-free.app",
+    "https://*.ngrok-free.app"
 ]
 
 # 開発環境

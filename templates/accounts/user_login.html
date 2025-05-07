@@ -82,7 +82,7 @@
                 if (!liff.isLoggedIn()){
                     // ライン公式の認証処理 -> リダイレクトで再度本画面に遷移する
                     liff.login({
-                        redirectUri: "https://605c-106-72-36-161.ngrok-free.app/accounts/user_login/"
+                        {% comment %} redirectUri: "https://605c-106-72-36-161.ngrok-free.app/accounts/user_login/" {% endcomment %}
                     });
                 }
             });
