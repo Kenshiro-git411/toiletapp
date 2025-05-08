@@ -9,10 +9,16 @@
             <div class="mt-7">
                 <label>{{ update_form.email.label }}</label>
                 <div>{{ update_form.email }}</div>
+                {% for error in update_form.email.errors %}
+                    <p class="font-semibold text-red-500">{{ error }}</p>
+                {% endfor %}
             </div>
             <div class="mt-5">
                 <label>{{ update_form.username.label }}</label>
                 <div>{{ update_form.username }}</div>
+                {% for error in update_form.username.errors %}
+                    <p class="font-semibold text-red-500">{{ error }}</p>
+                {% endfor %}
             </div>
             <div class="mt-5">
                 <label>{{ update_form.gender.label }}</label>

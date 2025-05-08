@@ -53,7 +53,7 @@
                 {% for label, value in toilet_info %}
                 {% if value is not None %}
                 <tr class="border border-gray-300 h-full flex flex-col justify-between">
-                    <th class="border border-gray-300 p-2 bg-[#5BB0EB] text-white">{{ label }}</th>
+                    <th class="border border-gray-300 py-2 px-1 bg-[#5BB0EB] text-white">{{ label }}</th>
                     <td class="border border-gray-300 py-4 px-2 bg-[#F6F8F8] text-center">{{ value }}</td>
                 </tr>
                 {% endif %}
@@ -253,7 +253,7 @@
                     tr.classList.add("border", "border-gray-300", "h-full", "flex", "flex-col", "justify-between");
     
                     const th = document.createElement("th");
-                    th.classList.add("border", "border-gray-300", "p-2", "bg-[#5BB0EB]", "text-white");
+                    th.classList.add("border", "border-gray-300", "py-2", "px-1", "bg-[#5BB0EB]", "text-white");
                     th.textContent = info.label;
     
                     const td = document.createElement("td");

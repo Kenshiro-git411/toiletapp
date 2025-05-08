@@ -6,7 +6,7 @@ class TrainLineAdmin(admin.ModelAdmin):
     search_fields = ("train_line_name",)
 
 class TrainStationAdmin(admin.ModelAdmin):
-    list_display = ("id", "station_name", "train_line") # 外部キーも表示する
+    list_display = ("id", "station_name", "station_name_japanese", "train_line") # 外部キーも表示する
     search_fields = ("station_name",)
     list_filter = ("train_line",) # 路線でフィルタリングする
 

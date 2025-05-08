@@ -17,17 +17,6 @@ from django.urls import reverse, NoReverseMatch
 
 # liffでアクセスする際に必要
 def liff_entrypoint(request):
-    # state = request.GET.get('liff.state')
-    # print("state", state)
-    # if state:
-    #     cleaned_state = state.strip('/')
-    #     if cleaned_state in ['home', 'search_toilet']:
-    #         return redirect('toilet:search_toilet')
-    #         # return redirect('toilet:' + cleaned_state)
-    #     else:
-    #         print(f"Unknown state: {cleaned_state}")
-    #         return redirect('toilet:home')
-            
     context = {
         "liff_id": settings.LINE_LIFF_ID,
     }
@@ -99,7 +88,7 @@ def suggest_station(request):
     print(query) # 入力された文字列を受け取る
     if query:
         # icontainsを使って部分一致検索
-        stations = TrainStation.objects.filter(station_name__icontains=query).values(
+        stations = TrainStation.objects.filter(station_name_japanese__icontains=query).values(
             "id", "station_name", "train_line__train_line_name", "train_line__railway_company"
         )
 

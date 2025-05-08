@@ -4,10 +4,14 @@
 {% block title %} トイレGOホーム {% endblock %}
 
 {% block content %}
-    
-    <p class="text-gray-400">
-       少々お待ちください。。
-    </p>
+    <div class="flex flex-col justify-center items-center mt-20 space-y-6">
+        <p class="text-xl text-gray-600">
+           少々お待ちください
+        </p>
+        <div class="flex justify-center" aria-label="読み込み中">
+            <div class="animate-spin h-20 w-20 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+        </div>
+    </div>
     
 {% endblock %}
 {% block extra_js %}
@@ -48,14 +52,19 @@
     }
 
     // リダイレクト先のURLを取得
-    // ここで場合分の編集
-    /* --------------------------------------------------*//
+    // ここで場合分けの編集
+    /* --------------------------------------------------*/
     function getRedirectUrl(redirectParam) {
         // リダイレクトパラメータに基づいてURLを返す
         switch (redirectParam) {
             case 'home':
                 return '{% url "toilet:home" %}';
-            // 他のリダイレクト先を追加する場合はここに記述
+            case 'search_toilet':
+                return '{% url "toilet:search_toilet" %}'
+            case 'toilet_rank':
+                return '{% url "toilet:toilet_rank" %}'
+            case 'get_latest_comment':
+                return '{% url "toilet:get_latest_comment" %}'
             default:
                 return '{% url "toilet:display_lp" %}'; // デフォルトのリダイレクト先
         }

@@ -15,6 +15,7 @@ class TrainStation(models.Model):
     """駅マスターテーブル"""
 
     station_name = models.CharField(max_length=255)
+    station_name_japanese = models.CharField(max_length=255)
     train_line = models.ForeignKey(TrainLine, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):

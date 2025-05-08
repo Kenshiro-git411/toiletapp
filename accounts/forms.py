@@ -43,21 +43,38 @@ class SigninForm(forms.ModelForm):
             "username": forms.TextInput(attrs={"class": "w-full max-w-md p-1 text-md ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"}),
         }
 
+    def clean_email(self):
+        """メールアドレスのバリデーション"""
+        cleaned_data = super().clean()
+        email = cleaned_data.get("email")
+        # print("email", email)
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("このメールアドレスは既に使用されています")
+        return email
+
+    def clean_username(self):
+        """ユーザー名のバリデーション"""
+        cleaned_data = super().clean()
+        username = cleaned_data.get("username")
+        if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("このユーザー名は既に使用されています")
+        return username
+
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
-        print('password', password)
+        # print('password', password)
         confirm_password = cleaned_data.get("confirm_password")
-        print(confirm_password)
+        # print(confirm_password)
         if password != confirm_password:
-            raise forms.ValidationError("パスワードが一致しません。")
+            raise forms.ValidationError("パスワードが一致しません")
 
-        print("clean処理は完了しました")
+        # print("clean処理は完了しました")
         return cleaned_data
 
     def save(self):
         user = super().save(commit=False)
-        print("saveメソッドが呼ばれました")
+        # print("saveメソッドが呼ばれました")
         user = User(
             email=self.cleaned_data.get("email"),
             username=self.cleaned_data.get("username"),
@@ -74,6 +91,7 @@ class UserInfoUpdateForm(forms.ModelForm):
     gender = forms.ModelChoiceField(
         queryset=Gender.objects.all(), # DBデータの取得
         widget=forms.Select(attrs={"class": "border border-gray-400 focus:border-blue-500 focus:outline-none rounded-none bg-white"}),
+        required=False,
         label="性別"
     )
     is_barrier_free = forms.BooleanField(
@@ -113,7 +131,7 @@ class UserInfoUpdateForm(forms.ModelForm):
         email = self.cleaned_data["email"]
         # print("更新処理のメール", email)
         if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
-            raise forms.ValidationError("このメールアドレスは既に使用されています。")
+            raise forms.ValidationError("このメールアドレスは既に使用されています")
         
         # print("メールアドレスの重複はありません。")
         return email
@@ -122,7 +140,7 @@ class UserInfoUpdateForm(forms.ModelForm):
         """ユーザー名のバリデーション（重複しないようする）"""
         username = self.cleaned_data["username"]
         if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
-            raise forms.ValidationError("このユーザー名は既に使用されています。")
+            raise forms.ValidationError("このユーザー名は既に使用されています")
         
         # print("ユーザー名の重複はありません。")
         return username

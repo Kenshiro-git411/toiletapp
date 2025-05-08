@@ -78,45 +78,45 @@
             </div>
         </div>
     </div>
-    <main>
-        <section class="my-14">
-            <h2 class="mb-16">
+    <main class="sm:w-full">
+        <section class="w-full my-14">
+            <h2 class="mb-12">
                 <div class="flex items-center justify-center my-5">
-                    <img src="{% static '/toilet/man_running.png' %}" alt="ロゴ_トイレ_人" class="w-16 h-auto flex items-center justify-center">
-                    <h1 class="font-bold text-8xl text-[#3697dc]">イレGO</h1>
-                    <img src="{% static '/toilet/toilet_image.png' %}" alt="ロゴ_トイレ" class="w-16 h-auto">
+                    <img src="{% static '/toilet/man_running.png' %}" alt="ロゴ_トイレ_人" class="w-9 sm:w-12 h-auto">
+                    <h1 class="font-bold text-5xl sm:text-6xl text-[#86C3EE] self-end">イレGO</h1>
+                    <img src="{% static '/toilet/toilet_image.png' %}" alt="ロゴ_トイレ" class="w-10 h-auto self-end">
                 </div>
-                <p class="text-center text-3xl text-[#5fb4e0]">駅のきれいなトイレを探す</p>
+                <p class="text-center text-lg text-xl text-[#5fb4e0]">駅のトイレを探す</p>
             </h2>
-            <img src="{% static '/lp/hamon.png' %}" alt="波紋" class="w-2/5 h-auto mx-auto my-6">
+            <img src="{% static '/lp/hamon.png' %}" alt="波紋" class="w-4/5 sm:w-2/5 h-auto mx-auto my-6">
         </section>
-        <section class="mt-16 mb-14">
-            <div>
-                <p class="text-center text-2xl font-bold text-[#00365c]">
+        <section class="my-24 w-full">
+            <div class="sm:w-4/5 mx-auto pb-5 sm:pb-10">
+                <p class="text-center sm:text-xl font-bold text-[#00365c] p-4 bg-blue-100 rounded mx-2">
                     トイレGOは、駅のトイレを探すことができるアプリです。<br>
                     こんなお悩みを解決するお手伝いをします。
                 </p>
             </div>
-            <div class="grid place-items-center space-y-1 mt-8">
-                <img src="{% static '/lp/bad.png' %}" alt="体調悪い人" class="object-contain">
-                <p class="text-xl font-semibold text-[#00365c] -mt-6">急に体調が悪くなった時</p>
-            </div>
-            <div class="flex justify-center items-center mb-5 space-x-72">
-                <div class="grid place-items-center space-y-1">
-                    <img src="{% static '/lp/child.png' %}" alt="親子" class="object-contain">
-                    <p class="text-xl font-semibold text-[#00365c] -mt-6">子どもからトイレに行きたいと求められた時</p>
+            <div class="flex flex-col justify-center items-center sm:flex-row p-4 space-y-4 sm:space-y-0">
+                <div class="sm:w-full">
+                    <img src="{% static '/lp/bad.png' %}" alt="体調悪い人" class="h-32 sm:w-36 object-contain mx-auto">
+                    <p class="w-full sm:text-xl font-semibold text-[#00365c] text-center">急に体調が悪くなった時</p>
                 </div>
-                <div class="grid place-items-center space-y-1">
-                    <img src="{% static '/lp/mirror.png' %}" alt="姿見" class="object-contain">
-                    <p class="text-xl font-semibold text-[#00365c] -mt-6">身だしなみを確認したい時</p>
+                <div class="sm:w-full">
+                    <img src="{% static '/lp/child.png' %}" alt="親子" class="h-32 sm:w-36 object-contain mx-auto">
+                    <p class="w-full sm:text-xl font-semibold text-[#00365c] text-center">子どもからトイレに行きたいと求められた時</p>
+                </div>
+                <div class="sm:w-full">
+                    <img src="{% static '/lp/mirror.png' %}" alt="姿見" class="h-32 sm:w-36 object-contain mx-auto">
+                    <p class="w-full sm:text-xl font-semibold text-[#00365c] text-center">身だしなみを確認したい時</p>
                 </div>
             </div>
         </section>
-        <section class="mb-14">
-            <h2 class="w-full max-w-screen-md mx-auto overflow-x-hidden font-bold text-2xl mb-5 text-[#00365c]">アプリでできること</h2>
-            <div class="flex justify-center items-center space-x-24">
-                <img src="{% static '/lp/smartphone.png' %}" alt="スマートフォン">
-                <ul class="p-10 font-semibold text-white bg-[#3697dc] rounded-lg list-disc list-inside space-y-4">
+        <section class="my-24">
+            <h2 class="flex justify-center items-center font-bold text-2xl mb-5 text-[#00365c]">アプリでできること</h2>
+            <div class="flex flex-col sm:flex-row justify-center items-center space-y-8 sm:space-y-0 sm:space-x-24">
+                <img src="{% static '/lp/smartphone.png' %}" alt="スマートフォン" class="w-2/5 sm:w-auto">
+                <ul class="mx-2 px-3 py-4 sm:p-10 font-semibold text-white bg-[#3697dc] rounded-lg list-disc list-outside pl-8 space-y-4">
                     <li>駅のトイレが改札内にあるか確認できる</li>
                     <li>チャイルドシートやおむつ交換設備付きトイレを調べることができる</li>
                     <li>パウダールームや姿見のあるトイレを確認できる</li>
@@ -124,11 +124,11 @@
                 </ul>
             </div>
         </section>
-        <section class="mb-14">
-            <div class="flex flex-col justify-center items-center">
+        <section class="mb-24 flex justify-center items-center">
+            <div class="flex flex-col justify-center items-center sm:w-2/3 mx-3 sm:mx-0">
                 <h2 class="text-2xl font-bold py-3 px-6 text-[#00365c]">アプリを開発した目的</h2>
                 <img src="{% static '/lp/icon.png' %}" alt="アイコン" class="h-36">
-                <p class="w-3/5 mt-4 py-4 px-6 bg-gray-100">
+                <p class="w-full mt-4 py-4 px-4 bg-gray-100">
                     駅のトイレの位置や機能のすぐに知ることで世の中の人が自分の目的にあったトイレを利用し、またトイレの混雑を解消でき、きれいなトイレを維持できると思い、トイレGOを開発しました。<br><br>
                     最終的な目標としてはトイレだけでなく駅全体がきれいで駅利用することに不快感を感じないような駅を作っていきたい。
                 </p>
