@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Sum
-# from .forms import Review
 from . import forms
 from django.http import JsonResponse
 from .models import TrainLine, TrainStation, ToiletMaster, MaleToilet, FemaleToilet, MultiFunctionalToilet, Comment
@@ -8,19 +7,18 @@ from decimal import Decimal, ROUND_DOWN
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from accounts.models import Gender, User
-# from django.db.models import F
+from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import Http404
 from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
-from django.urls import reverse, NoReverseMatch
+
 
 # liffでアクセスする際に必要
 def liff_entrypoint(request):
     context = {
         "liff_id": settings.LINE_LIFF_ID,
     }
-    return render(request, 'toilet/liff_entry.html', context)   
+    return render(request, 'toilet/liff_entry.html', context)
 
 def display_lp(request):
     return render(request, 'lp/service_introduction.html')
@@ -85,14 +83,14 @@ def suggest_station(request):
     """駅名検索時の駅候補機能（DBから参照する）"""
 
     query = request.GET.get("query", "")
-    print(query) # 入力された文字列を受け取る
+    # print(query) # 入力された文字列を受け取る
     if query:
-        # icontainsを使って部分一致検索
-        stations = TrainStation.objects.filter(station_name_japanese__icontains=query).values(
+        # icontainsを使って入力された文字をもとに部分一致検索
+        stations = TrainStation.objects.filter(Q(station_name_japanese__icontains=query) | Q(station_name__icontains=query)).values(
             "id", "station_name", "train_line__train_line_name", "train_line__railway_company"
         )
 
-        print(list(stations))
+        # print(list(stations))
 
         return JsonResponse({"suggestions": list(stations)})
 

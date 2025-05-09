@@ -1,6 +1,7 @@
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+from dj_database_url import parse
 
 # 環境変数.envの読み込み
 load_dotenv()
@@ -78,12 +79,19 @@ WSGI_APPLICATION = 'toiletproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DEBUG:
+    DATABASES = {
+        # localの場合はsqlite3を使用するように設定
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    # DATABASE_URL 環境変数を取得
+    DATABASES = {
+        'default': parse(os.getenv('DATABASE_URL'))
+    }
 
 
 # Password validation
@@ -149,7 +157,7 @@ LINE_CHANNEL_ACCESS_TOKEN = os.environ['LINE_CHANNEL_ACCESS_TOKEN']
 LINE_CHANNEL_SECRET = os.environ['LINE_CHANNEL_SECRET']
 LINE_LIFF_ID = os.environ['LINE_LIFF_ID']
 
-# CSRFを許可
+# CSRF許可
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 
 # 開発環境
@@ -158,7 +166,8 @@ if DEBUG:
     SECRET_KEY = os.environ['SECRET_KEY']
 
     # ALLOWED_HOSTS:
-    ALLOWED_HOSTS = ['*']
+    # ALLOWED_HOSTS = ['*']
+    ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0:8000', 'localhost']
 
     # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # メールの内容をコンソールに表示する。
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #djangoappプロジェクトフォルダ配下のmediaフォルダを指定。
@@ -180,4 +189,3 @@ if not DEBUG:
     EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
     EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
     EMAIL_USE_TLS = True # SMTPサーバーと通信する際に、TLS（セキュア）接続する
-
