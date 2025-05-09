@@ -149,11 +149,8 @@ LINE_CHANNEL_ACCESS_TOKEN = os.environ['LINE_CHANNEL_ACCESS_TOKEN']
 LINE_CHANNEL_SECRET = os.environ['LINE_CHANNEL_SECRET']
 LINE_LIFF_ID = os.environ['LINE_LIFF_ID']
 
-# 以下のurlはCSRFを許可
-CSRF_TRUSTED_ORIGINS = [
-    "https://605c-106-72-36-161.ngrok-free.app",
-    "https://*.ngrok-free.app"
-]
+# CSRFを許可
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 
 # 開発環境
 if DEBUG:
