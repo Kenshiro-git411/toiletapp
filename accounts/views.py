@@ -234,10 +234,10 @@ def user_delete(request):
     if request.method == "POST":
         delete_form = forms.UserDeleteForm(request.POST, user=request.user)
         if delete_form.is_valid() and delete_form.cleaned_data.get("confirm"):
-            delete_form.save() # 論理削除する
+            delete_form.save() # 物理削除する
             logout(request)
             print("アカウントが削除されました")
-            return redirect("accounts:home")
+            return redirect("toilet:display_lp")
     else:
         delete_form = forms.UserDeleteForm()
 

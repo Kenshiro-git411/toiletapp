@@ -1,6 +1,7 @@
 from django.db import models
 from accounts.models import User, Gender
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 class TrainLine(models.Model):
     """路線マスターテーブル"""
@@ -41,7 +42,7 @@ class ToiletMaster(models.Model):
     floor = models.CharField(max_length=5, help_text="設置されている階を数字で入力してください")
     near_gate = models.CharField(max_length=100)
     near_home_num = models.CharField(max_length=3)
-    near_train_door_num = models.CharField(max_length=3)
+    near_train_car_num = models.CharField(max_length=3)
     toilet_root = models.TextField(null=True)
 
     def __str__(self):
@@ -50,7 +51,6 @@ class ToiletMaster(models.Model):
     def get_opening_hours(self):
         """営業時間を 'HH:MM～HH:MM' の形式で取得"""
         return f"{self.open_time.strftime('%H:%M')}～{self.close_time.strftime('%H:%M')}"
-
 
 class MaleToilet(models.Model):
     """男性用トイレテーブル"""
@@ -70,7 +70,8 @@ class MaleToilet(models.Model):
     # 空き具合(平均値:随時更新)
     congestion = models.FloatField(null=True)
     # 個室
-    toilet_stall = models.IntegerField(help_text="個室数を入力してください")
+    # toilet_stall = models.IntegerField(help_text="個室数を入力してください")
+    # toilet_stall = models.ForeignKey(ToiletStall, blank=True, null=True, on_delete=models.SET_NULL)
     # 小便器
     urial = models.IntegerField(help_text="小便器数を入力してください")
     # 温水洗浄便座
@@ -151,7 +152,7 @@ class FemaleToilet(models.Model):
     # 空き具合(平均値:随時更新)
     congestion = models.FloatField(null=True)
     # 個室
-    toilet_stall = models.IntegerField(help_text="個室数を入力してください")
+    # toilet_stall = models.IntegerField(help_text="個室数を入力してください")
     # 温水洗浄便座
     warm_water_washing_toilet_seat = models.BooleanField(null=True)
     # おむつ交換設備
@@ -168,6 +169,9 @@ class FemaleToilet(models.Model):
     fitting_board = models.BooleanField(null=True)
     # ゴミ箱
     trash_can = models.BooleanField(null=True)
+
+    def __str__(self):
+        return f"{self.toilet_id.place}({self.toilet_id.station_id.station_name})"
 
     def warm_water_washing_toilet_seat_display(self):
         """温水洗浄便座の〇☓表示"""
@@ -236,7 +240,7 @@ class MultiFunctionalToilet(models.Model):
     # 空き具合(平均値:随時更新)
     congestion = models.FloatField(null=True)
     # 個室
-    toilet_stall = models.IntegerField(help_text="個室数を入力してください")
+    # toilet_stall = models.IntegerField(help_text="個室数を入力してください")
     # 温水洗浄便座
     warm_water_washing_toilet_seat = models.BooleanField(null=True)
     # おむつ交換設備
@@ -251,6 +255,9 @@ class MultiFunctionalToilet(models.Model):
     fitting_board = models.BooleanField(null=True)
     # ゴミ箱
     trash_can = models.BooleanField(null=True)
+
+    def __str__(self):
+        return f"{self.toilet_id.place}({self.toilet_id.station_id.station_name})"
 
     def warm_water_washing_toilet_seat_display(self):
         """温水洗浄便座の〇☓表示"""
@@ -293,6 +300,23 @@ class MultiFunctionalToilet(models.Model):
         if self.trash_can is None:
             return "-"
         return "〇" if self.trash_can else "☓"
+    
+class ToiletStall(models.Model):
+    male_toilet_id = models.ForeignKey(MaleToilet, on_delete=models.SET_NULL, null=True, blank=True)
+    female_toilet_id = models.ForeignKey(FemaleToilet, on_delete=models.SET_NULL, null=True, blank=True)
+    multi_toilet_id = models.ForeignKey(MultiFunctionalToilet, on_delete=models.SET_NULL, null=True, blank=True)
+    western_style = models.IntegerField(blank=True, null=True)
+    japanese_style = models.IntegerField(blank=True, null=True)
+
+    def clean(self):
+        # 登録フィールドを制御する
+        related_fields = [self.male_toilet_id, self.female_toilet_id, self.multi_toilet_id]
+        filled = [field for field in related_fields if field is not None]
+
+        if len(filled) == 0:
+            raise ValidationError("男性、女性、多機能トイレのどれかのIDを入力してください")
+        elif len(filled) > 1:
+            raise ValidationError("男性、女性、多機能トイレのいずれか1つのみ登録ができます")
 
 class Comment(models.Model):
     """コメントテーブル"""

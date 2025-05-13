@@ -134,7 +134,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 STATIC_URL = '/static/'
 if DEBUG: # (DEBUG=True)
-    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'assets')]
 else:# (DEBUG=False)
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
@@ -166,8 +166,8 @@ if DEBUG:
     SECRET_KEY = os.environ['SECRET_KEY']
 
     # ALLOWED_HOSTS:
-    # ALLOWED_HOSTS = ['*']
-    ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0:8000', 'localhost']
+    ALLOWED_HOSTS = ['*']
+    # ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0:8000', 'localhost']
 
     # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # メールの内容をコンソールに表示する。
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #djangoappプロジェクトフォルダ配下のmediaフォルダを指定。

@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Sum
 from . import forms
 from django.http import JsonResponse
-from .models import TrainLine, TrainStation, ToiletMaster, MaleToilet, FemaleToilet, MultiFunctionalToilet, Comment
+from .models import TrainLine, TrainStation, ToiletMaster, MaleToilet, FemaleToilet, MultiFunctionalToilet, Comment, ToiletStall
 from decimal import Decimal, ROUND_DOWN
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
@@ -103,15 +103,16 @@ def toilet_info(request, pk, gender):
     try:
         if gender == 1:
             toilet = get_object_or_404(MaleToilet, pk=pk)
+            toilet_stall = get_object_or_404(ToiletStall, male_toilet_id=toilet)
             toilet_info = [
                 ("改札内外", toilet.toilet_id.station_ticket_gate_id),
                 ("設置階", toilet.toilet_id.floor),
                 ("利用時間", toilet.toilet_id.get_opening_hours),
-                ("個室数", toilet.toilet_stall),
+                ("個室数", {"洋式": toilet_stall.western_style, "和式": toilet_stall.japanese_style}),
                 ("小便器数", toilet.urial),
                 ("近い改札口", toilet.toilet_id.near_gate),
                 ("近いホーム", toilet.toilet_id.near_home_num),
-                ("近い車両番号", toilet.toilet_id.near_train_door_num),
+                ("近い車両番号", toilet.toilet_id.near_train_car_num),
                 ("温水洗浄便座", toilet.warm_water_washing_toilet_seat_display),
                 ("おむつ交換設備", toilet.child_facility_display),
                 ("バリアフリートイレ", toilet.barrier_free_toilet_display),
@@ -122,14 +123,15 @@ def toilet_info(request, pk, gender):
             ]
         elif gender == 2:
             toilet = get_object_or_404(FemaleToilet, pk=pk)
+            toilet_stall = get_object_or_404(ToiletStall, female_toilet_id=toilet)
             toilet_info = [
                 ("改札内外", toilet.toilet_id.station_ticket_gate_id),
                 ("設置階", toilet.toilet_id.floor),
                 ("利用時間", toilet.toilet_id.get_opening_hours),
-                ("個室数", toilet.toilet_stall),
+                ("個室数", {"洋式": toilet_stall.western_style, "和式": toilet_stall.japanese_style}),
                 ("近い改札口", toilet.toilet_id.near_gate),
                 ("近いホーム", toilet.toilet_id.near_home_num),
-                ("近い車両番号", toilet.toilet_id.near_train_door_num),
+                ("近い車両番号", toilet.toilet_id.near_train_car_num),
                 ("パウダールーム", toilet.powder_room_display),
                 ("温水洗浄便座", toilet.warm_water_washing_toilet_seat_display),
                 ("おむつ交換設備", toilet.child_facility_display),
@@ -141,14 +143,15 @@ def toilet_info(request, pk, gender):
             ]
         elif gender == 3:
             toilet = get_object_or_404(MultiFunctionalToilet, pk=pk)
+            toilet_stall = get_object_or_404(ToiletStall, multi_toilet_id=toilet)
             toilet_info = [
                 ("改札内外", toilet.toilet_id.station_ticket_gate_id),
                 ("設置階", toilet.toilet_id.floor),
                 ("利用時間", toilet.toilet_id.get_opening_hours),
-                ("個室数", toilet.toilet_stall),
+                ("個室数", {"洋式": toilet_stall.western_style, "和式": toilet_stall.japanese_style}),
                 ("近い改札口", toilet.toilet_id.near_gate),
                 ("近いホーム", toilet.toilet_id.near_home_num),
-                ("近い車両番号", toilet.toilet_id.near_train_door_num),
+                ("近い車両番号", toilet.toilet_id.near_train_car_num),
                 ("温水洗浄便座", toilet.warm_water_washing_toilet_seat_display),
                 ("おむつ交換設備", toilet.child_facility_display),
                 ("バリアフリートイレ", toilet.barrier_free_toilet_display),
@@ -200,13 +203,15 @@ def change_toilet_data(request, toilet_pk, gender_num):
     try:
         if gender_num == 1:
             toilet = get_object_or_404(MaleToilet, toilet_id=toilet_pk)
-            # 小便器数
             urial = toilet.urial
+            toilet_stall = get_object_or_404(ToiletStall, male_toilet_id=toilet)
         elif gender_num == 2:
             toilet = get_object_or_404(FemaleToilet, toilet_id=toilet_pk)
+            toilet_stall = get_object_or_404(ToiletStall, female_toilet_id=toilet)
             powder_room = toilet.powder_room_display()
         elif gender_num == 3:
             toilet = get_object_or_404(MultiFunctionalToilet, toilet_id=toilet_pk)
+            toilet_stall = get_object_or_404(ToiletStall, multi_toilet_id=toilet)
         else:
             return JsonResponse({"error": "無効なgender値です"}, status=400)
     except Exception as e:
@@ -239,14 +244,12 @@ def change_toilet_data(request, toilet_pk, gender_num):
     # 利用時間
     # time = f"{toilet.toilet_id.open_time}～{toilet.toilet_id.close_time}"
     time = toilet.toilet_id.get_opening_hours()
-    # 個室数
-    toilet_stall = toilet.toilet_stall
     # 近い改札口
     near_gate = toilet.toilet_id.near_gate
     # 近いホーム
     near_home_num = toilet.toilet_id.near_home_num
     # 近い車両番号
-    near_train_door_num = toilet.toilet_id.near_train_door_num
+    near_train_car_num = toilet.toilet_id.near_train_car_num
     # 温水洗浄便座
     warm_water_washing_toilet_seat = toilet.warm_water_washing_toilet_seat_display()
     # おむつ交換設備
@@ -268,6 +271,7 @@ def change_toilet_data(request, toilet_pk, gender_num):
     # コメント
     comments = Comment.objects.select_related("user").filter(gender=gen, toilet=toilet_pk).order_by("data_create").reverse()
     print(comments)
+
     if comments.exists():
         comments = list(comments.values(
             "user",
@@ -288,11 +292,11 @@ def change_toilet_data(request, toilet_pk, gender_num):
             {"label": "改札内外", "value": in_out_station_ticket_gate},
             {"label": "設置階", "value": floor},
             {"label": "利用時間", "value": time},
-            {"label": "個室数", "value": toilet_stall},
+            {"label": "個室数", "value": {"洋式": toilet_stall.western_style, "和式": toilet_stall.japanese_style}},
             {"label": "小便器数", "value": urial},
             {"label": "近い改札口", "value": near_gate},
             {"label": "近いホーム", "value": near_home_num},
-            {"label": "近い車両番号", "value": near_train_door_num},
+            {"label": "近い車両番号", "value": near_train_car_num},
             {"label": "温水洗浄便座", "value": warm_water_washing_toilet_seat},
             {"label": "おむつ交換設備", "value": child_facility},
             {"label": "バリアフリートイレ", "value": barrier_free_toilet},
@@ -306,10 +310,10 @@ def change_toilet_data(request, toilet_pk, gender_num):
             {"label": "改札内外", "value": in_out_station_ticket_gate},
             {"label": "設置階", "value": floor},
             {"label": "利用時間", "value": time},
-            {"label": "個室数", "value": toilet_stall},
+            {"label": "個室数", "value": {"洋式": toilet_stall.western_style, "和式": toilet_stall.japanese_style}},
             {"label": "近い改札口", "value": near_gate},
             {"label": "近いホーム", "value": near_home_num},
-            {"label": "近い車両番号", "value": near_train_door_num},
+            {"label": "近い車両番号", "value": near_train_car_num},
             {"label": "パウダールーム", "value": powder_room},
             {"label": "温水洗浄便座", "value": warm_water_washing_toilet_seat},
             {"label": "おむつ交換設備", "value": child_facility},
@@ -324,10 +328,10 @@ def change_toilet_data(request, toilet_pk, gender_num):
             {"label": "改札内外", "value": in_out_station_ticket_gate},
             {"label": "設置階", "value": floor},
             {"label": "利用時間", "value": time},
-            {"label": "個室数", "value": toilet_stall},
+            {"label": "個室数", "value": {"洋式": toilet_stall.western_style, "和式": toilet_stall.japanese_style}},
             {"label": "近い改札口", "value": near_gate},
             {"label": "近いホーム", "value": near_home_num},
-            {"label": "近い車両番号", "value": near_train_door_num},
+            {"label": "近い車両番号", "value": near_train_car_num},
             {"label": "温水洗浄便座", "value": warm_water_washing_toilet_seat},
             {"label": "おむつ交換設備", "value": child_facility},
             {"label": "バリアフリートイレ", "value": barrier_free_toilet},

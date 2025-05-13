@@ -161,12 +161,13 @@ class UserDeleteForm(forms.Form):
 
 
     def save(self):
-        """ユーザーを論理削除する"""
+        """ユーザーを物理削除する"""
         if self.user:
-            self.user.is_active=False
-            self.user.is_deleted=True
-            self.user.deleted_at=datetime.now()
-            self.user.save()
+            self.user.delete()
+            # self.user.is_active=False
+            # self.user.is_deleted=True
+            # self.user.deleted_at=datetime.now()
+            # self.user.save()
 
 
 

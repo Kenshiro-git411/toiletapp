@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TrainLine, TrainStation, ToiletMaster, MaleToilet, FemaleToilet, MultiFunctionalToilet, Comment, StationTicketGate
+from .models import TrainLine, TrainStation, ToiletMaster, MaleToilet, FemaleToilet, MultiFunctionalToilet, Comment, StationTicketGate, ToiletStall
 
 class TrainLineAdmin(admin.ModelAdmin):
     list_display = ("id", "train_line_name")
@@ -18,18 +18,21 @@ class ToiletMasterAdmin(admin.ModelAdmin):
 class StationTicketGateAdmin(admin.ModelAdmin):
     list_display = ("station_ticket_gate",)
 
+class ToiletStallAdmin(admin.ModelAdmin):
+    list_display = ("male_toilet_id", "female_toilet_id", "multi_toilet_id", "western_style", "japanese_style")
+
 class MaleToiletAdmin(admin.ModelAdmin):
-    list_display = ("toilet_id", "initial_value", "initial_size", "initial_congestion", "value", "size", "congestion", "toilet_stall", "urial", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair",)
+    list_display = ("toilet_id", "initial_value", "initial_size", "initial_congestion", "value", "size", "congestion", "urial", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair",)
     search_fields = ("toilet_id", "value",)
     list_filter = ("toilet_id",)
 
 class FemaleToiletAdmin(admin.ModelAdmin):
-    list_display = ("toilet_id", "initial_value", "initial_size", "initial_congestion", "value", "size", "congestion", "toilet_stall", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair", "powder_room")
+    list_display = ("toilet_id", "initial_value", "initial_size", "initial_congestion", "value", "size", "congestion", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair", "powder_room")
     search_fields = ("toilet_id", "value",)
     list_filter = ("toilet_id",)
 
 class MultiFunctionalToiletAdmin(admin.ModelAdmin):
-    list_display = ("toilet_id", "initial_value", "initial_size", "initial_congestion", "value", "size", "congestion", "toilet_stall", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair",)
+    list_display = ("toilet_id", "initial_value", "initial_size", "initial_congestion", "value", "size", "congestion","warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair",)
     search_fields = ("toilet_id", "value",)
     list_filter = ("toilet_id",)
 
@@ -43,6 +46,7 @@ admin.site.register(TrainLine, TrainLineAdmin)
 admin.site.register(TrainStation, TrainStationAdmin)
 admin.site.register(ToiletMaster, ToiletMasterAdmin)
 admin.site.register(StationTicketGate, StationTicketGateAdmin)
+admin.site.register(ToiletStall, ToiletStallAdmin)
 admin.site.register(MaleToilet, MaleToiletAdmin)
 admin.site.register(FemaleToilet, FemaleToiletAdmin)
 admin.site.register(MultiFunctionalToilet, MultiFunctionalToiletAdmin)

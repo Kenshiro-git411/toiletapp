@@ -51,12 +51,22 @@
         <table class="table-auto border-collapse w-full max-w-3xl">
             <tbody class="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {% for label, value in toilet_info %}
-                {% if value is not None %}
-                <tr class="border border-gray-300 h-full flex flex-col justify-between">
-                    <th class="border border-gray-300 py-2 px-1 bg-[#5BB0EB] text-white">{{ label }}</th>
-                    <td class="border border-gray-300 py-4 px-2 bg-[#F6F8F8] text-center">{{ value }}</td>
-                </tr>
-                {% endif %}
+                    {% if value is not None %}
+                        {% if label == "個室数" %}
+                            <tr class="border border-gray-300 h-full flex flex-col justify-between">
+                                <th class="border border-gray-300 py-2 px-1 bg-[#5BB0EB] text-white">{{ label }}</th>
+                                <td class="border border-gray-300 py-4 px-2 bg-[#F6F8F8] text-center">
+                                    洋式：{{ value.洋式 }}&emsp;和式：{{ value.和式 }}
+                                </td>
+                            </tr>
+                        
+                        {% else %}
+                            <tr class="border border-gray-300 h-full flex flex-col justify-between">
+                                <th class="border border-gray-300 py-2 px-1 bg-[#5BB0EB] text-white">{{ label }}</th>
+                                <td class="border border-gray-300 py-4 px-2 bg-[#F6F8F8] text-center">{{ value }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endif %}
                 {% endfor %}
             </tbody>
         </table>
@@ -249,20 +259,37 @@
             toilet.toilet_info.forEach(info => {
                 console.log("info", info);
                 if (info.value !== null){
-                    const tr = document.createElement("tr");
-                    tr.classList.add("border", "border-gray-300", "h-full", "flex", "flex-col", "justify-between");
-    
-                    const th = document.createElement("th");
-                    th.classList.add("border", "border-gray-300", "py-2", "px-1", "bg-[#5BB0EB]", "text-white");
-                    th.textContent = info.label;
-    
-                    const td = document.createElement("td");
-                    td.classList.add("border", "border-gray-300", "py-4", "px-2", "bg-[#F6F8F8]", "text-center");
-                    td.textContent = info.value;
-    
-                    tr.appendChild(th);
-                    tr.appendChild(td);
-                    tbody.appendChild(tr);
+                    if (info.label == "個室数"){
+                        const tr = document.createElement("tr");
+                        tr.classList.add("border", "border-gray-300", "h-full", "flex", "flex-col", "justify-between");
+        
+                        const th = document.createElement("th");
+                        th.classList.add("border", "border-gray-300", "py-2", "px-1", "bg-[#5BB0EB]", "text-white");
+                        th.textContent = info.label;
+        
+                        const td = document.createElement("td");
+                        td.classList.add("border", "border-gray-300", "py-4", "px-2", "bg-[#F6F8F8]", "text-center");
+                        td.textContent = "洋式：" + info.value["洋式"] + "\u2003和式：" + info.value["和式"];
+        
+                        tr.appendChild(th);
+                        tr.appendChild(td);
+                        tbody.appendChild(tr);
+                    } else {
+                        const tr = document.createElement("tr");
+                        tr.classList.add("border", "border-gray-300", "h-full", "flex", "flex-col", "justify-between");
+        
+                        const th = document.createElement("th");
+                        th.classList.add("border", "border-gray-300", "py-2", "px-1", "bg-[#5BB0EB]", "text-white");
+                        th.textContent = info.label;
+        
+                        const td = document.createElement("td");
+                        td.classList.add("border", "border-gray-300", "py-4", "px-2", "bg-[#F6F8F8]", "text-center");
+                        td.textContent = info.value;
+        
+                        tr.appendChild(th);
+                        tr.appendChild(td);
+                        tbody.appendChild(tr);
+                    }
                 }
             })
     
