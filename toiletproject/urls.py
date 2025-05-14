@@ -8,6 +8,8 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('line_app/', include('line_app.urls')),
     path('toilet/', include('toilet.urls')),
+    path('', include('lp.urls')),
+
 ]
 
 if settings.DEBUG:

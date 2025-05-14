@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'accounts',
     'toilet',
     'line_app',
+    'lp',
 ]
 
 MIDDLEWARE = [

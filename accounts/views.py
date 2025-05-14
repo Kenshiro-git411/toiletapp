@@ -15,6 +15,7 @@ from django.conf import settings
 from django.http import JsonResponse
 import json
 import uuid
+from .forms import CustomPasswordResetForm
 
 def user_login(request):
     login_form = forms.LoginForm()
@@ -159,7 +160,7 @@ def user_info_update(request):
 def password_reset_request(request):
     """パスワードリセットリクエスト（メール送信）"""
     if request.method == "POST":
-        form = PasswordResetForm(request.POST)
+        form = CustomPasswordResetForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data["email"]
             print('email', email)
@@ -190,7 +191,7 @@ def password_reset_request(request):
                 print("該当するユーザーが見つかりません")
 
     else:
-        form = PasswordResetForm()
+        form = CustomPasswordResetForm()
 
     return render(request, 'accounts/password_reset/password_reset_form.html', {"form": form})
 
@@ -236,8 +237,8 @@ def user_delete(request):
         if delete_form.is_valid() and delete_form.cleaned_data.get("confirm"):
             delete_form.save() # 物理削除する
             logout(request)
-            print("アカウントが削除されました")
-            return redirect("toilet:display_lp")
+            # print("アカウントが削除されました")
+            return redirect("toilet:home")
     else:
         delete_form = forms.UserDeleteForm()
 

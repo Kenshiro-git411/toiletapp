@@ -66,7 +66,7 @@
             case 'get_latest_comment':
                 return '{% url "toilet:get_latest_comment" %}'
             default:
-                return '{% url "toilet:display_lp" %}'; // デフォルトのリダイレクト先
+                return '{% url "lp:display_lp" %}'; // デフォルトのリダイレクト先
         }
     }
     /* --------------------------------------------------*/
@@ -147,7 +147,7 @@
                         window.location.href = getRedirectUrl(savedRedirect);
                     } else {
                         // デフォルトのホームページへ
-                        window.location.href = '{% url "toilet:display_lp" %}';
+                        window.location.href = '{% url "lp:display_lp" %}';
                     }
                 {% endif %}
             }

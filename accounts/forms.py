@@ -2,6 +2,20 @@ from django import forms
 from .models import Gender, User
 from django.contrib.auth.password_validation import validate_password
 from datetime import datetime
+from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+
+# 仮想環境の修正は行わず、継承する
+class CustomPasswordResetForm(PasswordResetForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["email"].widget.attrs["class"] = "w-full p-1 text-md ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"
+
+# 仮想環境の修正は行わず、継承する
+class CustomSetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["new_password1"].widget.attrs["class"] = "p-1 ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"
+        self.fields["new_password2"].widget.attrs["class"] = "p-1 ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"
 
 class LoginForm(forms.Form):
     email = forms.EmailField(

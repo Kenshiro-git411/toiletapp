@@ -20,10 +20,6 @@ def liff_entrypoint(request):
     }
     return render(request, 'toilet/liff_entry.html', context)
 
-def display_lp(request):
-    return render(request, 'lp/service_introduction.html')
-
-
 def home(request):
     print("LINE_LIFF_ID", settings.LINE_LIFF_ID)
     context = {
