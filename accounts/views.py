@@ -15,7 +15,7 @@ from django.conf import settings
 from django.http import JsonResponse
 import json
 import uuid
-from .forms import CustomPasswordResetForm
+from .forms import CustomPasswordResetForm, CustomSetPasswordForm
 
 def user_login(request):
     login_form = forms.LoginForm()
@@ -210,14 +210,14 @@ def password_reset_confirm(request, uidb64, token):
 
     if user is not None and default_token_generator.check_token(user, token):
         if request.method == "POST":
-            form = SetPasswordForm(user, request.POST)
+            form = CustomSetPasswordForm(user, request.POST)
             if form.is_valid():
                 form.save()
                 messages.success(request, "パスワードが変更されました。")
                 print("パスワードが変更されました。")
                 return redirect("accounts:password_reset_complete")
         else:
-            form = SetPasswordForm(user)
+            form = CustomSetPasswordForm(user)
 
         return render(request, "accounts/password_reset/password_reset_confirm.html", {"form": form})
     

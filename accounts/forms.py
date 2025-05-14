@@ -12,8 +12,8 @@ class CustomPasswordResetForm(PasswordResetForm):
 
 # 仮想環境の修正は行わず、継承する
 class CustomSetPasswordForm(SetPasswordForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(user, *args, **kwargs)
         self.fields["new_password1"].widget.attrs["class"] = "p-1 ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"
         self.fields["new_password2"].widget.attrs["class"] = "p-1 ring-1 ring-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-none"
 
