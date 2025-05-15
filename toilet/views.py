@@ -181,12 +181,6 @@ def toilet_info(request, pk, gender):
         congestion = congestion.quantize(Decimal("0.0"), rounding=ROUND_DOWN)
         root = toilet.toilet_id.toilet_root
 
-        # comments = Comment.objects.filter(toilet=toilet.toilet_id, gender=gender).order_by("data_create").reverse()
-        # # print(comments)
-        # if not comments.exists():
-        #     print("コメントはありません")
-        #     comments = ""
-
         return render(request, 'toilet/search_result_toilet_info.html', {
             "toilet": toilet,
             "station_name": station_name,
@@ -256,7 +250,6 @@ def change_toilet_data(request, toilet_pk, gender_num):
     # 設置階
     floor = toilet.toilet_id.floor
     # 利用時間
-    # time = f"{toilet.toilet_id.open_time}～{toilet.toilet_id.close_time}"
     time = toilet.toilet_id.get_opening_hours()
     # 近い改札口
     near_gate = toilet.toilet_id.near_gate
@@ -282,10 +275,6 @@ def change_toilet_data(request, toilet_pk, gender_num):
     root = toilet.toilet_id.toilet_root
     # 性別id
     gen = toilet.gender.pk
-
-    # コメント
-    # comments = Comment.objects.select_related("user").filter(gender=gen, toilet=toilet_pk).order_by("data_create").reverse()
-    # print(comments)
 
     if comments.exists():
         comments = list(comments.values(
@@ -439,16 +428,6 @@ def toilet_review(request, toilet_id, gender):
                         toilet=multi_toilet_instance,
                     )
 
-                # comment_data = Comment.objects.create(
-                #     user=user_instance,
-                #     comment=review_form.cleaned_data["comment"],
-                #     gender=gender_instance,
-                #     value=review_form.cleaned_data["value"],
-                #     size=review_form.cleaned_data["size"],
-                #     congestion=review_form.cleaned_data["congestion"],
-                #     toilet=toilet_instance,
-                # )
-
                 data_dict = {
                     "value": review_form.cleaned_data["value"],
                     "size": review_form.cleaned_data["size"],
@@ -490,11 +469,6 @@ def toilet_review(request, toilet_id, gender):
         }, status=500)
     
 def calculate_value_size_congestion(gender, toilet_id):
-    # gender = gender
-    # value = data_dict["value"]
-    # size = data_dict["size"]
-    # congestion = data_dict["congestion"]
-    # toilet_id = toilet_id
 
     if gender == 1:
         # きれいさ
@@ -580,13 +554,7 @@ def calculate_value_size_congestion(gender, toilet_id):
     else:
         raise ValueError("不正gender値が設定されました")
 
-    # コメントの数 + デフォルトで最初に登録されているデータ1件
-    # length = (Comment.objects.filter(toilet_id=toilet_id, gender=gender).count() + 1)
-
     # きれいさの総合値
-    # comment_total_value_dict = Comment.objects.filter(toilet_id=toilet_id, gender=gender).aggregate(Sum('value'))
-    # print("total_value_dict", total_value_dict)
-
     comment_total_value = comment_total_value_dict['value__sum'] or 0
     # print("comment_total_value", comment_total_value)
 
@@ -594,9 +562,6 @@ def calculate_value_size_congestion(gender, toilet_id):
     # print("total_value", total_value)
 
     # 広さの総合値
-    # comment_total_size_dict = Comment.objects.filter(toilet_id=toilet_id, gender=gender).aggregate(Sum('size'))
-    # print("total_size_dict", total_size_dict)
-
     comment_total_size = comment_total_size_dict['size__sum'] or 0
     # print("comment_total_size", comment_total_size)
 
@@ -604,9 +569,6 @@ def calculate_value_size_congestion(gender, toilet_id):
     # print("total_size", total_size)
 
     # 空き具合の総合値
-    # comment_total_congestion_dict = Comment.objects.filter(toilet_id=toilet_id, gender=gender).aggregate(Sum('congestion'))
-    # print("total_congestion_dict", total_congestion_dict)
-
     comment_total_congestion = comment_total_congestion_dict['congestion__sum'] or 0
     # print("comment_total_congestion", comment_total_congestion)
 
@@ -713,7 +675,6 @@ def get_latest_comment(request):
 def user_comments(request):
     user = request.user
     print(user)
-    # comments = Comment.objects.filter(user=request.user).order_by("data_create").reverse()
 
     # 各コメントを取得
     male_comments = MaleToiletComments.objects.filter(user=user)
@@ -747,14 +708,6 @@ def toilet_review_revise(request, pk, gender):
         comment = get_object_or_404(MaleToiletComments, pk=pk, user=user)
         print("comment", comment.toilet)
         print("comment", comment.comment)
-
-
-
-
-    # comment = get_object_or_404(Comment, pk=pk, user=request.user)
-    # print("comment", comment.toilet)
-    # print("comment", comment.comment)
-    # print("comment", comment.gender.pk)
 
     if request.method == "POST":
         form = forms.Review(request.POST, instance=comment)
@@ -804,7 +757,6 @@ def toilet_review_delete(request, pk, gender):
         print("comment", comment.toilet)
         print("comment", comment.comment)
 
-    # comment = get_object_or_404(Comment, pk=pk, user=request.user)
     gender_pk = gender
     toilet_pk = comment.toilet.pk
     toilet_id = comment.toilet.toilet_id # 各性別トイレテーブルが持つtoilet_id(ToiletMasterテーブルのpkでもある)
