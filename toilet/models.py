@@ -69,9 +69,6 @@ class MaleToilet(models.Model):
     size = models.FloatField(null=True)
     # 空き具合(平均値:随時更新)
     congestion = models.FloatField(null=True)
-    # 個室
-    # toilet_stall = models.IntegerField(help_text="個室数を入力してください")
-    # toilet_stall = models.ForeignKey(ToiletStall, blank=True, null=True, on_delete=models.SET_NULL)
     # 小便器
     urial = models.IntegerField(help_text="小便器数を入力してください")
     # 温水洗浄便座
@@ -151,8 +148,6 @@ class FemaleToilet(models.Model):
     size = models.FloatField(null=True)
     # 空き具合(平均値:随時更新)
     congestion = models.FloatField(null=True)
-    # 個室
-    # toilet_stall = models.IntegerField(help_text="個室数を入力してください")
     # 温水洗浄便座
     warm_water_washing_toilet_seat = models.BooleanField(null=True)
     # おむつ交換設備
@@ -239,8 +234,6 @@ class MultiFunctionalToilet(models.Model):
     size = models.FloatField(null=True)
     # 空き具合(平均値:随時更新)
     congestion = models.FloatField(null=True)
-    # 個室
-    # toilet_stall = models.IntegerField(help_text="個室数を入力してください")
     # 温水洗浄便座
     warm_water_washing_toilet_seat = models.BooleanField(null=True)
     # おむつ交換設備
@@ -334,4 +327,44 @@ class Comment(models.Model):
         help_text="コメントされた日時"
     )
 
+class MaleToiletComments(models.Model):
+    """男性トイレコメントテーブル"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField(max_length=300)
+    gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
+    value = models.IntegerField(help_text="5段階で数値を入力してください")
+    size = models.IntegerField(help_text="5段階で数値を入力してください", null=True)
+    congestion = models.IntegerField(help_text="5段階で数値を入力してください", null=True)
+    toilet = models.ForeignKey(MaleToilet, on_delete=models.CASCADE)
+    data_create = models.DateTimeField(
+        default=timezone.now,
+        help_text="コメントされた日時"
+    )
 
+class FemaleToiletComments(models.Model):
+    """女性トイレコメントテーブル"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField(max_length=300)
+    gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
+    value = models.IntegerField(help_text="5段階で数値を入力してください")
+    size = models.IntegerField(help_text="5段階で数値を入力してください", null=True)
+    congestion = models.IntegerField(help_text="5段階で数値を入力してください", null=True)
+    toilet = models.ForeignKey(FemaleToilet, on_delete=models.CASCADE)
+    data_create = models.DateTimeField(
+        default=timezone.now,
+        help_text="コメントされた日時"
+    )
+
+class MultifunctionalToiletComments(models.Model):
+    """多機能トイレコメントテーブル"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField(max_length=300)
+    gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
+    value = models.IntegerField(help_text="5段階で数値を入力してください")
+    size = models.IntegerField(help_text="5段階で数値を入力してください", null=True)
+    congestion = models.IntegerField(help_text="5段階で数値を入力してください", null=True)
+    toilet = models.ForeignKey(MultiFunctionalToilet, on_delete=models.CASCADE)
+    data_create = models.DateTimeField(
+        default=timezone.now,
+        help_text="コメントされた日時"
+    )

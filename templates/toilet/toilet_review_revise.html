@@ -4,7 +4,7 @@
 
 {% block content %}
 <div>
-    <form method="post" action="{% url 'toilet:toilet_review_revise' comment.pk %}">{% csrf_token %}
+    <form method="post" action="{% url 'toilet:toilet_review_revise' comment.pk comment.gender.pk %}">{% csrf_token %}
         <ul class="flex items-center space-x-4">
             <li class="my-3">
                 {{ review_form.value.label }}
@@ -21,7 +21,7 @@
         </ul>
         <div class="flex flex-col my-3">
             <label>トイレ場所</label>
-            <p class="flex pl-1 pr-3 py-1 bg-white w-fit border border-gray-500">{{ comment.toilet.place }}</p>
+            <p class="flex pl-1 pr-3 py-1 bg-white w-fit border border-gray-500">{{ comment.toilet.toilet_id.place }}</p>
         </div>
         <div>
             {{ review_form.comment.label }}

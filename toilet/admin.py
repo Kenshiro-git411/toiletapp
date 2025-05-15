@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TrainLine, TrainStation, ToiletMaster, MaleToilet, FemaleToilet, MultiFunctionalToilet, Comment, StationTicketGate, ToiletStall
+from .models import TrainLine, TrainStation, ToiletMaster, MaleToilet, FemaleToilet, MultiFunctionalToilet, Comment, StationTicketGate, ToiletStall, MaleToiletComments, FemaleToiletComments, MultifunctionalToiletComments
 
 class TrainLineAdmin(admin.ModelAdmin):
     list_display = ("id", "train_line_name")
@@ -36,7 +36,23 @@ class MultiFunctionalToiletAdmin(admin.ModelAdmin):
     search_fields = ("toilet_id", "value",)
     list_filter = ("toilet_id",)
 
+# 後ほど削除する
 class CommentAdmin(admin.ModelAdmin):
+    list_display = ("toilet", "user", "gender", "value")
+    search_fields = ("toilet", "user", "gender", "value")
+    list_filter = ("toilet", "user", "gender", "value")
+
+class MaleToiletCommentsAdmin(admin.ModelAdmin):
+    list_display = ("toilet", "user", "gender", "value")
+    search_fields = ("toilet", "user", "gender", "value")
+    list_filter = ("toilet", "user", "gender", "value")
+
+class FemaleToiletCommentsAdmin(admin.ModelAdmin):
+    list_display = ("toilet", "user", "gender", "value")
+    search_fields = ("toilet", "user", "gender", "value")
+    list_filter = ("toilet", "user", "gender", "value")
+
+class MultifunctionalToiletCommentsAdmin(admin.ModelAdmin):
     list_display = ("toilet", "user", "gender", "value")
     search_fields = ("toilet", "user", "gender", "value")
     list_filter = ("toilet", "user", "gender", "value")
@@ -51,3 +67,6 @@ admin.site.register(MaleToilet, MaleToiletAdmin)
 admin.site.register(FemaleToilet, FemaleToiletAdmin)
 admin.site.register(MultiFunctionalToilet, MultiFunctionalToiletAdmin)
 admin.site.register(Comment, CommentAdmin)
+admin.site.register(MaleToiletComments, MaleToiletCommentsAdmin)
+admin.site.register(FemaleToiletComments, FemaleToiletCommentsAdmin)
+admin.site.register(MultifunctionalToiletComments, MultifunctionalToiletCommentsAdmin)

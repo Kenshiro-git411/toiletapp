@@ -9,6 +9,11 @@
         {% for comment in page_obj %}
         <div class="flex flex-col items-start justify-center p-3 my-4 rounded bg-[#D2E8F8]">
             <div class="flex items-center">
+                {% if comment.gender.pk != 3 %}
+                    <span>{{ comment.gender }}：</span>
+                {% else %}
+                    <span>多機能：</span>
+                {% endif %}
                 <span class="border-b border-gray-400">{{ comment.toilet }}</span>
                 <span class="text-sm text-gray-800 inline-block ml-1">{{ comment.data_create | time_since}}前</span>
             </div>
@@ -19,8 +24,8 @@
                     <li>空き具合★{{ comment.congestion }}</li>
                 </ul>
                 <div class="flex items-center space-x-4 sm:space-x-7">
-                    <a href="{% url 'toilet:toilet_review_revise' comment.pk %}"><img src="{% static '/accounts/account_revise.png' %}" alt="ロゴ_修正" class="w-4 h-auto"></a>
-                    <a href="{% url 'toilet:toilet_review_delete' comment.pk %}" onclick="return confirm('レビューを削除してもよろしいですか？')"><img src="{% static '/accounts/account_trush.png' %}" alt="ロゴ_ゴミ箱" class="w-5 h-auto"></a>
+                    <a href="{% url 'toilet:toilet_review_revise' comment.pk comment.gender.pk %}"><img src="{% static '/accounts/account_revise.png' %}" alt="ロゴ_修正" class="w-4 h-auto"></a>
+                    <a href="{% url 'toilet:toilet_review_delete' comment.pk comment.gender.pk %}" onclick="return confirm('レビューを削除してもよろしいですか？')"><img src="{% static '/accounts/account_trush.png' %}" alt="ロゴ_ゴミ箱" class="w-5 h-auto"></a>
                 </div>
             </div>
             <p class="w-full text-justify  rounded p-4 mt-1 bg-white">{{ comment.comment }}</p>
