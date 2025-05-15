@@ -134,18 +134,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 STATIC_URL = '/static/'
-if DEBUG: # (DEBUG=True)
-    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'assets')]
-else:# (DEBUG=False)
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'assets')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
-# 開発環境
-if DEBUG:
-    MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
-# 本番環境
-else:
-    MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
+MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
 
 # 認証用のモデルとして設定
 AUTH_USER_MODEL = 'accounts.User'
