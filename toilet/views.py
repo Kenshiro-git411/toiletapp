@@ -386,7 +386,12 @@ def toilet_review(request, toilet_id, gender):
             raise ValueError(f"toilet_id={toilet_id} のデータが見つかりません")
 
         if request.method == 'POST':
-            review_form = forms.Review(request.POST)
+            if gender == 1:
+                review_form = forms.MaleToiletReviewForm(request.POST)
+            elif gender == 2:
+                review_form = forms.FemaleToiletReviewForm(request.POST)
+            elif gender == 3:
+                review_form = forms.MultifunctionalToiletReviewForm(request.POST)
 
             if review_form.is_valid():
                 gender_instance = get_object_or_404(Gender, pk=gender)
@@ -441,8 +446,12 @@ def toilet_review(request, toilet_id, gender):
         else:
             print("GETメソッド")
             try:
-                review_form = forms.Review()
-                # review_form = None
+                if gender == 1:
+                    review_form = forms.MaleToiletReviewForm()
+                elif gender == 2:
+                    review_form = forms.FemaleToiletReviewForm()
+                elif gender == 3:
+                    review_form = forms.MultifunctionalToiletReviewForm()
             except Exception as e:
                 print("フォーム生成エラー: ", e)
                 raise e
@@ -710,7 +719,12 @@ def toilet_review_revise(request, pk, gender):
         print("comment", comment.comment)
 
     if request.method == "POST":
-        form = forms.Review(request.POST, instance=comment)
+        if gender == 1:
+            form = forms.MaleToiletReviewForm(request.POST, instance=comment)
+        elif gender == 2:
+            form = forms.FemaleToiletReviewForm(request.POST, instance=comment)
+        elif gender == 3:
+            form = forms.MultifunctionalToiletReviewForm(request.POST, instance=comment)
         gender_pk = gender
         toilet_pk = comment.toilet.pk
         toilet_id = comment.toilet.toilet_id # 各性別トイレテーブルが持つtoilet_id(ToiletMasterテーブルのpkでもある)
@@ -735,7 +749,12 @@ def toilet_review_revise(request, pk, gender):
         except Exception as e:
             print("e", e)
     else:
-        review_form = forms.Review(instance=comment)
+        if gender == 1:
+            review_form = forms.MaleToiletReviewForm(instance=comment)
+        elif gender == 2:
+            review_form = forms.FemaleToiletReviewForm(instance=comment)
+        elif gender == 3:
+            review_form = forms.MultifunctionalToiletReviewForm(instance=comment)
 
     return render(request, "toilet/toilet_review_revise.html", context={
         "review_form": review_form,

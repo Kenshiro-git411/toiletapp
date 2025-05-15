@@ -311,22 +311,6 @@ class ToiletStall(models.Model):
         elif len(filled) > 1:
             raise ValidationError("男性、女性、多機能トイレのいずれか1つのみ登録ができます")
 
-class Comment(models.Model):
-    """コメントテーブル"""
-
-    # accountsアプリのUserモデルを外部キーに設定
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.TextField(max_length=300)
-    gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
-    value = models.IntegerField(help_text="5段階で数値を入力してください")
-    size = models.IntegerField(help_text="5段階で数値を入力してください", null=True)
-    congestion = models.IntegerField(help_text="5段階で数値を入力してください", null=True)
-    toilet = models.ForeignKey(ToiletMaster, on_delete=models.CASCADE)
-    data_create = models.DateTimeField(
-        default=timezone.now,
-        help_text="コメントされた日時"
-    )
-
 class MaleToiletComments(models.Model):
     """男性トイレコメントテーブル"""
     user = models.ForeignKey(User, on_delete=models.CASCADE)

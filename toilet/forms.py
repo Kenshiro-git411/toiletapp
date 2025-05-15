@@ -1,6 +1,6 @@
 from django import forms
-from .models import TrainLine, ToiletMaster
-from toilet.models import Gender, Comment
+from .models import TrainLine, ToiletMaster, MaleToiletComments, FemaleToiletComments, MultifunctionalToiletComments
+from toilet.models import Gender
 
 class SearchStation(forms.Form):
     station_name = forms.CharField(
@@ -14,7 +14,7 @@ class SearchStation(forms.Form):
         })
     )
 
-class Review(forms.ModelForm):
+class BaseReviewForm(forms.ModelForm):
     value = forms.IntegerField(
         label="きれいさ",
         min_value=1,
@@ -57,10 +57,21 @@ class Review(forms.ModelForm):
 
     )
 
-    # モデルと連携させることで、Commentモデルに連携されたフォームを作成 -> 登録データが入力された状態のフォームを表示できる
     class Meta:
-        model = Comment
         fields = ['value', 'size', 'congestion', 'comment']
+
+class MaleToiletReviewForm(BaseReviewForm):
+    # モデルと連携させることで、Commentモデルに連携されたフォームを作成 -> 登録データが入力された状態のフォームを表示できる。女性、多機能も同様
+    class Meta(BaseReviewForm.Meta):
+        model = MaleToiletComments
+
+class FemaleToiletReviewForm(BaseReviewForm):
+    class Meta(BaseReviewForm.Meta):
+        model = FemaleToiletComments
+
+class MultifunctionalToiletReviewForm(BaseReviewForm):
+    class Meta(BaseReviewForm.Meta):
+        model = MultifunctionalToiletComments
 
 class SearchLine(forms.Form):
     line = forms.ModelChoiceField(
