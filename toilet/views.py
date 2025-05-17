@@ -117,6 +117,7 @@ def toilet_info(request, pk, gender):
                 ("近い車両番号", toilet.toilet_id.near_train_car_num),
                 ("パウダールーム", toilet.powder_room_display),
                 ("温水洗浄便座", toilet.warm_water_washing_toilet_seat_display),
+                ("チャイルドシート", toilet.child_seat_display),
                 ("おむつ交換設備", toilet.child_facility_display),
                 ("バリアフリートイレ", toilet.barrier_free_toilet_display),
                 ("車いす対応", toilet.wheelchair_display),
@@ -141,6 +142,7 @@ def toilet_info(request, pk, gender):
                 ("近い車両番号", toilet.toilet_id.near_train_car_num),
                 ("パウダールーム", toilet.powder_room_display),
                 ("温水洗浄便座", toilet.warm_water_washing_toilet_seat_display),
+                ("チャイルドシート", toilet.child_seat_display),
                 ("おむつ交換設備", toilet.child_facility_display),
                 ("バリアフリートイレ", toilet.barrier_free_toilet_display),
                 ("車いす対応", toilet.wheelchair_display),
@@ -164,6 +166,7 @@ def toilet_info(request, pk, gender):
                 ("近いホーム", toilet.toilet_id.near_home_num),
                 ("近い車両番号", toilet.toilet_id.near_train_car_num),
                 ("温水洗浄便座", toilet.warm_water_washing_toilet_seat_display),
+                ("チャイルドシート", toilet.child_seat_display),
                 ("おむつ交換設備", toilet.child_facility_display),
                 ("バリアフリートイレ", toilet.barrier_free_toilet_display),
                 ("車いす対応", toilet.wheelchair_display),
@@ -261,6 +264,8 @@ def change_toilet_data(request, toilet_pk, gender_num):
     near_train_car_num = toilet.toilet_id.near_train_car_num
     # 温水洗浄便座
     warm_water_washing_toilet_seat = toilet.warm_water_washing_toilet_seat_display()
+    # チャイルドシート
+    child_seat = toilet.child_seat_display()
     # おむつ交換設備
     child_facility = toilet.child_facility_display()
     # バリアフリートイレ
@@ -305,6 +310,7 @@ def change_toilet_data(request, toilet_pk, gender_num):
             {"label": "近い車両番号", "value": near_train_car_num},
             {"label": "パウダールーム", "value": powder_room},
             {"label": "温水洗浄便座", "value": warm_water_washing_toilet_seat},
+            {"label": "チャイルドシート", "value": child_seat},
             {"label": "おむつ交換設備", "value": child_facility},
             {"label": "バリアフリートイレ", "value": barrier_free_toilet},
             {"label": "車いす対応", "value": wheelchair},
@@ -323,6 +329,7 @@ def change_toilet_data(request, toilet_pk, gender_num):
             {"label": "近い車両番号", "value": near_train_car_num},
             {"label": "パウダールーム", "value": powder_room},
             {"label": "温水洗浄便座", "value": warm_water_washing_toilet_seat},
+            {"label": "チャイルドシート", "value": child_seat},
             {"label": "おむつ交換設備", "value": child_facility},
             {"label": "バリアフリートイレ", "value": barrier_free_toilet},
             {"label": "車いす対応", "value": wheelchair},
@@ -340,6 +347,7 @@ def change_toilet_data(request, toilet_pk, gender_num):
             {"label": "近いホーム", "value": near_home_num},
             {"label": "近い車両番号", "value": near_train_car_num},
             {"label": "温水洗浄便座", "value": warm_water_washing_toilet_seat},
+            {"label": "チャイルドシート", "value": child_seat},
             {"label": "おむつ交換設備", "value": child_facility},
             {"label": "バリアフリートイレ", "value": barrier_free_toilet},
             {"label": "車いす対応", "value": wheelchair},

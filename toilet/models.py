@@ -73,6 +73,8 @@ class MaleToilet(models.Model):
     urial = models.IntegerField(help_text="小便器数を入力してください")
     # 温水洗浄便座
     warm_water_washing_toilet_seat = models.BooleanField(null=True)
+    # チャイルドシート
+    child_seat = models.BooleanField(null=True)
     # おむつ交換設備
     child_facility = models.BooleanField(null=True)
     # バリアフリートイレ
@@ -138,6 +140,12 @@ class MaleToilet(models.Model):
         if self.powder_room is None:
             return "-"
         return "〇" if self.powder_room else "☓"
+    
+    def child_seat_display(self):
+        """チャイルドシートの〇☓表示"""
+        if self.child_seat is None:
+            return "-"
+        return "〇" if self.child_seat else "☓"
 
 
 class FemaleToilet(models.Model):
@@ -159,6 +167,8 @@ class FemaleToilet(models.Model):
     congestion = models.FloatField(null=True)
     # 温水洗浄便座
     warm_water_washing_toilet_seat = models.BooleanField(null=True)
+    # チャイルドシート
+    child_seat = models.BooleanField(null=True)
     # おむつ交換設備
     child_facility = models.BooleanField(null=True)
     # バリアフリートイレ
@@ -224,6 +234,12 @@ class FemaleToilet(models.Model):
         if self.trash_can is None:
             return "-"
         return "〇" if self.trash_can else "☓"
+    
+    def child_seat_display(self):
+        """チャイルドシートの〇☓表示"""
+        if self.child_seat is None:
+            return "-"
+        return "〇" if self.child_seat else "☓"
 
 
 class MultiFunctionalToilet(models.Model):
@@ -245,6 +261,8 @@ class MultiFunctionalToilet(models.Model):
     congestion = models.FloatField(null=True)
     # 温水洗浄便座
     warm_water_washing_toilet_seat = models.BooleanField(null=True)
+    # チャイルドシート
+    child_seat = models.BooleanField(null=True)
     # おむつ交換設備
     child_facility = models.BooleanField(null=True)
     # バリアフリートイレ
@@ -302,6 +320,12 @@ class MultiFunctionalToilet(models.Model):
         if self.trash_can is None:
             return "-"
         return "〇" if self.trash_can else "☓"
+    
+    def child_seat_display(self):
+        """チャイルドシートの〇☓表示"""
+        if self.child_seat is None:
+            return "-"
+        return "〇" if self.child_seat else "☓"
     
 class ToiletStall(models.Model):
     male_toilet_id = models.ForeignKey(MaleToilet, on_delete=models.SET_NULL, null=True, blank=True)
