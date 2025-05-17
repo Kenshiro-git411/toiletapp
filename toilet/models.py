@@ -79,6 +79,8 @@ class MaleToilet(models.Model):
     barrier_free_toilet = models.BooleanField(null=True)
     # 車いす対応
     wheelchair = models.BooleanField(null=True)
+    # パウダールーム
+    powder_room = models.BooleanField(null=True)
     # 姿見
     full_length_mirror = models.BooleanField(null=True)
     # フィッティングボード
@@ -130,6 +132,13 @@ class MaleToilet(models.Model):
         if self.trash_can is None:
             return "-"
         return "〇" if self.trash_can else "☓"
+    
+    def powder_room_display(self):
+        """パウダールームの〇☓表示"""
+        if self.powder_room is None:
+            return "-"
+        return "〇" if self.powder_room else "☓"
+
 
 class FemaleToilet(models.Model):
     """女性用トイレテーブル"""
@@ -194,9 +203,9 @@ class FemaleToilet(models.Model):
 
     def powder_room_display(self):
         """パウダールームの〇☓表示"""
-        if self.wheelchair is None:
+        if self.powder_room is None:
             return "-"
-        return "〇" if self.wheelchair else "☓"
+        return "〇" if self.powder_room else "☓"
     
     def full_length_mirror_display(self):
         """姿見の〇☓表示"""

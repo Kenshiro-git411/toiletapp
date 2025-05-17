@@ -115,6 +115,7 @@ def toilet_info(request, pk, gender):
                 ("近い改札口", toilet.toilet_id.near_gate),
                 ("近いホーム", toilet.toilet_id.near_home_num),
                 ("近い車両番号", toilet.toilet_id.near_train_car_num),
+                ("パウダールーム", toilet.powder_room_display),
                 ("温水洗浄便座", toilet.warm_water_washing_toilet_seat_display),
                 ("おむつ交換設備", toilet.child_facility_display),
                 ("バリアフリートイレ", toilet.barrier_free_toilet_display),
@@ -209,6 +210,7 @@ def change_toilet_data(request, toilet_pk, gender_num):
             toilet = get_object_or_404(MaleToilet, toilet_id=toilet_pk)
             urial = toilet.urial
             toilet_stall = get_object_or_404(ToiletStall, male_toilet_id=toilet)
+            powder_room = toilet.powder_room_display()
             comments = MaleToiletComments.objects.select_related("user").filter(gender=gender_num, toilet=toilet.pk).order_by("data_create").reverse()
         elif gender_num == 2:
             toilet = get_object_or_404(FemaleToilet, toilet_id=toilet_pk)
@@ -301,6 +303,7 @@ def change_toilet_data(request, toilet_pk, gender_num):
             {"label": "近い改札口", "value": near_gate},
             {"label": "近いホーム", "value": near_home_num},
             {"label": "近い車両番号", "value": near_train_car_num},
+            {"label": "パウダールーム", "value": powder_room},
             {"label": "温水洗浄便座", "value": warm_water_washing_toilet_seat},
             {"label": "おむつ交換設備", "value": child_facility},
             {"label": "バリアフリートイレ", "value": barrier_free_toilet},

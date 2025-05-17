@@ -22,7 +22,7 @@ class ToiletStallAdmin(admin.ModelAdmin):
     list_display = ("male_toilet_id", "female_toilet_id", "multi_toilet_id", "western_style", "japanese_style")
 
 class MaleToiletAdmin(admin.ModelAdmin):
-    list_display = ("toilet_id", "initial_value", "initial_size", "initial_congestion", "value", "size", "congestion", "urial", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair",)
+    list_display = ("toilet_id", "initial_value", "initial_size", "initial_congestion", "value", "size", "congestion", "urial", "warm_water_washing_toilet_seat", "child_facility", "barrier_free_toilet", "wheelchair", "powder_room")
     search_fields = ("toilet_id", "value",)
     list_filter = ("toilet_id",)
 
