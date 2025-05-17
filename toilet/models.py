@@ -37,8 +37,8 @@ class ToiletMaster(models.Model):
     place = models.CharField(max_length=30)
     station_ticket_gate_id = models.ForeignKey(StationTicketGate, on_delete=models.SET_NULL, null=True)
     # open_timeとclose_timeを文字列の始発~終電の記載にする方法を確認するAPI
-    open_time = models.TimeField(auto_now=False)
-    close_time = models.TimeField(auto_now=False)
+    open_time = models.TimeField(auto_now=False, null=True)
+    close_time = models.TimeField(auto_now=False, null=True)
     floor = models.CharField(max_length=5, help_text="設置されている階を数字で入力してください")
     near_gate = models.CharField(max_length=100)
     near_home_num = models.CharField(max_length=3)
