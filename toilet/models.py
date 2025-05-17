@@ -41,8 +41,8 @@ class ToiletMaster(models.Model):
     close_time = models.TimeField(auto_now=False, null=True)
     floor = models.CharField(max_length=5, help_text="設置されている階を数字で入力してください")
     near_gate = models.CharField(max_length=100)
-    near_home_num = models.CharField(max_length=3)
-    near_train_car_num = models.CharField(max_length=3)
+    near_home_num = models.CharField(max_length=30)
+    near_train_car_num = models.CharField(max_length=30)
     toilet_root = models.TextField(null=True)
 
     def __str__(self):
