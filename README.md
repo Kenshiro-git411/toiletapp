@@ -19,6 +19,7 @@
 4. システム構成図
 
 5. ER図
+![ER図](assets/readme/toiletgo_er.png)
 
 6. 機能一覧
 * ユーザー登録(Django、LIFF)、ログイン機能(Django、LIFF)、ログアウト機能
