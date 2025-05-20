@@ -70,6 +70,8 @@ class SigninForm(forms.ModelForm):
         """ユーザー名のバリデーション"""
         cleaned_data = super().clean()
         username = cleaned_data.get("username")
+        if not username:
+            raise forms.ValidationError("ユーザー名を入力してください")
         if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
             raise forms.ValidationError("このユーザー名は既に使用されています")
         return username

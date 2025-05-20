@@ -117,7 +117,7 @@ def user_create(request):
         if signin_form.is_valid():
             try:
                 signin_form.save()
-                return redirect('accounts:home')
+                return redirect('toilet:home')
             except ValidationError as e:
                 signin_form.add_error('password', e)
                 # print(type(e).__name__, e)
