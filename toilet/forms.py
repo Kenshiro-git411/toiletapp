@@ -38,7 +38,7 @@ class BaseReviewForm(forms.ModelForm):
         }),
     )
     congestion = forms.IntegerField(
-        label="混雑さ",
+        label="空き具合",
         min_value=1,
         max_value=5,
         required=True,

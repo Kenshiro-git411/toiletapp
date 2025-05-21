@@ -2,6 +2,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 from dj_database_url import parse
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # 環境変数.envの読み込み
 load_dotenv()
@@ -183,3 +185,19 @@ if not DEBUG:
     EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
     EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
     EMAIL_USE_TLS = True # SMTPサーバーと通信する際に、TLS（セキュア）接続する
+
+# sentryの導入でエラーを検知する（sentryのウェブサイトでエラーの確認可能）
+sentry_sdk.init(
+    dsn=os.environ['DSN'],
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=1.0,
+    send_default_pii=True,
+    _experiments={
+        # Set continuous_profiling_auto_start to True
+        # to automatically start the profiler on when
+        # possible.
+        "continuous_profiling_auto_start": True,
+    },
+)
